@@ -22,10 +22,11 @@ public class Main {
 
         do{
             try{ //basicamente es para que si poonen un string en vez de int no se rompa nada
-                System.out.println("\n    - - MENU - - \n " +
+                System.out.println("\n    - - MENU - - \n" +
                         "Elija una de las opciones: " +
                         "\n1)Mostrar todos los datos" +
                         "\n2) Mostrar cliente DB (Aparece un warning, es normal, solo avisa que traes datos 'sin acceso') " +
+                        "\n3)Mostrar las ventas con el cliente" +
                         "\n10)Salir");
 
                 opcion = scan.nextInt();
@@ -36,6 +37,9 @@ public class Main {
                         break;
                     case 2 :
                         Querrys.mostrarClientes();
+                        break;
+                    case 3:
+                        Querrys.mostrarVentasConCliente();
                         break;
                     case 10:
                         System.out.println("Saliendo...");
