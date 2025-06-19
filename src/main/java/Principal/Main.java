@@ -27,6 +27,7 @@ public class Main {
                         "\n1)Mostrar todos los datos" +
                         "\n2) Mostrar cliente DB " +
                         "\n3)Mostrar las ventas con el cliente" +
+                        "\n4)Abrir interfaz gráfica" +
                         "\n10)Salir");
 
                 opcion = scan.nextInt();
@@ -40,6 +41,9 @@ public class Main {
                         break;
                     case 3:
                         Querrys.mostrarVentasConCliente();
+                        break;
+                    case 4:
+                        MetodosSwitch.abrirApp();
                         break;
                     case 10:
                         System.out.println("Saliendo...");

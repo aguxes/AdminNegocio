@@ -22,6 +22,11 @@ public class MetodosSwitch {
         lista.add(emp2);
     }
 
+    public static void abrirApp() {
+        System.out.println("Abriendo interfaz gráfica ");
+        View.App.main(new String[0]); // llama al método `main` de la clase JavaFX, no entienod mucho
+    }
+
     public static void imprimirTodo(ArrayList<Imprimible> lista){
         if(!lista.isEmpty()){
             lista.getFirst().imprimirEncabezado(); //llamo al primer dato del array solo para poner el encabezado, no es importante

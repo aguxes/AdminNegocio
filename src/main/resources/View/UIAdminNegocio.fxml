@@ -3,19 +3,21 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="TOP_CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.AppController">
+<VBox alignment="TOP_CENTER" prefHeight="517.0" prefWidth="840.0" spacing="20.0" style="-fx-background-color: lightblue;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.AppController">
     <padding>
         <Insets bottom="20" left="20" right="20" top="20" />
     </padding>
-
-    <HBox spacing="10">
-        <Button onAction="#mostrarClientes" text="Mostrar clientes" />
-        <Button onAction="#mostrarVentas" text="Mostrar ventas" />
-    </HBox>
+   <Pane prefHeight="54.0" prefWidth="800.0">
+      <children>
+           <Button layoutY="15.0" onAction="#mostrarClientes" style="-fx-background-color: lightGreen;" text="Mostrar clientes" />
+           <Button alignment="CENTER_RIGHT" layoutX="705.0" layoutY="15.0" onAction="#mostrarVentas" style="-fx-background-color: lightGreen;" text="Mostrar ventas" />
+      </children>
+   </Pane>
 
     <TextArea fx:id="outputArea" prefHeight="400" prefWidth="800" wrapText="true" />
+
 
 </VBox>
