@@ -2,6 +2,7 @@ package Principal;
 
 import Clases.Cliente;
 import Clases.*;
+import DataBase.Querrys;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -24,7 +25,7 @@ public class Main {
                 System.out.println("\n    - - MENU - - \n " +
                         "Elija una de las opciones: " +
                         "\n1)Mostrar todos los datos" +
-                        "\n2) agragar" +
+                        "\n2) Mostrar cliente DB (Aparece un warning, es normal, solo avisa que traes datos 'sin acceso') " +
                         "\n10)Salir");
 
                 opcion = scan.nextInt();
@@ -32,6 +33,9 @@ public class Main {
                 switch (opcion) {
                     case 1:
                         MetodosSwitch.imprimirTodo(lista);
+                        break;
+                    case 2 :
+                        Querrys.mostrarClientes();
                         break;
                     case 10:
                         System.out.println("Saliendo...");
