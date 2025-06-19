@@ -1,0 +1,37 @@
+
+# === JAVA ===
+*.class
+*.jar
+*.war
+*.ear
+
+# === IDEs comunes ===
+
+# IntelliJ IDEA
+.idea/
+*.iml
+out/
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+*.bak
+
+# VSCode
+.vscode/
+
+# === SISTEMA ===
+.DS_Store
+Thumbs.db
+
+# === OTROS ===
+*.log
+*.tmp

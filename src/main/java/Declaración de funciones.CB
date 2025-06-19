@@ -1,0 +1,402 @@
+class ArchivoClientes {
+private:
+        string _nombreArchivo;
+
+    public:
+        ArchivoClientes(string nombreArchivo);
+        bool Guardar(Cliente cliente);
+        bool Guardar(Cliente cliente, int posicion);
+        Cliente Buscar(int clienteID);
+        int BuscarPosRegistro(int clienteID);
+
+        void FiltrarClientes();
+        void FiltrarPorNombre(string _nombre);
+        void FiltrarPorOrdenAlfabetico();
+        void FiltrarPorID(int _ID);
+        void FiltrarPorNComprasRealizadas();
+
+        void ModificarCliente(int clienteID);
+        void eliminarArchivoClientes();
+        void eliminarRegistroCliente(int clienteID);
+        void exportarClientesACSV(string nombreArchivoCSV);
+
+        Cliente Leer(int posicion);
+        int CantidadRegistros();
+        void Leer(int CantidadRegistros, Cliente *vector);
+};
+
+class ArchivoDetalleVentas {
+private:
+        string _nombreArchivo;
+
+    public:
+        ArchivoDetalleVentas(string nombreArchivo);
+        bool Guardar(DetalleVenta detalleVenta);
+        bool Guardar(DetalleVenta detalleVenta, int posicion);
+        DetalleVenta Buscar(int idVenta);
+        DetalleVenta BuscarPorLinea(int idVenta, int idLinea);
+        int ContLineas(int idVenta);
+        DetalleVenta Leer(int posicion);
+        int CantidadRegistros();
+        void ModificarDetalleVenta(int idVenta);
+        int BuscarPosRegistro(int idVenta);
+        void Leer(int CantidadRegistros, DetalleVenta *vector);
+        void exportarDetalleVentasACSV(string nombreArchivoCSV);
+};
+
+class ArchivoEmpleados {
+private:
+        string _nombreArchivo;
+
+    public:
+        ArchivoEmpleados(string nombreArchivo);
+        bool Guardar(Empleado empleado);
+        bool Guardar(Empleado empleado, int posicion);
+
+        Empleado Buscar(int empleadoID);
+        int BuscarPosRegistro(int empleadoID);
+
+        void FiltrarEmpleados();
+        void FiltrarPorNombre(string _nombre);
+        void FiltrarPorOrdenAlfabetico();
+        void FiltrarPorID(int _ID);
+        void FiltrarPorFecha();
+        void FiltrarPorAsistencias();
+        void FiltrarPorVacacionesActivas(bool _vacaciones);
+        void ModificarEmpleado(int empleadoID);
+
+        void eliminarArchivoEmpleados();
+        void eliminarRegistroEmpleado(int empleadoID);
+
+        Empleado Leer(int posicion);
+        int CantidadRegistros();
+        void Leer(int CantidadRegistros, Empleado *vector);
+        void exportarEmpleadosACSV(string nombreArchivoCSV);
+};
+
+class ArchivoProductos {
+private:
+        string _nombreArchivo;
+
+    public:
+        ArchivoProductos(string nombreArchivo);
+        bool Guardar(Producto producto);
+        bool Guardar(Producto prodcuto, int posicion);
+        Producto Buscar(int ID);
+
+        void FiltrarProductos();
+        void FiltrarPorNombre(string _nombre);
+        void FiltrarPorID(int productoID);
+        void FiltrarPorCategoria (string _categoria);
+        void ModificarProducto(int productoID);
+
+        int BuscarPos(int productoID);
+        int ContLineas(int ID);
+
+        void eliminarArchivoProductos();
+        void eliminarRegistroProducto(int productoID);
+        void exportarProductosACSV(string nombreArchivoCSV);
+
+        Producto Leer(int posicion);
+        int CantidadRegistros();
+        void Leer(int cantidadRegistros, Producto *vector);
+};
+
+class Cliente : public Persona {
+private:
+    int clienteID;
+public:
+    Cliente();
+    Cliente(int, const char*, const char*, const char*, int, const char*, int _clienteID); //Constructor de la clase Cliente
+
+    int getID();
+    void setClienteID (int _clienteID);
+    Persona getPersona();
+
+    void cargarCliente();
+    void mostrarCliente();
+};
+
+class DetalleVenta{
+private:
+    int idVenta;
+    int idLinea;
+    int idProducto;
+    int cantidadProducto;
+    float importe;
+    bool estado;
+public:
+    DetalleVenta();
+    DetalleVenta(int _idVenta, int _idLinea, int _idProducto, int _cantidadProducto, float _importe, bool _estado);
+
+
+    int getIdVenta();
+    int getIdLinea();
+    int getIdProducto();
+    int getCantidadProducto();
+    float getImporte();
+    bool getEstado();
+
+    void setIdVenta(int _idVenta);
+    void setIdLinea(int _idLinea);
+    void setIdProducto(int _idProducto);
+    void setCantidadProducto(int _cantidadProducto);
+    void setImporte(float _importe);
+    void setEstado(bool _estado);
+
+    void cargarDetalleDeVenta(int _idVenta);
+    void mostrarDetalleDeVenta();
+
+};
+
+class Eliminados {
+public:
+    void menuEliminarEmpleados();
+
+    void eliminarArchivoEmpleados();
+    void eliminarRegistroEmpleado();
+
+
+    void menuEliminarClientes();
+
+    void eliminarArchivoClientes();
+    void eliminarRegistroCliente();
+
+    void menuEliminarVentas();
+
+    void eliminarArchivoVentas();
+    void eliminarRegistroVenta();
+
+    void menuEliminarProductos();
+
+    void eliminarArchivoProductos();
+    void eliminarRegistroProducto();
+
+};
+
+class Empleado : public Persona {
+private:
+    Fecha fechaDeIngreso;
+    int empleadoID;
+    int asistencias;
+    bool vacacionesActivas;
+    float sueldo;
+
+public:
+    Empleado();
+    Empleado(int, const char *, const char*, const char*, int, const char*,Fecha _fechaDeIngreso, int _empleadoID, int _asistencias, bool _vacacionesActivas); //Constructor de la clase Empleado
+
+    int getID();
+    Fecha getFechaIngreso();
+    int getAsistencias();
+    bool getIsVacaciones();
+    float getSueldo();
+
+    void setfechadeingreso(Fecha _fechaDeIngreso);
+    void setempleadoID(int _empleadoID);
+    void setAsistencias(int _asistencias);
+    void setvacacionesActivas(bool _vacacionesActivas);
+    void setSueldo(float _sueldo);
+
+    void cargarEmpleado();
+    void mostrarEmpleado();
+
+};
+
+class Fecha{
+    private:
+    int dia, mes, anio;
+
+    public:
+    Fecha();
+    Fecha(int _dia, int _mes, int _anio);
+
+    int getDia();
+    int getMes();
+    int getAnio();
+
+
+    void setDia(int _dia);
+    void setMes(int _mes);
+    void setAnio(int _anio);
+
+    bool validar();
+    void AgregarDia();
+    void RestarDia();
+    bool esBisiesto();
+
+    void cargarFecha();
+    void mostrarFecha();
+
+    char* toString();
+};
+
+class Listados {
+public:
+    void MenulistarEmpleados();
+
+    void listarEmpleadosxName();
+    void listarEmpleadosxOrdenAlfabetico();
+    void listarEmpleadosxID();
+    void listarEmpleadosxFecha();
+    void listarEmpleadosxAsistencias();
+    void listarEmpleadosxVacaciones();
+    void listarEmpleadosAll();
+
+    void MenulistarClientes();
+
+    void listarClientesxName();
+    void listarClientesxOrdenAlfabetico();
+    void listarClientesxID();
+    void listarClientesxComprasRealizadas();
+    void listarClientesAll();
+
+    void listarVentas();
+
+    void MenulistarProductos();
+    void MenuListarProductosDetalleVentas();
+
+    void listarProductosxName();
+    void listarProductosxID();
+    void listarProductosxCategoria();
+    void listarProductosAll();
+    void listarProductosDisponibles();
+};
+
+class Menu{
+public:
+    ///FUNCIONES DE MANEJO DE MENU
+    void getMainMenu();
+    void listar();
+    void crear();
+    void registrar();
+    void modificar();
+    void eliminar();
+
+    ///FUNCIONES PARA CREACION DE OBJETOS
+    void crearEmpleado();
+    void crearCliente();
+
+    ///REGISTRACIONES DE VENTAS Y NUEVOS PRODUCTOS
+    void registrarVenta();
+    void registrarProducto();
+
+    ///MODIFICACIONES DE VENTAS
+    void modificarRegistroVenta();
+
+    ///INFORMES
+    void menuInformes();
+    void clientesMasActivos();
+    void clientesMenosActivos();
+    void empleadosMayoresVentas();
+    void empleadosMayoresAsistencias();
+    void fdpMasUtilizadas();
+
+    //EXPORTAR .toCSV
+    void menuExportarCSV();
+    void ExportarProductos();
+    void ExportarVentas();
+    void ExportarClientes();
+    void ExportarEmpleados();
+    void ExportarDetalledeVentas();
+
+    ///FUNCIONES PARA INTERFAZ
+    void mensajeDeError(string mensaje);
+    static void setColor(int color);
+};
+
+class Persona{
+private:
+    int  DNI;
+    char nombre [50];
+    char apellido [50];
+    char email [50];
+    int  nTelefono;
+    char localidad [50];
+public:
+    Persona();
+    Persona(int _DNI, const char* _nombre,const char* _apellido,const char* _email, int _nTelefono, const char* _localidad);
+
+    int getDNI();
+    const char* getNombre();
+    const char* getApellido();
+    const char* getEmail();
+    int getnTelefono();
+    const char* getLocalidad();
+
+    void setDNI(int _DNI);
+    void setNombre(const char* _nombre);
+    void setApellido(const char* _apellido);
+    void setEmail(const char* _email);
+    void setnTelefono(int _nTelefono);
+    void setLocalidad(const char* _localidad);
+    void cargarPersona();
+    void mostrarPersona();
+
+};
+
+class Producto : public DetalleVenta {
+private:
+    int productoID;
+    char nombreProducto[50];
+    float precioUnitario;
+    int stock;
+    char categoriaProducto[50];
+
+public:
+    Producto();
+    Producto(int _productoID, const char* _nombreProducto, float _precioUnitario, int _stock, const char* _categoriaProducto); //Constructor de la clase Producto
+
+    int getID();
+    const char* getNombre();
+    float getPrecioUnitario();
+    const char* getCategoriaProducto();
+    int getStock();
+
+    void setProductoID(int _productoID);
+    void setNombre(const char* _nombre);
+    void setPrecioUnitario(float _precioUnitario);
+    void setCategoriaProducto(const char* _categoriaProducto);
+    void setStock(int _stock);
+
+    void setID(int _ID);
+
+
+    void cargarProducto();
+    void mostrarProducto();
+
+};
+
+class Venta
+{
+private:
+    int idVenta;
+    int idEmpleado;
+    int idCliente;
+    Fecha fecha;
+    int formaDePago;
+    float importeTotal = 0;
+    bool estado = false;
+public:
+
+    Venta();
+    Venta(int _idVenta,  int _idEmpleado, int _idCliente, Fecha _fecha, int _formaDePago, float _importeTotal, bool _estado);
+    int getIdVenta();
+    int getIdEmpleado();
+    int getIdCliente();
+    Fecha getFecha();
+    int getFormaDePago();
+    float getImporteTotal();
+    bool getEstado();
+
+    void setidVenta(int _idVenta);
+    void setidEmpleado(int _idEmpleado);
+    void setidCliente(int _idCliente);
+    void setFecha(Fecha _fecha);
+    void setFormaDePago(int _formaDePago);
+    void setImporteTotal(float _ImporteTotal);
+    void setEstado(bool _estado);
+
+    void cargarVenta();
+    void mostrarVenta();
+};
