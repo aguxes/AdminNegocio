@@ -25,7 +25,7 @@ public class Main {
                 System.out.println("\n    - - MENU - - \n" +
                         "Elija una de las opciones: " +
                         "\n1)Mostrar todos los datos" +
-                        "\n2) Mostrar cliente DB (Aparece un warning, es normal, solo avisa que traes datos 'sin acceso') " +
+                        "\n2) Mostrar cliente DB " +
                         "\n3)Mostrar las ventas con el cliente" +
                         "\n10)Salir");
 
