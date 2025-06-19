@@ -2,6 +2,7 @@ package Principal;
 
 import Clases.Cliente;
 import Clases.*;
+import DataBase.ClienteDAO;
 import DataBase.Querrys;
 
 import java.util.ArrayList;
@@ -10,7 +11,10 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         ArrayList<Imprimible> lista = new ArrayList<Imprimible>();
-        MetodosSwitch.harcodearDatos(lista); //pongo datos de prueba, dsp borrar cuando tengamos sql
+        // MetodosSwitch.harcodearDatos(lista); //pongo datos de prueba, dsp borrar cuando tengamos sql
+
+        ClienteDAO dao = new ClienteDAO();
+        dao.cargarClientesEnLista(lista);
 
         Scanner scan = new Scanner(System.in); //esto crea el input, lo llamas poniendo:
         //  int opcion = scan.nextInt();
@@ -25,9 +29,8 @@ public class Main {
                 System.out.println("\n    - - MENU - - \n" +
                         "Elija una de las opciones: " +
                         "\n1)Mostrar todos los datos" +
-                        "\n2) Mostrar cliente DB " +
-                        "\n3)Mostrar las ventas con el cliente" +
-                        "\n4)Abrir interfaz gráfica" +
+                        "\n2)Mostrar las ventas con el cliente" +
+                        "\n3)Abrir interfaz gráfica" +
                         "\n10)Salir");
 
                 opcion = scan.nextInt();
@@ -36,13 +39,10 @@ public class Main {
                     case 1:
                         MetodosSwitch.imprimirTodo(lista);
                         break;
-                    case 2 :
-                        Querrys.mostrarClientes();
-                        break;
-                    case 3:
+                    case 2:
                         Querrys.mostrarVentasConCliente();
                         break;
-                    case 4:
+                    case 3:
                         MetodosSwitch.abrirApp();
                         break;
                     case 10:

@@ -4,7 +4,7 @@ import Clases.*;
 import java.util.ArrayList;
 
 public class MetodosSwitch {
-
+/*
     public static void harcodearDatos(ArrayList<Imprimible> lista){
         // Clientes
         Cliente cliente1 = new Cliente("Juan", 12345678, "Pérez", "juanperez@email.com", 1134567890, "Rosario", 1);
@@ -21,7 +21,7 @@ public class MetodosSwitch {
         lista.add(emp1);
         lista.add(emp2);
     }
-
+*/
     public static void abrirApp() {
         System.out.println("Abriendo interfaz gráfica ");
         View.App.main(new String[0]); // llama al método `main` de la clase JavaFX, no entienod mucho
