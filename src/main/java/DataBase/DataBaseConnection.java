@@ -23,7 +23,15 @@ public class DataBaseConnection {
     }
 
     public static java.sql.Connection getConnection() {
+        try {
+            if (conn == null || conn.isClosed()) {
+                conn = DriverManager.getConnection(URL);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al reconectar con la base de datos", e);
+        }
         return conn;
     }
+
 }
 

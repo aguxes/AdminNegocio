@@ -13,8 +13,8 @@ public class Main {
         ArrayList<Imprimible> lista = new ArrayList<Imprimible>();
         // MetodosSwitch.harcodearDatos(lista); //pongo datos de prueba, dsp borrar cuando tengamos sql
 
-        ClienteDAO dao = new ClienteDAO();
-        dao.cargarClientesEnLista(lista);
+        ClienteDAO dao = new ClienteDAO(); //objeto cliente
+
 
         Scanner scan = new Scanner(System.in); //esto crea el input, lo llamas poniendo:
         //  int opcion = scan.nextInt();
@@ -25,12 +25,16 @@ public class Main {
         int opcion = 0;
 
         do{
+            lista.clear(); //Borro todo lo de la lista
+            dao.cargarClientesEnLista(lista); //con cada vuelta del bucle si borro un dato se actualiza
+
             try{ //basicamente es para que si poonen un string en vez de int no se rompa nada
                 System.out.println("\n    - - MENU - - \n" +
                         "Elija una de las opciones: " +
                         "\n1)Mostrar todos los datos" +
                         "\n2)Mostrar las ventas con el cliente" +
                         "\n3)Abrir interfaz gráfica" +
+                        "\n4)Eliminar por ID" +
                         "\n10)Salir");
 
                 opcion = scan.nextInt();
@@ -44,6 +48,9 @@ public class Main {
                         break;
                     case 3:
                         MetodosSwitch.abrirApp();
+                        break;
+                    case 4:
+                        dao.eliminarPorId(scan);
                         break;
                     case 10:
                         System.out.println("Saliendo...");

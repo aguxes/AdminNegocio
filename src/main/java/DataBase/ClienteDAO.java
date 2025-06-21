@@ -6,11 +6,12 @@ import Clases.Imprimible;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class ClienteDAO {
 
     public void cargarClientesEnLista(ArrayList<Imprimible> lista) {
-        String sql = "SELECT id, nombre, email, telefono FROM clientes";
+        String sql = "SELECT * FROM clientes";
 
         try (Connection conn = DataBaseConnection.getConnection();
              Statement stmt = conn.createStatement();
@@ -50,19 +51,47 @@ public class ClienteDAO {
         }
     }
 
-    public void eliminarPorId(int id) {
-        String sql = "DELETE FROM clientes WHERE id = ?";
+    public void eliminarPorId(Scanner scan) {
+        System.out.print("Ingrese el ID del cliente a eliminar: ");
+        int id = scan.nextInt();
+
+        String sql = "SELECT nombre FROM clientes WHERE id = ?";
 
         try (Connection conn = DataBaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, id);
-            stmt.executeUpdate();
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String nombre = rs.getString("nombre");
+
+                System.out.println("Vas a eliminar al cliente ID: " + id + " Nombre: " + nombre +
+                        "\n¿Está seguro? (1 = Sí, 2 = No)");
+                int opcion = scan.nextInt();
+
+                if (opcion == 1) {
+                    String deleteSQL = "DELETE FROM clientes WHERE id = ?";
+                    conn.setAutoCommit(false);
+                    try (PreparedStatement deleteStmt = conn.prepareStatement(deleteSQL)) {
+                        deleteStmt.setInt(1, id);
+                        deleteStmt.executeUpdate();
+                        conn.commit();
+                        System.out.println("✅ Cliente eliminado.");
+                    }
+                } else {
+                    System.out.println("❎ Cancelado. No se eliminó a nadie.");
+                }
+
+            } else {
+                System.out.println("⚠️ No se encontró ningún cliente con ese ID.");
+            }
 
         } catch (SQLException e) {
-            System.out.println("❌ Error al eliminar cliente: " + e.getMessage());
+            System.out.println("❌ Error en la base de datos: " + e.getMessage());
         }
     }
+
 
     public void actualizarEmail(int id, String nuevoEmail) {
         String sql = "UPDATE clientes SET email = ? WHERE id = ?";
