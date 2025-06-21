@@ -95,6 +95,46 @@ public class ProductoDAO {
     }
 
     public void eliminarProductoPorId(Scanner scan) {
+        System.out.print("Ingrese el ID del prodcuto a eliminar: ");
+        int id = scan.nextInt();
+
+        String sql = "SELECT nombre FROM PRODUCTOS WHERE id = ?";
+
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String nombre = rs.getString("nombre");
+
+                System.out.println("Vas a eliminar prducto ID: " + id + " Nombre: " + nombre +
+                        "\n¿Está seguro? (1 = Sí, 2 = No)");
+                int opcion = scan.nextInt();
+                scan.nextLine();
+
+                if (opcion == 1) {
+                    String deleteSQL = "DELETE FROM productos WHERE id = ?";
+                    conn.setAutoCommit(false);
+                    try (PreparedStatement deleteStmt = conn.prepareStatement(deleteSQL)) {
+                        deleteStmt.setInt(1, id);
+                        deleteStmt.executeUpdate();
+                        conn.commit();
+                        System.out.println("✅ Producto eliminado.");
+                    }
+                } else {
+                    System.out.println("❎ Cancelado. No se elimino.");
+                }
+
+            } else {
+                System.out.println("⚠️ No se encontró ningún producto con ese ID.");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("❌ Error en la base de datos: " + e.getMessage());
+        }
+
     }
 
     public void buscarProductoPorNombreOCodigo(Scanner scan) {

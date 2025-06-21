@@ -1,24 +1,13 @@
 package Clases;
-public class Producto implements Imprimible {
-        private int productoID = 0;
-        private String nombreProducto; //[0] = '\0';
-        private String categoriaProducto; //[0] = '\0';
-        private String descripcionProducto;
-        private double precioUnitario;
-        private int stock;
-        private double costo;
-        private String unidadMedida;
 
-    public Producto(int productoID, String nombreProducto, String categoriaProducto, String descripcionProducto, double precioUnitario, int stock, double costo, String unidadMedida) {
-        this.productoID = productoID;
-        this.nombreProducto = nombreProducto;
-        this.categoriaProducto = categoriaProducto;
-        this.descripcionProducto = descripcionProducto;
-        this.precioUnitario = precioUnitario;
-        this.stock = stock;
-        this.costo = costo;
-        this.unidadMedida = unidadMedida;
-    }
+public class Producto implements Imprimible {
+    private int productoID;
+    private String nombreProducto;
+    private String descripcionProducto;
+    private double precioUnitario;
+    private double costo;
+    private int stock;
+    private String unidadMedida;
 
     public Producto(int productoID, String nombreProducto, String descripcionProducto, double precioUnitario, double costo, int stock, String unidadMedida) {
         this.productoID = productoID;
@@ -26,43 +15,25 @@ public class Producto implements Imprimible {
         this.descripcionProducto = descripcionProducto;
         this.precioUnitario = precioUnitario;
         this.costo = costo;
-        this.unidadMedida = unidadMedida;
         this.stock = stock;
-    }
-
-    public Producto( String nombreProducto, String descripcionProducto, double precioUnitario, double costo, int stock, String unidadMedida) {
-        this.productoID = productoID;
-        this.nombreProducto = nombreProducto;
-        this.descripcionProducto = descripcionProducto;
-        this.precioUnitario = precioUnitario;
-        this.costo = costo;
-        this.unidadMedida = unidadMedida;
-        this.stock = stock;
-    }
-
-    public double getCosto() {
-        return costo;
-    }
-
-    public void setCosto(double costo) {
-        this.costo = costo;
-    }
-
-    public String getUnidadMedida() {
-        return unidadMedida;
-    }
-
-    public void setUnidadMedida(String unidadMedida) {
         this.unidadMedida = unidadMedida;
     }
 
-    public String getDescripcionProducto() {
-        return descripcionProducto;
+    public Producto(String nombreProducto, String descripcionProducto, double precioUnitario, double costo, int stock, String unidadMedida) {
+        this(0, nombreProducto, descripcionProducto, precioUnitario, costo, stock, unidadMedida);
     }
 
-    public void setDescripcionProducto(String descripcionProducto) {
-        this.descripcionProducto = descripcionProducto;
-    }
+    public double getCosto() {return costo;}
+
+    public void setCosto(double costo) {this.costo = costo;}
+
+    public String getUnidadMedida() {return unidadMedida;}
+
+    public void setUnidadMedida(String unidadMedida) {this.unidadMedida = unidadMedida;}
+
+    public String getDescripcionProducto() {return descripcionProducto;}
+
+    public void setDescripcionProducto(String descripcionProducto) {this.descripcionProducto = descripcionProducto;}
 
     public int getProductoID() {return productoID;}
 
@@ -71,10 +42,6 @@ public class Producto implements Imprimible {
     public String getNombreProducto() {return nombreProducto;}
 
     public void setNombreProducto(String nombreProducto) {this.nombreProducto = nombreProducto;}
-
-    public String getCategoriaProducto() {return categoriaProducto;}
-
-    public void setCategoriaProducto(String categoriaProducto) {this.categoriaProducto = categoriaProducto;}
 
     public double getPrecioUnitario() {return precioUnitario;}
 
