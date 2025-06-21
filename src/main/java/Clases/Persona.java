@@ -5,11 +5,11 @@ public class Persona{
     protected String nombre;
     protected String apellido;
     protected String email;
-    protected int telefono;
+    protected long telefono;
     protected String localidad;
 
 
-    public Persona(String nombre, int dni, String apellido, String email, int telefono, String localidad) {
+    public Persona(String nombre, int dni, String apellido, String email, long telefono, String localidad) {
         this.nombre = nombre;
         this.DNI = dni;
         this.apellido = apellido;
@@ -34,7 +34,7 @@ public class Persona{
 
     public void setEmail(String email) {this.email = email;}
 
-    public int getTelefono() {return telefono;}
+    public long getTelefono() {return telefono;}
 
     public void setTelefono(int telefono) {this.telefono = telefono;}
 

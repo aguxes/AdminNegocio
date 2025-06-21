@@ -2,67 +2,103 @@ package Principal;
 
 import Clases.Cliente;
 import Clases.*;
-import DataBase.ClienteDAO;
-import DataBase.Querrys;
+import DataBase.*;
+
+
 
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        ArrayList<Imprimible> lista = new ArrayList<Imprimible>();
-        // MetodosSwitch.harcodearDatos(lista); //pongo datos de prueba, dsp borrar cuando tengamos sql
+        ArrayList<Imprimible> lista = new ArrayList<>();
+        ClienteDAO daoCliente = new ClienteDAO();
+        VentaDAO daoVenta = new VentaDAO();
+        ProductoDAO daoProducto = new ProductoDAO();
 
-        ClienteDAO dao = new ClienteDAO(); //objeto cliente
-
+        Cliente cliente = new Cliente(null , 0, null, null, 0, null, 0);
 
         Scanner scan = new Scanner(System.in); //esto crea el input, lo llamas poniendo:
-        //  int opcion = scan.nextInt();
-        //scanner.nextLine(); Siempre dsp de un nextInt() xq deja un salto de linea, con eso se corrige
-
-        //  String opcion = scan.nextLine();
-
         int opcion = 0;
 
         do{
             lista.clear(); //Borro todo lo de la lista
-            dao.cargarClientesEnLista(lista); //con cada vuelta del bucle si borro un dato se actualiza
+            daoCliente.cargarClientesEnLista(lista); //con cada vuelta del bucle si borro un dato se actualiza
 
             try{ //basicamente es para que si poonen un string en vez de int no se rompa nada
-                System.out.println("\n    - - MENU - - \n" +
-                        "Elija una de las opciones: " +
-                        "\n1)Mostrar todos los datos" +
-                        "\n2)Mostrar las ventas con el cliente" +
-                        "\n3)Abrir interfaz gráfica" +
-                        "\n4)Eliminar por ID" +
-                        "\n10)Salir");
-
-                opcion = scan.nextInt();
+                MetodosSwitch.mostrarMenu();
+                opcion = Integer.parseInt(scan.nextLine());
 
                 switch (opcion) {
-                    case 1:
-                        MetodosSwitch.imprimirTodo(lista);
+                    case 1: // Ver clientes
+                        daoCliente.imprimirClientes(lista);
                         break;
-                    case 2:
-                        Querrys.mostrarVentasConCliente();
+
+                    case 2: // Agregar nuevo cliente
+                        Cliente nuevo = daoCliente.agregarClientePorConsola(scan);
+                        ClienteDAO.insertar(nuevo);
                         break;
-                    case 3:
+
+                    case 3: // Modificar datos de un cliente
+                        daoCliente.modificarClientePorId(scan, lista);
+                        break;
+
+                    case 4: // Eliminar cliente por ID
+                        daoCliente.eliminarPorId(scan);
+                        break;
+
+                    case 5: // Buscar cliente por nombre/email
+                        daoCliente.buscarClientePorDato(scan);
+                        break;
+
+                    case 6: // Ver ventas
+                        daoVenta.mostrarTodasLasVentas();
+                        break;
+
+                    case 7: // Registrar nueva venta
+                        daoVenta.registrarVentaPorConsola(scan, lista);
+                        break;
+
+                    case 8: // Ver ventas por cliente
+                        daoVenta.mostrarVentasPorCliente(scan);
+                        break;
+
+                    case 9: // Ver productos
+                        daoProducto.mostrarProductos();
+                        break;
+
+                    case 10: // Agregar nuevo producto
+                        daoProducto.agregarProductoPorConsola(scan);
+                        break;
+
+                    case 11: // Modificar producto
+                        daoProducto.modificarProductoPorId(scan);
+                        break;
+
+                    case 12: // Eliminar producto
+                        daoProducto.eliminarProductoPorId(scan);
+                        break;
+
+                    case 13: // Buscar producto por nombre o código
+                        daoProducto.buscarProductoPorNombreOCodigo(scan);
+                        break;
+
+                    case 14: // Reportes (totales, por fecha, por cliente)
+                        MetodosSwitch.mostrarReportes(scan);
+                        break;
+
+                    case 15: // Abrir interfaz gráfica
                         MetodosSwitch.abrirApp();
                         break;
-                    case 4:
-                        dao.eliminarPorId(scan);
-                        break;
-                    case 10:
-                        System.out.println("Saliendo...");
-                        break;
-                    default :
-                        System.out.println("Numero no valido, elija una de las opciones");
+
+                    case 16:
+                        System.out.println("Saliendo del sistema...");
                         break;
                 }
             }catch(Exception e){
                 System.out.println("Opcion no permitida, solo numeros");
             }
-        }while(opcion != 10); //puse 10 por poner, la idea es dsp un numero en el menu para salir, como siempre
+        }while(opcion != 16);
 
     }
 }
