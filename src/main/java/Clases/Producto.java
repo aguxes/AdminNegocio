@@ -3,14 +3,30 @@ public class Producto implements Imprimible {
         private int productoID = 0;
         private String nombreProducto; //[0] = '\0';
         private String categoriaProducto; //[0] = '\0';
-        private int precioUnitario;
+        private String descripcionProducto;
+        private double precioUnitario;
         private int stock;
+        private double costo;
+        private String unidadMedida;
 
-    public Producto(int productoID, String nombreProducto, String categoriaProducto, int precioUnitario, int stock) {
+    public Producto(int productoID, String nombreProducto, String categoriaProducto, String descripcionProducto, double precioUnitario, int stock, double costo, String unidadMedida) {
         this.productoID = productoID;
         this.nombreProducto = nombreProducto;
         this.categoriaProducto = categoriaProducto;
+        this.descripcionProducto = descripcionProducto;
         this.precioUnitario = precioUnitario;
+        this.stock = stock;
+        this.costo = costo;
+        this.unidadMedida = unidadMedida;
+    }
+
+    public Producto(int productoID, String nombreProducto, String descripcionProducto, double precioUnitario, double costo, int stock, String unidadMedida) {
+        this.productoID = productoID;
+        this.nombreProducto = nombreProducto;
+        this.descripcionProducto = descripcionProducto;
+        this.precioUnitario = precioUnitario;
+        this.costo = costo;
+        this.unidadMedida = unidadMedida;
         this.stock = stock;
     }
 
@@ -26,16 +42,26 @@ public class Producto implements Imprimible {
 
     public void setCategoriaProducto(String categoriaProducto) {this.categoriaProducto = categoriaProducto;}
 
-    public int getPrecioUnitario() {return precioUnitario;}
+    public double getPrecioUnitario() {return precioUnitario;}
 
-    public void setPrecioUnitario(int precioUnitario) {this.precioUnitario = precioUnitario;}
+    public void setPrecioUnitario(double precioUnitario) {this.precioUnitario = precioUnitario;}
 
     public int getStock() {return stock;}
 
     public void setStock(int stock) {this.stock = stock;}
 
     @Override
-    public void imprimir() { }
+    public void imprimir() {
+        System.out.printf("%-5d %-20s %-40s %-10.2f %-10.2f %-10d %-15s\n",
+                productoID, nombreProducto, descripcionProducto, precioUnitario, costo, stock, unidadMedida);
+    }
+
+    @Override
+    public void imprimirEncabezado() {
+        System.out.printf("%-5s %-20s %-40s %-10s %-10s %-10s %-15s\n",
+                "ID", "Nombre", "Descripción", "Precio", "Costo", "Stock", "Unidad");
+        System.out.println("-------------------------------------------------------------------------------------------------");
+    }
     /*
         int Producto::getID() { return productoID; }
     const char* Producto::getNombre() { return nombreProducto; }
