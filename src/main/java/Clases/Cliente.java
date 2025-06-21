@@ -12,17 +12,9 @@ public class Cliente extends Persona implements Imprimible{
         super(nombre, dni, apellido, email, telefono, localidad);
     }
 
-
     public int getClienteID() {return ClienteID;}
 
     public void setClienteID(int clienteID) {ClienteID = clienteID;}
-
-
-
-
-
-
-
 
     @Override
     public void imprimir() { //Los porsentajes son la cantidad de caracteres que tiene cada columna

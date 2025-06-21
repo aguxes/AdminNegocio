@@ -115,6 +115,11 @@ public class ClienteDAO {
 
         System.out.print("Ingrese el email del cliente: ");
         String email = scan.nextLine();
+        while (!email.contains("@") || !email.contains(".")) {
+            System.out.print("❌ Email inválido. Ingrese un email válido: ");
+            email = scan.nextLine();
+        }
+
 
         System.out.print("Ingrese el telefono del cliente: ");
         long telefono = Long.parseLong(scan.nextLine());
@@ -183,7 +188,13 @@ public class ClienteDAO {
 
                 System.out.print("Nuevo email (" + email + "): ");
                 input = scan.nextLine();
-                if (!input.isEmpty()) email = input;
+                if (!input.isEmpty()){
+                    while (!input.contains("@") || !input.contains(".")) {
+                        System.out.print("❌ Email inválido. Ingrese un email válido: ");
+                        input = scan.nextLine();
+                    }
+                    email = input;
+                }
 
                 System.out.print("Nuevo teléfono (anterior: " + telefono + "): ");
                 String telStr = scan.nextLine();
