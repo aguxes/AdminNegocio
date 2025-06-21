@@ -13,7 +13,7 @@ public class MetodosSwitch {
                 "\n2) Agregar nuevo cliente !!!" +
                 "\n3) Modificar datos de un cliente !!!" +
                 "\n4) Eliminar cliente por ID !!!" +
-                "\n5) Buscar cliente por nombre/email" +
+                "\n5) Buscar cliente por nombre/email !!!" +
                 "\n6) Ver ventas" +
                 "\n7) Registrar nueva venta" +
                 "\n8) Ver ventas por cliente" +

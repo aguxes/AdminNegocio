@@ -26,6 +26,7 @@ public class ClienteDAO {
 
                 // Se puede usar datos ficticios para campos no devueltos por la tabla
                 Cliente c = new Cliente(nombre, 0, apellido, email, telefono, localidad, id);
+
                 lista.add(c);
             }
 
@@ -249,6 +250,46 @@ public class ClienteDAO {
 
 
     public void buscarClientePorDato(Scanner scan) {
+        ArrayList<Imprimible> listaTemp = new ArrayList<>();
+        System.out.print("Buscar por email o nombre: (Ingrese la palabra 'email' o 'nombre'): ");
+        String campo = scan.nextLine().toLowerCase();
+
+        if (campo.equals("email") || campo.equals("nombre")) {
+            System.out.print("Ingrese el " + campo + " a buscar: ");
+            String valor = scan.nextLine();
+
+            String sql = "SELECT * FROM clientes WHERE " + campo + " LIKE ?";
+            try (Connection conn = DataBaseConnection.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+                stmt.setString(1, "%" + valor + "%");
+                ResultSet rs = stmt.executeQuery();
+
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String nombre = rs.getString("nombre");
+                    String apellido = rs.getString("apellido");
+                    String email = rs.getString("email");
+                    long telefono = rs.getLong("telefono");
+                    String localidad = rs.getString("localidad");
+
+                    Cliente c = new Cliente(nombre, 0, apellido, email, telefono, localidad, id);
+                    listaTemp.add(c);
+                }
+
+                if (listaTemp.isEmpty()) {
+                    System.out.println("❌ No se encontraron clientes con ese " + campo + ".");
+                } else {
+                    imprimirClientes(listaTemp);
+                }
+
+            } catch (SQLException e) {
+                System.out.println("❌ Error en la base de datos: " + e.getMessage());
+            }
+        } else {
+            System.out.println("⚠️ Opción no válida. Debe ingresar 'email' o 'nombre'.");
+        }
     }
+
 }
 
