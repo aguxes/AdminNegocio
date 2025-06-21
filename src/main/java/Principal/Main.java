@@ -68,7 +68,8 @@ public class Main {
                         break;
 
                     case 10: // Agregar nuevo producto
-                        daoProducto.agregarProductoPorConsola(scan);
+                        Producto p = daoProducto.agregarProductoPorConsola(scan);
+                        daoProducto.insertar(p);
                         break;
 
                     case 11: // Modificar producto

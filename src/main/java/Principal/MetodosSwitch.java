@@ -17,8 +17,8 @@ public class MetodosSwitch {
                 "\n6) Ver ventas" +
                 "\n7) Registrar nueva venta" +
                 "\n8) Ver ventas por cliente !!!" +
-                "\n9) Ver productos" +
-                "\n10) Agregar nuevo producto" +
+                "\n9) Ver productos !!!" +
+                "\n10) Agregar nuevo producto !!!" +
                 "\n11) Modificar producto" +
                 "\n12) Eliminar producto" +
                 "\n13) Buscar producto por nombre o código" +

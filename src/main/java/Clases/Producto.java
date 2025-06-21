@@ -30,6 +30,40 @@ public class Producto implements Imprimible {
         this.stock = stock;
     }
 
+    public Producto( String nombreProducto, String descripcionProducto, double precioUnitario, double costo, int stock, String unidadMedida) {
+        this.productoID = productoID;
+        this.nombreProducto = nombreProducto;
+        this.descripcionProducto = descripcionProducto;
+        this.precioUnitario = precioUnitario;
+        this.costo = costo;
+        this.unidadMedida = unidadMedida;
+        this.stock = stock;
+    }
+
+    public double getCosto() {
+        return costo;
+    }
+
+    public void setCosto(double costo) {
+        this.costo = costo;
+    }
+
+    public String getUnidadMedida() {
+        return unidadMedida;
+    }
+
+    public void setUnidadMedida(String unidadMedida) {
+        this.unidadMedida = unidadMedida;
+    }
+
+    public String getDescripcionProducto() {
+        return descripcionProducto;
+    }
+
+    public void setDescripcionProducto(String descripcionProducto) {
+        this.descripcionProducto = descripcionProducto;
+    }
+
     public int getProductoID() {return productoID;}
 
     public void setProductoID(int productoID) {this.productoID = productoID;}

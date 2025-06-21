@@ -4,10 +4,7 @@ import Clases.Cliente;
 import Clases.Imprimible;
 import Clases.Producto;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -45,8 +42,54 @@ public class ProductoDAO {
         }
     }
 
-    public void agregarProductoPorConsola(Scanner scan) {
+
+    public Producto agregarProductoPorConsola(Scanner scan) {
+        System.out.print("Ingrese el nombre del producto: ");
+        String nombre = scan.nextLine();
+
+        System.out.print("Ingrese la descripcion del producto: ");
+        String descripcion = scan.nextLine();
+
+        System.out.print("Ingrese el precio unitario del producto: ");
+        int precioUnitario = Integer.parseInt(scan.nextLine());  //un scaner para int que no se rompe
+
+        System.out.print("Ingrese el costo del producto: ");
+        double costo = Double.parseDouble(scan.nextLine());
+
+
+        System.out.print("Ingrese el Stock del producto: ");
+        int stock = Integer.parseInt(scan.nextLine());
+
+        System.out.print("Ingrese la unidad de medida del producto: ");
+        String unidadMedida = scan.nextLine();
+
+        Producto p = new Producto(nombre, descripcion, precioUnitario, costo, stock, unidadMedida);
+
+        return p;
     }
+
+    public static void insertar(Producto producto) {
+        String sql = "INSERT INTO productos (nombre, descripcion, precioUnitario, costo, stock, unidadMedida) VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, producto.getNombreProducto());
+            stmt.setString(2, producto.getDescripcionProducto());
+            stmt.setDouble(3, producto.getPrecioUnitario());
+            stmt.setDouble(4, producto.getCosto());
+            stmt.setInt(5, producto.getStock());
+            stmt.setString(6, producto.getUnidadMedida());
+
+            stmt.executeUpdate();
+
+            System.out.println("Producto insertado correctamente.");
+
+        } catch (SQLException e) {
+            System.out.println("❌ Error al insertar cliente: " + e.getMessage());
+        }
+    }
+
 
     public void modificarProductoPorId(Scanner scan) {
     }
