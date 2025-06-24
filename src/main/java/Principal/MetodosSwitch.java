@@ -103,8 +103,8 @@ public class MetodosSwitch {
         while(true){
             try{
                 System.out.println("\n      - - Menu ventas - -" +
-                        "\n1) Ver ventas" +
-                        "\n2) Registrar nueva venta" +
+                        "\n1) Ver ventas !!!" +
+                        "\n2) Registrar nueva venta !!!" +
                         "\n3) Ver ventas por cliente !!!" +
                         "\n4)Volver al menu principal");
 
@@ -115,11 +115,9 @@ public class MetodosSwitch {
                     case 1: // Ver ventas
                         daoVenta.mostrarTodasLasVentas();
                         break;
-
                     case 2: // Registrar nueva venta
                         daoVenta.registrarVentaPorConsola(scan, listaVentas);
                         break;
-
                     case 3: // Ver ventas por cliente
                         daoVenta.mostrarVentasPorCliente(scan);
                         break;
@@ -128,7 +126,7 @@ public class MetodosSwitch {
                 }
 
             }catch(Exception e){
-                System.out.println("Opcion no permitida, solo numeros");
+                System.out.println("\nOpcion no permitida, solo numeros");
             }
         }
     }
