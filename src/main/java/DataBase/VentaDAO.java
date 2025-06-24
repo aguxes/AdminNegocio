@@ -13,6 +13,7 @@ public class VentaDAO {
 
     public void registrarVentaPorConsola(Scanner scan, ArrayList<Imprimible> lista) {
     }
+
     public void mostrarVentasPorCliente(Scanner scan) {
         System.out.print("Ingrese el ID del cliente: ");
         int id = scan.nextInt();
