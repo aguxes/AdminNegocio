@@ -92,6 +92,7 @@ public class ProductoDAO {
 
 
     public void modificarProductoPorId(Scanner scan) {
+
     }
 
     public void eliminarProductoPorId(Scanner scan) {
@@ -138,5 +139,40 @@ public class ProductoDAO {
     }
 
     public void buscarProductoPorNombreOCodigo(Scanner scan) {
+        System.out.print("Ingrese el ID del producto a buscar: ");
+        int id = scan.nextInt();
+        scan.nextLine(); // consumir newline
+
+        String sql = "SELECT * FROM productos WHERE id = ?";
+
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                // Encabezado
+                System.out.printf("%-5s %-20s %-40s %-10s %-10s %-10s %-15s\n",
+                        "ID", "Nombre", "Descripción", "Precio", "Costo", "Stock", "Unidad");
+                System.out.println("-------------------------------------------------------------------------------------------------");
+
+                // Datos del producto
+                System.out.printf("%-5d %-20s %-40s $%-9.2f $%-9.2f %-10d %-15s\n",
+                        rs.getInt("id"),
+                        rs.getString("nombre"),
+                        rs.getString("descripcion"),
+                        rs.getDouble("precioUnitario"),
+                        rs.getDouble("costo"),
+                        rs.getInt("stock"),
+                        rs.getString("unidadMedida"));
+            } else {
+                System.out.println("⚠️ No se encontró ningún producto con ese ID.");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("❌ Error al buscar producto: " + e.getMessage());
+        }
     }
+
 }

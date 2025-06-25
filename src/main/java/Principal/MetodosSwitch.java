@@ -144,7 +144,7 @@ public class MetodosSwitch {
                         "\n2) Agregar nuevo producto !!!" +
                         "\n3) Modificar producto " +
                         "\n4) Eliminar producto !!!" +
-                        "\n5) Buscar producto por nombre o código" +
+                        "\n5) Buscar producto por ID !!! (agregar buscar por nombre)" +
                         "\n6)Volver a menu principal");
 
                 opcion = Integer.parseInt(scan.nextLine());
