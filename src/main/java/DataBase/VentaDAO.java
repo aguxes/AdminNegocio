@@ -15,19 +15,12 @@ public class VentaDAO {
                 "JOIN clientes c ON v.cliente_id = c.id " +
                 "JOIN empleados e ON v.empleado_id = e.id";
 
-
-
         System.out.printf("%-5s %-20s %-20s %-25s %-10s %-15s\n", "id", "cliente", "empleado", "fecha", "total", "medio de pago");
-
-
         System.out.println("-----------------------------------------------------------------------------------------------------------------");
-
 
         try (Connection conn = DataBaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-
-
 
             while (rs.next()){
                 int id = rs.getInt("id");

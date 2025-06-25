@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 public class ClienteDAO {
 
-    public void cargarClientesEnLista(ArrayList<Imprimible> lista) {
+    public static void cargarClientesEnLista(ArrayList<Imprimible> lista) {
         String sql = "SELECT * FROM clientes";
 
         try (Connection conn = DataBaseConnection.getConnection();
@@ -33,6 +33,7 @@ public class ClienteDAO {
         } catch (SQLException e) {
             System.out.println("❌ Error al cargar clientes en lista: " + e.getMessage());
         }
+
     }
 
     public void eliminarPorId(Scanner scan) {
@@ -290,6 +291,7 @@ public class ClienteDAO {
             System.out.println("⚠️ Opción no válida. Debe ingresar 'email' o 'nombre'.");
         }
     }
+
 
 }
 

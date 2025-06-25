@@ -22,7 +22,8 @@ public class MetodosSwitch {
                         "\n2)Ventas" +
                         "\n3)Inventario" +
                         "\n4)Reportes" +
-                        "\n5)Salir");
+                        "\n5)Abrir app" +
+                        "\n6)Salir");
 
                 opcion = Integer.parseInt(scan.nextLine());
 
@@ -40,6 +41,9 @@ public class MetodosSwitch {
                         menuReporte(scan, listaReportes, daoReportes);
                         break;
                     case 5:
+                        MetodosSwitch.abrirApp();
+                        break;
+                    case 6:
                         System.out.println("Saliendo...");
                         bucle = 5;
                         break;
@@ -62,7 +66,7 @@ public class MetodosSwitch {
                         "\n2) Agregar nuevo cliente !!!" +
                         "\n3) Modificar datos de un cliente !!!" +
                         "\n4) Eliminar cliente por ID !!!" +
-                        "\n5) Buscar cliente por nombre/email " +
+                        "\n5) Buscar cliente por nombre/email !!!" +
                         "\n6)Volver a menu principal");
 
 
@@ -138,7 +142,7 @@ public class MetodosSwitch {
                 System.out.println("\n      - - Menu Productos - -"+
                         "\n1) Ver productos !!!" +
                         "\n2) Agregar nuevo producto !!!" +
-                        "\n3) Modificar producto" +
+                        "\n3) Modificar producto " +
                         "\n4) Eliminar producto !!!" +
                         "\n5) Buscar producto por nombre o código" +
                         "\n6)Volver a menu principal");
@@ -184,8 +188,7 @@ public class MetodosSwitch {
             do {
                 System.out.println("\n      - - Menu Reportes - -"+
                         "\n1) Reportes (totales, por fecha, por cliente)" +
-                        "\n2) Abrir interfaz gráfica" +
-                        "\n3) Volver al menu principal");
+                        "\n2) Volver al menu principal");
 
                 opcion = Integer.parseInt(scan.nextLine());
 
@@ -193,10 +196,7 @@ public class MetodosSwitch {
                     case 1: // Reportes (totales, por fecha, por cliente)
                         MetodosSwitch.mostrarReportes(scan);
                         break;
-                    case 2: // Abrir interfaz gráfica
-                        MetodosSwitch.abrirApp();
-                        break;
-                    case 3:
+                    case 2:
                         return;
                 }
 

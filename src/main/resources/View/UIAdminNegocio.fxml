@@ -17,7 +17,10 @@
       </children>
    </Pane>
 
-    <TextArea fx:id="outputArea" prefHeight="400" prefWidth="800" wrapText="true" />
+    <TextArea fx:id="outputArea" prefHeight="400" prefWidth="800" wrapText="true"
+              style="-fx-font-family: 'Courier New'; -fx-font-size: 11px;" />
+
+
 
 
 </VBox>

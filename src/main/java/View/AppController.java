@@ -1,6 +1,6 @@
 package View;
 
-import DataBase.Querrys;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -16,7 +16,7 @@ public class AppController {
     @FXML
     protected void mostrarClientes() {
         System.out.println("\n\n Mostrando clientes desde botón...");
-        String datos = Querrys.obtenerClientesComoTexto(); // NUEVO método
+        String datos = VentanaClientes.MostrarClientes();
         outputArea.setText(datos);
 
     }
@@ -24,7 +24,7 @@ public class AppController {
     @FXML
     protected void mostrarVentas() {
         System.out.println("\n\nMostrando ventas desde botón...");
-        String datos = Querrys.obtenerVentasComoTexto(); // NUEVO método
+        String datos = VentanaVentas.obtenerVentasComoTexto();
         outputArea.setText(datos);
 
     }
