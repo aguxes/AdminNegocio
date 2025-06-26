@@ -3,24 +3,33 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="TOP_CENTER" prefHeight="517.0" prefWidth="840.0" spacing="20.0" style="-fx-background-color: lightblue;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.AppController">
-    <padding>
-        <Insets bottom="20" left="20" right="20" top="20" />
-    </padding>
-   <Pane prefHeight="54.0" prefWidth="800.0">
-      <children>
-           <Button layoutY="15.0" onAction="#mostrarClientes" style="-fx-background-color: lightGreen;" text="Mostrar clientes" />
-           <Button alignment="CENTER_RIGHT" layoutX="705.0" layoutY="15.0" onAction="#mostrarVentas" style="-fx-background-color: lightGreen;" text="Mostrar ventas" />
-      </children>
-   </Pane>
+<HBox prefWidth="1300.0" prefHeight="1000.0"
+      xmlns="http://javafx.com/javafx/23.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="View.AppController">
 
-    <TextArea fx:id="outputArea" prefHeight="400" prefWidth="800" wrapText="true"
-              style="-fx-font-family: 'Courier New'; -fx-font-size: 11px;" />
+    <!-- 📌 Menú lateral -->
+    <VBox fx:id="menuLateral" prefWidth="180.0" spacing="15.0" styleClass="menu-lateral" alignment="TOP_CENTER">
+        <padding><Insets top="20" left="10" right="10" bottom="10"/></padding>
 
+        <Button fx:id="btnClientes" text="Clientes" onAction="#mostrarClientes" styleClass="boton-menu"/>
+        <Button fx:id="btnVentas" text="Ventas" onAction="#mostrarVentas" styleClass="boton-menu"/>
+        <Button fx:id="btnInventario" text="Inventario" onAction="#mostrarInventario" styleClass="boton-menu"/>
+        <Button fx:id="btnReportes" text="Reportes" onAction="#mostrarReportes" styleClass="boton-menu"/>
+    </VBox>
 
+    <!-- 📌 Contenido principal -->
+    <VBox spacing="20.0" styleClass="contenido-principal" HBox.hgrow="ALWAYS">
+        <padding><Insets top="20" left="20" right="20" bottom="20"/></padding>
 
+        <TextArea fx:id="outputArea"
+                  wrapText="true"
+                  VBox.vgrow="ALWAYS"
+                  styleClass="area-salida" />
 
-</VBox>
+    </VBox>
+
+</HBox>
