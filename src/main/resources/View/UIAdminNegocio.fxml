@@ -25,6 +25,14 @@
     <VBox spacing="20.0" styleClass="contenido-principal" HBox.hgrow="ALWAYS">
         <padding><Insets top="20" left="20" right="20" bottom="20"/></padding>
 
+        <HBox fx:id="submenuClientes" spacing="10" visible="false">
+            <Button text="Ver" onAction="#verClientes"/>
+            <Button text="Agregar" onAction="#agregarCliente"/>
+            <Button text="Modificar" onAction="#modificarCliente"/>
+            <Button text="Eliminar" onAction="#eliminarCliente"/>
+            <Button text="Buscar" onAction="#buscarCliente"/>
+        </HBox>
+
         <TextArea fx:id="outputArea"
                   wrapText="true"
                   VBox.vgrow="ALWAYS"
