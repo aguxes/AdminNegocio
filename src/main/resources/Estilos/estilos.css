@@ -24,3 +24,44 @@
     -fx-text-fill: black;
     -fx-background-color: #ffffff;
 }
+
+/* Estilo general para formularios */
+VBox{
+    -fx-spacing: 10px;
+    -fx-alignment: top-left;
+}
+HBox {
+     -fx-spacing: 23px;
+     -fx-alignment: center;
+
+ }
+
+/* Inputs y botones con look moderno */
+.text-field, .choice-box {
+    -fx-pref-height: 30px;
+    -fx-font-size: 13px;
+}
+
+.button {
+    -fx-font-size: 13px;
+    -fx-padding: 6 15;
+}
+
+/* Etiquetas */
+.label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #2c3e50;
+}
+
+.form-box {
+    -fx-padding: 20px;
+    -fx-background-color: white;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0.5, 0, 2);
+    -fx-max-width: 700px;
+    -fx-border-color: #dcdde1;
+    -fx-border-radius: 10px;
+    -fx-border-width: 1;
+    -fx-translate-y: 10px;
+}
+

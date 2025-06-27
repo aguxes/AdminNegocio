@@ -62,7 +62,7 @@ public class MetodosSwitch {
         while(true){
             try{
                 System.out.println("\n      - - Menu Clientes - -" +
-                        "\n1) Ver clientes !!!" +
+                        "\n1) Ver clientes !!! (Arregla, agrega cliente y no actualiza la lista)" +
                         "\n2) Agregar nuevo cliente !!!" +
                         "\n3) Modificar datos de un cliente !!!" +
                         "\n4) Eliminar cliente por ID !!!" +
