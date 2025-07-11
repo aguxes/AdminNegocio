@@ -21,12 +21,10 @@ public class Main {
         ProductoDAO daoProducto = new ProductoDAO();
         ReportesDAO daoReportes = new ReportesDAO();
 
-        Scanner scan = new Scanner(System.in); //esto crea el input, lo llamas poniendo:
+        Scanner scan = new Scanner(System.in);
         int opcion = 0;
-        daoCliente.cargarClientesEnLista(listaClientes); //con cada vuelta del bucle si borro un dato se actualiza
+        ClienteDAO.cargarClientesEnLista(listaClientes); //con cada vuelta del bucle si borro un dato se actualiza
 
-        //AGORA SI MANITO, AGORA SI
-        //Tenemos main
         do{
             try{
                 opcion = MetodosSwitch.menuPrincipal(scan, listaClientes,listaVentas, listaProdutos, listaReportes, daoCliente, daoVenta, daoProducto, daoReportes);

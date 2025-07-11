@@ -167,7 +167,50 @@ public class AppController {
     }
 
     private void agregarCliente() {
-        outputArea.setText("📝 Formulario para agregar cliente (en construcción)");
+        Stage ventana = new Stage();
+        ventana.setTitle("Agregar Cliente");
+
+        TextField txtNombre = new TextField();
+        TextField txtApellido = new TextField();
+        TextField txtDNI = new TextField();
+        TextField txtEmail = new TextField();
+        TextField txtTelefono = new TextField();
+        TextField txtLocalidad = new TextField();
+
+        txtNombre.setPromptText("Nombre");
+        txtApellido.setPromptText("Apellido");
+        txtDNI.setPromptText("DNI");
+        txtEmail.setPromptText("Email");
+        txtTelefono.setPromptText("Teléfono");
+        txtLocalidad.setPromptText("Localidad");
+
+        Button btnGuardar = new Button("Guardar");
+
+        btnGuardar.setOnAction(e -> {
+            String nombre = txtNombre.getText().trim();
+            String apellido = txtApellido.getText().trim();
+            String dni = txtDNI.getText().trim();
+            String email = txtEmail.getText().trim();
+            String telefono = txtTelefono.getText().trim();
+            String localidad = txtLocalidad.getText().trim();
+
+            // Faltaria Llamar una funcion con validaciones acá. O en el diseño usar una herramienta para validar como son los RequiredFieldValidator en el VS
+
+            Cliente cliente = new Cliente(nombre, apellido, dni, email, telefono, localidad);
+            ClienteDAO.insertar(cliente);
+
+            outputArea.setText("✅ Cliente agregado correctamente.");
+            ventana.close();
+        });
+
+        VBox layout = new VBox(10, txtNombre, txtApellido, txtDNI, txtEmail, txtTelefono, txtLocalidad, btnGuardar);
+        layout.setPadding(new Insets(20));
+        layout.setAlignment(Pos.CENTER);
+
+        Scene escena = new Scene(layout, 350, 350);
+        ventana.setScene(escena);
+        ventana.initModality(Modality.APPLICATION_MODAL);
+        ventana.showAndWait();
     }
 
     private void modificarCliente() {

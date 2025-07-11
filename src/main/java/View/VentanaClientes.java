@@ -2,6 +2,7 @@ package View;
 
 import Clases.Cliente;
 import DataBase.DataBaseConnection;
+import util.ClienteMapper;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -16,15 +17,7 @@ public class VentanaClientes {
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                int id = rs.getInt("id");
-                String nombre = rs.getString("nombre");
-                String apellido = rs.getString("apellido");
-                String email = rs.getString("email");
-                String telefono = rs.getString("telefono");
-                String localidad = rs.getString("localidad");
-                String dni = rs.getString("dni");
-
-                Cliente c = new Cliente(nombre, dni, apellido, email, telefono, localidad, id);
+                Cliente c = ClienteMapper.GetC(rs);
                 lista.add(c);
             }
 
@@ -100,17 +93,7 @@ public class VentanaClientes {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
 
-            if (rs.next()) {
-                return new Cliente(
-                        rs.getString("nombre"),
-                        rs.getString("dni"),
-                        rs.getString("apellido"),
-                        rs.getString("email"),
-                        rs.getString("telefono"),
-                        rs.getString("localidad"),
-                        rs.getInt("id")
-                );
-            }
+            if (rs.next()) { Cliente c = ClienteMapper.GetC(rs); }
 
         } catch (SQLException e) {
             System.out.println("❌ Error al buscar cliente: " + e.getMessage());
@@ -138,9 +121,6 @@ public class VentanaClientes {
 
         return null;
     }
-
-
-
     public static String buscarClientePorDato(String campo, String valor) {
         ArrayList<Cliente> listaTemp = new ArrayList<>();
         StringBuilder resultado = new StringBuilder();
@@ -154,15 +134,7 @@ public class VentanaClientes {
                 ResultSet rs = stmt.executeQuery();
 
                 while (rs.next()) {
-                    Cliente c = new Cliente(
-                            rs.getString("nombre"),
-                            rs.getString("dni"),
-                            rs.getString("apellido"),
-                            rs.getString("email"),
-                            rs.getString("telefono"),
-                            rs.getString("localidad"),
-                            rs.getInt("id")
-                    );
+                    Cliente c = ClienteMapper.GetC(rs);
                     listaTemp.add(c);
                 }
 
@@ -187,21 +159,13 @@ public class VentanaClientes {
         StringBuilder resultado = new StringBuilder();
 
         try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, cliente.getNombre());
-            stmt.setString(2, cliente.getEmail());
-            stmt.setString(3, cliente.getTelefono());
-            stmt.setString(4, cliente.getLocalidad());
-            stmt.setString(5, cliente.getApellido());
-            stmt.setString(6, cliente.getDNI());
-
+             PreparedStatement stmt = conn.prepareStatement(sql))
+        {
+            ClienteMapper.SetC(stmt, cliente);
             stmt.executeUpdate();
             resultado.append("✅ Cliente insertado correctamente.");
 
-        } catch (SQLException e) {
-            resultado.append("❌ Error al insertar cliente: ").append(e.getMessage());
-        }
+        } catch (SQLException e) { resultado.append("❌ Error al insertar cliente: ").append(e.getMessage()); }
 
         return resultado.toString();
     }
