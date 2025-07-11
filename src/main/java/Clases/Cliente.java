@@ -3,12 +3,12 @@ package Clases;
 public class Cliente extends Persona implements Imprimible{
     private int ClienteID;
 
-    public Cliente(String nombre, int dni, String apellido, String email, long telefono, String localidad, int clienteID) {
+    public Cliente(String nombre, String dni, String apellido, String email, String telefono, String localidad, int clienteID) {
         super(nombre, dni, apellido, email, telefono, localidad);
         this.ClienteID = clienteID;
     }
 
-    public Cliente(String nombre, int dni, String apellido, String email, long telefono, String localidad) {
+    public Cliente(String nombre, String dni, String apellido, String email, String telefono, String localidad) {
         super(nombre, dni, apellido, email, telefono, localidad);
     }
 

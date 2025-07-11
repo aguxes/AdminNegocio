@@ -21,11 +21,11 @@ public class ClienteDAO {
                 String nombre = rs.getString("nombre");
                 String apellido = rs.getString("apellido");
                 String email = rs.getString("email");
-                long telefono = rs.getLong("telefono");
+                String telefono = rs.getString("telefono");
                 String localidad = rs.getString("localidad");
+                String dni = rs.getString("string");
 
-                // Se puede usar datos ficticios para campos no devueltos por la tabla
-                Cliente c = new Cliente(nombre, 0, apellido, email, telefono, localidad, id);
+                Cliente c = new Cliente(nombre, dni, apellido, email, telefono, localidad, id);
 
                 lista.add(c);
             }
@@ -113,7 +113,7 @@ public class ClienteDAO {
         String apellido = scan.nextLine();
 
         System.out.print("Ingrese el dni del cliente: ");
-        int dni = Integer.parseInt(scan.nextLine());  //un scaner para int que no se rompe
+        String dni = scan.nextLine();
 
         System.out.print("Ingrese el email del cliente: ");
         String email = scan.nextLine();
@@ -121,17 +121,15 @@ public class ClienteDAO {
             System.out.print("❌ Email inválido. Ingrese un email válido: ");
             email = scan.nextLine();
         }
-
-
         System.out.print("Ingrese el telefono del cliente: ");
-        long telefono = Long.parseLong(scan.nextLine());
+        String telefono = scan.nextLine();
 
-        System.out.print("Ingrese el localidad del cliente: ");
+        System.out.print("Ingrese la localidad del cliente: ");
         String localidad = scan.nextLine();
 
-        Cliente cliente = new Cliente(nombre, dni, apellido, email, telefono, localidad);
+        Cliente c = new Cliente(nombre, dni, apellido, email, telefono, localidad);
 
-        return cliente;
+        return c;
     }
 
     public static void insertar(Cliente cliente) {
@@ -142,10 +140,10 @@ public class ClienteDAO {
 
             stmt.setString(1, cliente.getNombre());
             stmt.setString(2, cliente.getEmail());
-            stmt.setLong(3, cliente.getTelefono());
+            stmt.setString(3, cliente.getTelefono());
             stmt.setString(4, cliente.getLocalidad());
             stmt.setString(5, cliente.getApellido());
-            stmt.setInt(6, cliente.getDNI());
+            stmt.setString(6, cliente.getDNI());
 
             stmt.executeUpdate();
 
@@ -156,6 +154,18 @@ public class ClienteDAO {
         }
     }
 
+    public Cliente MapearClienteRS(ResultSet rs) throws SQLException
+    {
+        return new Cliente(
+                rs.getString("nombre"),
+                rs.getString("dni"),
+                rs.getString("apellido"),
+                rs.getString("email"),
+                rs.getString("telefono"),
+                rs.getString("localidad"),
+                rs.getInt("ClienteID")
+        );
+    }
     public void modificarClientePorId(Scanner scan, ArrayList<Imprimible> lista) {
         System.out.print("Ingrese el id del cliente: ");
         int id = Integer.parseInt(scan.nextLine());
@@ -170,66 +180,57 @@ public class ClienteDAO {
             ResultSet rs = stmtSelect.executeQuery();
 
             if (rs.next()) {
-                // Datos actuales
-                String nombre = rs.getString("nombre");
-                String apellido = rs.getString("apellido");
-                String email = rs.getString("email");
-                long telefono = rs.getLong("telefono");
-                String localidad = rs.getString("localidad");
-                int dni = rs.getInt("dni");
-
+                Cliente cliente = MapearClienteRS(rs);
                 System.out.println("↩️ Deje el campo vacío si no quiere modificarlo");
 
-                System.out.print("Nuevo nombre (" + nombre + "): ");
+                System.out.print("Nuevo nombre (" + cliente.getNombre() + "): ");
                 String input = scan.nextLine();
-                if (!input.isEmpty()) nombre = input;
+                if (!input.isEmpty()) cliente.setNombre(input);
 
-                System.out.print("Nuevo apellido (" + apellido + "): ");
+                System.out.print("Nuevo apellido (" + cliente.getApellido() + "): ");
                 input = scan.nextLine();
-                if (!input.isEmpty()) apellido = input;
+                if (!input.isEmpty()) cliente.setApellido(input);
 
-                System.out.print("Nuevo email (" + email + "): ");
+                System.out.print("Nuevo email (" + cliente.getEmail() + "): ");
                 input = scan.nextLine();
                 if (!input.isEmpty()){
                     while (!input.contains("@") || !input.contains(".")) {
                         System.out.print("❌ Email inválido. Ingrese un email válido: ");
                         input = scan.nextLine();
                     }
-                    email = input;
+                    cliente.setEmail(input);
                 }
 
-                System.out.print("Nuevo teléfono (anterior: " + telefono + "): ");
+                System.out.print("Nuevo teléfono (anterior: " + cliente.getTelefono() + "): ");
                 String telStr = scan.nextLine();
-                if (!telStr.isEmpty()) {
-                    try {
-                        telefono = Long.parseLong(telStr);
-                    } catch (NumberFormatException e) {
+                if (!telStr.isEmpty())
+                {
+                    try { cliente.setTelefono(telStr); } catch (NumberFormatException e) {
                         System.out.println("⚠️ Teléfono inválido. Se mantiene el valor anterior.");
                     }
                 }
 
-
-                System.out.print("Nueva localidad (" + localidad + "): ");
+                System.out.print("Nueva localidad (" + cliente.getLocalidad() + "): ");
                 input = scan.nextLine();
-                if (!input.isEmpty()) localidad = input;
+                if (!input.isEmpty()) { cliente.setLocalidad(input); }
 
-                System.out.print("Nuevo DNI (" + dni + "): ");
-                String inputDni = scan.nextLine();
-                if (!inputDni.isEmpty()) {
+                System.out.print("Nuevo DNI (" + cliente.getDNI() + "): ");
+                input = scan.nextLine();
+                if (input.isEmpty()) {
                     try {
-                        dni = Integer.parseInt(inputDni);
+                        cliente.setDNI(input);
                     } catch (NumberFormatException e) {
                         System.out.println("⚠️ DNI inválido. Se mantiene el valor anterior.");
                     }
                 }
 
                 try (PreparedStatement stmtUpdate = conn.prepareStatement(sqlUpdate)) {
-                    stmtUpdate.setString(1, nombre);
-                    stmtUpdate.setString(2, apellido);
-                    stmtUpdate.setString(3, email);
-                    stmtUpdate.setLong(4, telefono);
-                    stmtUpdate.setString(5, localidad);
-                    stmtUpdate.setInt(6, dni);
+                    stmtUpdate.setString(1, cliente.getNombre());
+                    stmtUpdate.setString(2, cliente.getApellido());
+                    stmtUpdate.setString(3, cliente.getEmail());
+                    stmtUpdate.setString(4, cliente.getTelefono());
+                    stmtUpdate.setString(5, cliente.getLocalidad());
+                    stmtUpdate.setString(6, cliente.getDNI());
                     stmtUpdate.setInt(7, id);
 
                     int filas = stmtUpdate.executeUpdate();
@@ -238,15 +239,9 @@ public class ClienteDAO {
                     cargarClientesEnLista(lista);
                 }
 
-            } else {
-                System.out.println("❌ Cliente no encontrado con ID: " + id);
-            }
+            } else { System.out.println("❌ Cliente no encontrado con ID: " + id); }
 
-        } catch (SQLException e) {
-            System.out.println("❌ Error en la base de datos: " + e.getMessage());
-        } catch (NumberFormatException e) {
-            System.out.println("⚠️ Ingreso inválido: se esperaba un número");
-        }
+        } catch (SQLException e) { System.out.println("❌ Error en la base de datos: " + e.getMessage()); }
     }
 
 
@@ -271,10 +266,11 @@ public class ClienteDAO {
                     String nombre = rs.getString("nombre");
                     String apellido = rs.getString("apellido");
                     String email = rs.getString("email");
-                    long telefono = rs.getLong("telefono");
+                    String telefono = rs.getString("telefono");
                     String localidad = rs.getString("localidad");
+                    String dni = rs.getString("dni");
 
-                    Cliente c = new Cliente(nombre, 0, apellido, email, telefono, localidad, id);
+                    Cliente c = new Cliente(nombre, dni, apellido, email, telefono, localidad, id);
                     listaTemp.add(c);
                 }
 

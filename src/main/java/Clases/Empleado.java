@@ -7,7 +7,7 @@ public class Empleado extends Persona implements Imprimible {
     private String vacacionesActivas;
     private int sueldo;
 
-    public Empleado(String nombre, int dni, String apellido, String email, int telefono, String localidad, String fechaDeIngreso, int empleadoID, String asistencias, String vacacionesActivas, int sueldo) {
+    public Empleado(String nombre, String dni, String apellido, String email, String telefono, String localidad, String fechaDeIngreso, int empleadoID, String asistencias, String vacacionesActivas, int sueldo) {
         super(nombre, dni, apellido, email, telefono, localidad);
         this.fechaDeIngreso = fechaDeIngreso;
         this.empleadoID = empleadoID;

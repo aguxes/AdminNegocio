@@ -20,9 +20,9 @@ public class VentanaClientes {
                 String nombre = rs.getString("nombre");
                 String apellido = rs.getString("apellido");
                 String email = rs.getString("email");
-                long telefono = rs.getLong("telefono");
+                String telefono = rs.getString("telefono");
                 String localidad = rs.getString("localidad");
-                int dni = rs.getInt("dni");
+                String dni = rs.getString("dni");
 
                 Cliente c = new Cliente(nombre, dni, apellido, email, telefono, localidad, id);
                 lista.add(c);
@@ -45,7 +45,7 @@ public class VentanaClientes {
 
         // Datos
         for (Cliente c : lista) {
-            sb.append(String.format("%-5d %-15d %-15s %-15s %-35s %-15d %-15s\n",
+            sb.append(String.format("%-5d %-15s %-15s %-15s %-35s %-15s %-15s\n",
                     c.getClienteID(),
                     c.getDNI(),
                     c.getNombre(),
@@ -103,10 +103,10 @@ public class VentanaClientes {
             if (rs.next()) {
                 return new Cliente(
                         rs.getString("nombre"),
-                        rs.getInt("dni"),
+                        rs.getString("dni"),
                         rs.getString("apellido"),
                         rs.getString("email"),
-                        rs.getLong("telefono"),
+                        rs.getString("telefono"),
                         rs.getString("localidad"),
                         rs.getInt("id")
                 );
@@ -156,10 +156,10 @@ public class VentanaClientes {
                 while (rs.next()) {
                     Cliente c = new Cliente(
                             rs.getString("nombre"),
-                            rs.getInt("dni"),
+                            rs.getString("dni"),
                             rs.getString("apellido"),
                             rs.getString("email"),
-                            rs.getLong("telefono"),
+                            rs.getString("telefono"),
                             rs.getString("localidad"),
                             rs.getInt("id")
                     );
@@ -191,10 +191,10 @@ public class VentanaClientes {
 
             stmt.setString(1, cliente.getNombre());
             stmt.setString(2, cliente.getEmail());
-            stmt.setLong(3, cliente.getTelefono());
+            stmt.setString(3, cliente.getTelefono());
             stmt.setString(4, cliente.getLocalidad());
             stmt.setString(5, cliente.getApellido());
-            stmt.setInt(6, cliente.getDNI());
+            stmt.setString(6, cliente.getDNI());
 
             stmt.executeUpdate();
             resultado.append("✅ Cliente insertado correctamente.");
