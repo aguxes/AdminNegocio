@@ -1,44 +1,32 @@
 package Clases;
 
-public class Persona{
-    protected String DNI; //Todos los atributos con numeros los paso a string porque despues son mas faciles de manipular
+public class Persona {
+    protected int DNI;
     protected String nombre;
     protected String apellido;
-    protected String email;
-    protected String telefono;
-    protected String localidad;
+    protected int genero;
+    protected int nacionalidad;
 
-
-    public Persona(String nombre, String dni, String apellido, String email, String telefono, String localidad) {
-        this.nombre = nombre;
+    public Persona(int dni, String nombre, String apellido, int genero, int nacionalidad) {
         this.DNI = dni;
+        this.nombre = nombre;
         this.apellido = apellido;
-        this.email = email;
-        this.telefono = telefono;
-        this.localidad = localidad;
+        this.genero = genero;
+        this.nacionalidad = nacionalidad;
     }
 
-    public String getNombre() {return nombre;}
+    public int getDNI() { return DNI; }
+    public void setDNI(int DNI) { this.DNI = DNI; }
 
-    public void setNombre(String nombre) {this.nombre = nombre;}
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public String getDNI() {return DNI;}
+    public String getApellido() { return apellido; }
+    public void setApellido(String apellido) { this.apellido = apellido; }
 
-    public void setDNI(String DNI) {this.DNI = DNI;}
+    public int getGenero() { return genero; }
+    public void setGenero(int genero) { this.genero = genero; }
 
-    public String getApellido() {return apellido;}
-
-    public void setApellido(String apellido) {this.apellido = apellido;}
-
-    public String getEmail() {return email;}
-
-    public void setEmail(String email) {this.email = email;}
-
-    public String getTelefono() {return telefono;}
-
-    public void setTelefono(String telefono) {this.telefono = telefono;}
-
-    public String getLocalidad() {return localidad;}
-
-    public void setLocalidad(String localidad) {this.localidad = localidad;}
+    public int getNacionalidad() { return nacionalidad; }
+    public void setNacionalidad(int nacionalidad) { this.nacionalidad = nacionalidad; }
 }

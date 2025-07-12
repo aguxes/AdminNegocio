@@ -1,25 +1,36 @@
 package Clases;
 
-public class Cliente extends Persona implements Imprimible{
-    private int ClienteID;
+import java.sql.Date;
 
-    public Cliente(String nombre, String dni, String apellido, String email, String telefono, String localidad, int clienteID) {
-        super(nombre, dni, apellido, email, telefono, localidad);
-        this.ClienteID = clienteID;
+public class Cliente extends Persona implements Imprimible {
+    private int id;
+    private int tipCliente;
+    private Date fechaAlta;
+    private int cantCompras;
+
+    public Cliente(int dni, String nombre, String apellido, int genero, int nacionalidad,
+                   int id, int tipCliente, Date fechaAlta, int cantCompras) {
+        super(dni, nombre, apellido, genero, nacionalidad);
+        this.id = id;
+        this.tipCliente = tipCliente;
+        this.fechaAlta = fechaAlta;
+        this.cantCompras = cantCompras;
     }
+    public int getid() { return id; }
+    public void setid(int id) { this.id = id; }
 
-    public Cliente(String nombre, String dni, String apellido, String email, String telefono, String localidad) {
-        super(nombre, dni, apellido, email, telefono, localidad);
-    }
+    public int getTipCliente() { return tipCliente; }
+    public void setTipCliente(int tipCliente) { this.tipCliente = tipCliente; }
 
-    public int getClienteID() {return ClienteID;}
+    public Date getFechaAlta() { return fechaAlta; }
+    public void setFechaAlta(Date fechaAlta) { this.fechaAlta = fechaAlta; }
 
-    public void setClienteID(int clienteID) {ClienteID = clienteID;}
+    public int getCantCompras() { return cantCompras; }
+    public void setCantCompras(int cantCompras) { this.cantCompras = cantCompras; }
 
     @Override
-    public void imprimir() { //Los porsentajes son la cantidad de caracteres que tiene cada columna
-        System.out.printf("%-5d %-15s %-15s %-35s %-15d %-15s\n",
-                ClienteID, nombre, apellido, email, telefono, localidad);
+    public void imprimir() {
+        System.out.printf("%-5d %-10s %-15s %-15s %-10s %-10s %-10d %-20s %-12s %-5d\n",
+                id, DNI, nombre, apellido, genero, nacionalidad, tipCliente, fechaAlta, cantCompras);
     }
-
 }

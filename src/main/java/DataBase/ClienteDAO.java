@@ -11,7 +11,12 @@ import java.util.Scanner;
 public class ClienteDAO
 {
     public static void cargarClientesEnLista(ArrayList<Imprimible> lista) {
-        String query = "SELECT * FROM clientes";
+        String query = """   
+        SELECT p.DNI, p.nombre, p.apellido, p.genero, p.nacionalidad, c.tipCliente,
+        FROM Cliente c
+        INNER JOIN Persona p ON c.DNI = p.DNI;
+        LEFT JOIN TiposClientes t ON c.tipCliente = t.idTipo;
+        """;
 
         try (Connection conn = DataBaseConnection.getConnection();
              Statement stmt = conn.createStatement();
@@ -26,11 +31,16 @@ public class ClienteDAO
 
     public void eliminarPorId(Scanner scan) {
         String query = """
-                        SELECT PE.nombre FROM Cliente c
-                        INNER JOIN Persona PE ON PE.DNI = c.DNI
-                        WHERE c.id = ?;
-                        """;
-        String deletequery = "DELETE FROM Cliente WHERE id = ?;";
+            SELECT PE.nombre FROM Cliente c
+            INNER JOIN Persona PE ON PE.DNI = c.DNI
+            WHERE c.id = ?;
+            """;
+        String deletequery = """
+            SELECT PE.nombre FROM Cliente c
+            INNER JOIN Persona PE ON PE.DNI = c.DNI
+            WHERE c.id = ?;
+            """;
+
         System.out.print("Ingrese el ID del cliente a eliminar: ");
         int id = scan.nextInt();
 
@@ -88,37 +98,45 @@ public class ClienteDAO
     }
 
     public Cliente agregarClientePorConsola(Scanner scan) {
+
+        System.out.print("Ingrese el dni del cliente: ");
+        int dni = scan.nextLine();
+
         System.out.print("Ingrese el nombre del cliente: ");
         String nombre = scan.nextLine();
 
         System.out.print("Ingrese el apellido del cliente: ");
         String apellido = scan.nextLine();
 
-        System.out.print("Ingrese el dni del cliente: ");
-        String dni = scan.nextLine();
+        System.out.print("Ingrese el genero del cliente: ");
+        int genero = scan.nextLine();
 
-        System.out.print("Ingrese el email del cliente: ");
-        String email = scan.nextLine();
-        while (!email.contains("@") || !email.contains(".")) {
-            System.out.print("❌ Email inválido. Ingrese un email válido: ");
-            email = scan.nextLine();
-        }
-        System.out.print("Ingrese el telefono del cliente: ");
-        String telefono = scan.nextLine();
+        System.out.print("Ingrese la nacionalidad del cliente: ");
+        int nacionalidad = scan.nextLine();
 
-        System.out.print("Ingrese la localidad del cliente: ");
-        String localidad = scan.nextLine();
+        System.out.print("Ingrese el id del cliente: ");
+        int id = scan.nextLine();
 
-        Cliente c = new Cliente(nombre, apellido, dni, email, telefono, localidad);
+        System.out.print("Ingrese el tipoCliente del cliente: ");
+        int tipCliente = scan.nextLine();
+
+        System.out.print("Ingrese la fechaAlta del cliente: ");
+        Date fechaAlta = scan.nextLine();
+
+        System.out.print("Ingrese la cantCompras del cliente: ");
+        int cantCompras = scan.nextLine();
+
+        Cliente c = new Cliente(dni, nombre, apellido, genero, nacionalidad,
+        id, tipCliente, fechaAlta, cantCompras);
 
         return c;
     }
 
     public static void insertar(Cliente cliente) {
-        String sql = "INSERT INTO clientes ( nombre, apellido, dni, email, telefono, localidad) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Cliente (id, DNI, tipCliente, fechaAlta, cantCompras) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql  ))
+             PreparedStatement stmt = conn.prepareStatement(sql))
         {
             Mapper.setCliente(stmt, cliente);
             stmt.executeUpdate();

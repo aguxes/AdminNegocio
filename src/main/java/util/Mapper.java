@@ -12,24 +12,24 @@ public class Mapper {
     // Mapeo de Cliente
     // ========================================
     public static Cliente getCliente(ResultSet rs) throws SQLException {
-        return new Cliente(
+        return new Cliente (
+                rs.getInt("DNI"),
                 rs.getString("nombre"),
-                rs.getString("dni"),
                 rs.getString("apellido"),
-                rs.getString("email"),
-                rs.getString("telefono"),
-                rs.getString("localidad"),
-                rs.getInt("id")
+                rs.getInt("genero"),
+                rs.getInt("nacionalidad"),
+                rs.getInt("id"),
+                rs.getInt("tipCliente"),
+                rs.getDate("fechaAlta"),
+                rs.getInt("cantCompras")
         );
     }
-
     public static void setCliente(PreparedStatement stmt, Cliente cliente) throws SQLException {
-        stmt.setString(1, cliente.getNombre());
-        stmt.setString(2, cliente.getDNI());
-        stmt.setString(3, cliente.getApellido());
-        stmt.setString(4, cliente.getEmail());
-        stmt.setString(5, cliente.getTelefono());
-        stmt.setString(6, cliente.getLocalidad());
+        stmt.setInt(1, cliente.getid());
+        stmt.setInt(2, cliente.getDNI());
+        stmt.setInt(3, cliente.getTipCliente());
+        stmt.setDate(4, cliente.getFechaAlta());
+        stmt.setInt(5, cliente.getCantCompras());
     }
 
 
