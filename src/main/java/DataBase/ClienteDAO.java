@@ -12,11 +12,11 @@ public class ClienteDAO
 {
 
     public static void cargarClientesEnLista(ArrayList<Imprimible> lista) {
-        String sql = "SELECT * FROM clientes";
+        String query = "SELECT * FROM clientes";
 
         try (Connection conn = DataBaseConnection.getConnection();
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql))
+             ResultSet rs = stmt.executeQuery(query))
         {
             while (rs.next()) {
                 Cliente c = Mapper.getCliente(rs);
@@ -27,13 +27,13 @@ public class ClienteDAO
     }
 
     public void eliminarPorId(Scanner scan) {
+        String query = "SELECT nombre FROM clientes WHERE id = ?";
+        String deletequery = "DELETE FROM clientes WHERE id = ?";
         System.out.print("Ingrese el ID del cliente a eliminar: ");
         int id = scan.nextInt();
 
-        String sql = "SELECT nombre FROM clientes WHERE id = ?";
-
         try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql))
+             PreparedStatement stmt = conn.prepareStatement(query))
         {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -47,9 +47,8 @@ public class ClienteDAO
                 scan.nextLine();
 
                 if (opcion == 1) {
-                    String deleteSQL = "DELETE FROM clientes WHERE id = ?";
                     conn.setAutoCommit(false);
-                    try (PreparedStatement deleteStmt = conn.prepareStatement(deleteSQL)) {
+                    try (PreparedStatement deleteStmt = conn.prepareStatement(deletequery)) {
                         deleteStmt.setInt(1, id);
                         deleteStmt.executeUpdate();
                         conn.commit();
@@ -59,9 +58,7 @@ public class ClienteDAO
 
             } else { System.out.println("⚠️ No se encontró ningún cliente con ese ID."); }
 
-        } catch (SQLException e) {
-            System.out.println("❌ Error en la base de datos: " + e.getMessage());
-        }
+        } catch (SQLException e) { System.out.println("❌ Error en la base de datos: " + e.getMessage()); }
     }
 
     public void actualizarEmail(int id, String nuevoEmail) {
@@ -127,14 +124,15 @@ public class ClienteDAO
         } catch (SQLException e) { System.out.println("❌ Error al insertar cliente: " + e.getMessage()); }
     }
     public void modificarClientePorId(Scanner scan, ArrayList<Imprimible> lista) {
+
+        String querySelect = "SELECT * FROM clientes WHERE id = ?";
+        String queryUPD = "UPDATE clientes SET nombre = ?, apellido = ?, dni = ?, email = ?, telefono = ?, localidad = ?, WHERE id = ?";
+
         System.out.print("Ingrese el id del cliente: ");
         int id = Integer.parseInt(scan.nextLine());
 
-        String sqlSelect = "SELECT * FROM clientes WHERE id = ?";
-        String sqlUpdate = "UPDATE clientes SET nombre = ?, apellido = ?, dni = ?, email = ?, telefono = ?, localidad = ?, WHERE id = ?";
-
         try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement stmtSelect = conn.prepareStatement(sqlSelect)) {
+             PreparedStatement stmtSelect = conn.prepareStatement(querySelect)) {
 
             stmtSelect.setInt(1, id);
             ResultSet rs = stmtSelect.executeQuery();
@@ -183,7 +181,7 @@ public class ClienteDAO
                         System.out.println("⚠️ DNI inválido. Se mantiene el valor anterior.");
                     }
                 }
-                try (PreparedStatement stmtUpdate = conn.prepareStatement(sqlUpdate)) {
+                try (PreparedStatement stmtUpdate = conn.prepareStatement(queryUPD)) {
                     Mapper.setCliente(stmtUpdate, cliente);
 
                     int filas = stmtUpdate.executeUpdate();
@@ -199,18 +197,19 @@ public class ClienteDAO
 
 
     public void buscarClientePorDato(Scanner scan) {
+
         ArrayList<Imprimible> listaTemp = new ArrayList<>();
         System.out.print("Buscar por email o nombre: (Ingrese la palabra 'email' o 'nombre'): ");
         String campo = scan.nextLine().toLowerCase();
+        String query = "SELECT * FROM clientes WHERE " + campo + " LIKE ?";
 
         if (campo.equals("email") || campo.equals("nombre"))
         {
             System.out.print("Ingrese el " + campo + " a buscar: ");
             String valor = scan.nextLine();
 
-            String sql = "SELECT * FROM clientes WHERE " + campo + " LIKE ?";
             try (Connection conn = DataBaseConnection.getConnection();
-                 PreparedStatement stmt = conn.prepareStatement(sql))
+                 PreparedStatement stmt = conn.prepareStatement(query))
             {
 
                 stmt.setString(1, "%" + valor + "%");
@@ -233,16 +232,13 @@ public class ClienteDAO
     public static boolean existeCliente(int idCliente) {
         String sql = "SELECT 1 FROM clientes WHERE id = ?";
         try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql))
+        {
             stmt.setInt(1, idCliente);
             ResultSet rs = stmt.executeQuery();
             return rs.next();
-        } catch (SQLException e) {
-            System.out.println("❌ Error validando cliente: " + e.getMessage());
-            return false;
-        }
+        } catch (SQLException e)
+        { System.out.println("❌ Error validando cliente: " + e.getMessage()); return false; }
     }
-
-
 }
 

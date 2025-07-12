@@ -43,7 +43,7 @@ public class Mapper {
         String fechaTexto = rs.getString("fecha");
 
         // Si la fecha no tiene hora (ej: "2025-06-19"), le pone hora cero
-        if (fechaTexto.length() == 10) {
+        if (fechaTexto.length() <= 10) {
             fechaTexto += " 00:00:00";
         }
 
@@ -61,23 +61,21 @@ public class Mapper {
                 rs.getString("empleado_nombre")
         );
     }
-    //Mira que bueno, con esto cuadno pones el mouse arriba del nombre ed la funcion te explica que necesita y para que sirve
+    //Mira que bueno, con esto cuadno pones el mouse arriba del nombre de la funcion te explica que necesita y para que sirve
     /**
-     * 📤 Prepara los parámetros de un PreparedStatement a partir de un objeto Venta
-     * Este método se usa cuando queremos insertar o actualizar una venta en la base de datos
-     *
-     * @param stmt  PreparedStatement con la consulta preparada
-     * @param venta Objeto Venta cuyos datos vamos a guardar
-     * @throws SQLException Si ocurre un error al setear los parámetros
+      📤 Prepara los parámetros de un PreparedStatement a partir de un objeto Venta
+      Este método se usa cuando queremos insertar o actualizar una venta en la base de datos
+
+      @param stmt  PreparedStatement con la consulta preparada
+      @param venta Objeto Venta cuyos datos vamos a guardar
+      @throws SQLException Si ocurre un error al setear los parámetros
      */
     public static void setVenta(PreparedStatement stmt, Venta venta) throws SQLException {
         stmt.setInt(1, venta.getIdCliente());
-        stmt.setString(2, venta.getFecha().format(FORMATTER));  // Guarda como texto con formato
+        stmt.setString(2, venta.getFecha().format(FORMATTER));
         stmt.setBigDecimal(3, venta.getImporteTotal());
         stmt.setInt(4, venta.getIdEmpleado());
         stmt.setString(5, venta.getMedioPago());
         stmt.setString(6, venta.getNotas());
     }
-
-
 }

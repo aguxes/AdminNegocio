@@ -16,13 +16,14 @@ public class VentanaVentas {
     public static ArrayList<Venta> cargarVentasEnLista() {
         ArrayList<Venta> lista = new ArrayList<>();
 
-        String sql =
-                "SELECT v.id, v.cliente_id, v.empleado_id, v.fecha, v.total, v.medio_pago, v.notas, " +
-                "c.nombre || ' ' || c.apellido AS cliente_nombre, " +
-                "e.nombre || ' ' || e.puesto AS empleado_nombre " +
-                "FROM ventas v " +
-                "INNER JOIN clientes c ON v.cliente_id = c.id " +
-                "INNER JOIN empleados e ON v.empleado_id = e.id;";
+        String sql = """
+                SELECT v.id, v.cliente_id, v.empleado_id, v.fecha, v.total, v.medio_pago, v.notas,
+                c.nombre || ' ' || c.apellido AS cliente_nombre,
+                e.nombre || ' ' || e.puesto AS empleado_nombre
+                FROM ventas v
+                INNER JOIN clientes c ON v.cliente_id = c.id
+                INNER JOIN empleados e ON v.empleado_id = e.id;
+                """;
 
         try (Connection conn = DataBaseConnection.getConnection();
              var stmt = conn.createStatement();
@@ -36,7 +37,6 @@ public class VentanaVentas {
         }
         return lista;
     }
-
 
     public static String obtenerVentas(ArrayList<Venta> lista) {
         if (lista == null || lista.isEmpty()) return "Lista de ventas vacía.";
@@ -56,11 +56,6 @@ public class VentanaVentas {
                     v.getImporteTotal(),
                     v.getNotas()));
         }
-
         return sb.toString();
     }
-
-
-
-
 }

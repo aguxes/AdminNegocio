@@ -12,6 +12,7 @@ import javafx.scene.layout.VBox;
 import Clases.Cliente;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import Clases.Imprimible;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -273,8 +274,8 @@ public class AppController {
                         medioPago,
                         total,
                         notas,
-                        "", // Nombre cliente no necesario aquí
-                        ""  // Nombre empleado no necesario aquí
+                        "",
+                        ""
                 );
 
                 boolean ventaCreado = VentaDAO.insertarVenta(nuevaVenta);
