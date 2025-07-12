@@ -229,6 +229,20 @@ public class ClienteDAO
         { System.out.println("⚠️ Opción no válida. Debe ingresar 'email' o 'nombre'."); }
     }
 
+    // Para validaciones en ventas
+    public static boolean existeCliente(int idCliente) {
+        String sql = "SELECT 1 FROM clientes WHERE id = ?";
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idCliente);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            System.out.println("❌ Error validando cliente: " + e.getMessage());
+            return false;
+        }
+    }
+
 
 }
 

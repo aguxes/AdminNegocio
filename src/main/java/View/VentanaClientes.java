@@ -17,7 +17,7 @@ public class VentanaClientes {
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                Cliente c = Mapper.GetC(rs);
+                Cliente c = Mapper.getCliente(rs);
                 lista.add(c);
             }
 
@@ -93,7 +93,7 @@ public class VentanaClientes {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
 
-            if (rs.next()) { Cliente c = Mapper.GetC(rs); }
+            if (rs.next()) { Cliente c = Mapper.getCliente(rs); }
 
         } catch (SQLException e) {
             System.out.println("❌ Error al buscar cliente: " + e.getMessage());
@@ -134,7 +134,7 @@ public class VentanaClientes {
                 ResultSet rs = stmt.executeQuery();
 
                 while (rs.next()) {
-                    Cliente c = Mapper.GetC(rs);
+                    Cliente c = Mapper.getCliente(rs);
                     listaTemp.add(c);
                 }
 
@@ -161,7 +161,7 @@ public class VentanaClientes {
         try (Connection conn = DataBaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql))
         {
-            Mapper.SetC(stmt, cliente);
+            Mapper.setCliente(stmt, cliente);
             stmt.executeUpdate();
             resultado.append("✅ Cliente insertado correctamente.");
 

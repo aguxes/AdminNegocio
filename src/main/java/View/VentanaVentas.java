@@ -1,45 +1,66 @@
 package View;
 
+import Clases.Venta;
 import DataBase.DataBaseConnection;
+import util.Mapper;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+
 
 public class VentanaVentas {
-    public static String obtenerVentasComoTexto() {
-        StringBuilder sb = new StringBuilder();
-        String sql = "SELECT v.id, " +
-                "c.nombre || ' ' || c.apellido AS cliente, " + //esa cosa rara es concatenacion en SQLlite, lo que aprende uno
-                "e.nombre || '   ' || e.puesto AS empleado, " +
-                "DATETIME(v.fecha, '-3 hours') AS fecha, v.total, v.medio_pago " +
-                "FROM ventas v " +
-                "JOIN clientes c ON v.cliente_id = c.id " +
-                "JOIN empleados e ON v.empleado_id = e.id";
 
-        sb.append(String.format("%-5s %-25s %-30s %-25s %-10s %-15s\n",
-                "ID", "Cliente", "Empleado", "Fecha", "Total", "Medio Pago"));
-        sb.append("--------------------------------------------------------------------------------------------------------------------------\n");
+    public static ArrayList<Venta> cargarVentasEnLista() {
+        ArrayList<Venta> lista = new ArrayList<>();
+
+        String sql =
+                "SELECT v.id, v.cliente_id, v.empleado_id, v.fecha, v.total, v.medio_pago, v.notas, " +
+                "c.nombre || ' ' || c.apellido AS cliente_nombre, " +
+                "e.nombre || ' ' || e.puesto AS empleado_nombre " +
+                "FROM ventas v " +
+                "INNER JOIN clientes c ON v.cliente_id = c.id " +
+                "INNER JOIN empleados e ON v.empleado_id = e.id;";
 
         try (Connection conn = DataBaseConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
+             var stmt = conn.createStatement();
+             var rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                sb.append(String.format("%-5d %-25s %-30s %-25s $%-9.2f %-15s\n",
-                        rs.getInt("id"),
-                        rs.getString("cliente"),
-                        rs.getString("empleado"),
-                        rs.getString("fecha"),
-                        rs.getDouble("total"),
-                        rs.getString("medio_pago")));
+                Venta venta = Mapper.getVenta(rs);
+                lista.add(venta);
             }
-
         } catch (SQLException e) {
-            sb.append("❌ Error al mostrar ventas: ").append(e.getMessage());
+            System.out.println("❌ Error al cargar ventas: " + e.getMessage());
+        }
+        return lista;
+    }
+
+
+    public static String obtenerVentas(ArrayList<Venta> lista) {
+        if (lista == null || lista.isEmpty()) return "Lista de ventas vacía.";
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("%-3s %-20s %-25s %-20s %-12s %-10s %-25s\n",
+                "ID", "Cliente", "Empleado", "Fecha", "MedioPago", "Total", "Notas"));
+        sb.append("---------------------------------------------------------------------------------------------------------------------------\n");
+
+        for (Venta v : lista) {
+            sb.append(String.format("%-3d %-20s %-25s %-20s %-12s %-10.2f %-25s\n",
+                    v.getIdVenta(),
+                    v.getNombreCliente(),
+                    v.getNombreEmpleado(),
+                    v.getFecha(),
+                    v.getMedioPago(),
+                    v.getImporteTotal(),
+                    v.getNotas()));
         }
 
         return sb.toString();
     }
+
+
+
+
 }

@@ -2,6 +2,8 @@ package DataBase;
 
 import Clases.Empleado;
 import Clases.Imprimible;
+import Clases.Venta;
+import util.Mapper;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -162,6 +164,24 @@ public class VentaDAO {
             System.out.println("❌ Error al mostrar ventas: " + e.getMessage());
         }
     }
+
+    public static boolean insertarVenta(Venta venta) {
+        String sql = "INSERT INTO ventas (cliente_id, fecha, total, empleado_id, medio_pago, notas) VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            Mapper.setVenta(stmt, venta);
+            stmt.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            System.out.println("❌ Error al insertar venta: " + e.getMessage());
+            return false;
+        }
+    }
+
+
 
 
 }

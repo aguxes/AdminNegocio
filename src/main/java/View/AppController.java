@@ -1,6 +1,7 @@
 package View;
 
-import DataBase.ClienteDAO;
+import Clases.Venta;
+import DataBase.*;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -9,11 +10,12 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import Clases.Cliente;
-import View.VentanaClientes;
-import View.VentanaVentas;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import DataBase.ClienteDAO;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class AppController {
 
@@ -220,12 +222,86 @@ public class AppController {
 
     // VENTAS
     private void verVentas() {
-        outputArea.setText(VentanaVentas.obtenerVentasComoTexto());
+        ArrayList<Venta> lista = VentanaVentas.cargarVentasEnLista();
+        outputArea.setText(VentanaVentas.obtenerVentas(lista));
     }
 
+
     private void registrarVenta() {
-        outputArea.setText("🧾 Lógica para registrar una nueva venta.");
+        Stage ventana = new Stage();
+        ventana.setTitle("Registrar Venta");
+
+        TextField txtClienteId = new TextField();
+        TextField txtEmpleadoId = new TextField();
+        TextField txtMedioPago = new TextField();
+        TextField txtTotal = new TextField();
+        TextField txtNotas = new TextField();
+
+        txtClienteId.setPromptText("ID Cliente");
+        txtEmpleadoId.setPromptText("ID Empleado");
+        txtMedioPago.setPromptText("Medio de Pago");
+        txtTotal.setPromptText("Total");
+        txtNotas.setPromptText("Notas (opcional)");
+
+        Button btnGuardar = new Button("Guardar Venta");
+
+        btnGuardar.setOnAction(e -> {
+            try {
+                int clienteId = Integer.parseInt(txtClienteId.getText().trim());
+                int empleadoId = Integer.parseInt(txtEmpleadoId.getText().trim());
+                String medioPago = txtMedioPago.getText().trim();
+                BigDecimal total = new BigDecimal(txtTotal.getText().trim());
+                String notas = txtNotas.getText().trim();
+
+                // Validaciones de qeue xista clinete y empleado
+                if (!ClienteDAO.existeCliente(clienteId)) {
+                    outputArea.setText("❌ Error: El ID de Cliente no existe.");
+                    return;
+                }
+                if (!EmpleadoDAO.existeEmpleado(empleadoId)) {
+                    outputArea.setText("❌ Error: El ID de Empleado no existe.");
+                    return;
+                }
+
+                LocalDateTime fechaActual = LocalDateTime.now();
+
+                Venta nuevaVenta = new Venta(
+                        0, // ID autogenerado
+                        empleadoId,
+                        clienteId,
+                        fechaActual,
+                        medioPago,
+                        total,
+                        notas,
+                        "", // Nombre cliente no necesario aquí
+                        ""  // Nombre empleado no necesario aquí
+                );
+
+                boolean ventaCreado = VentaDAO.insertarVenta(nuevaVenta);
+
+                if (ventaCreado) {
+                    outputArea.setText("✅ Venta registrada correctamente.");
+                    ventana.close();
+                } else {
+                    outputArea.setText("❌ Error al registrar la venta.");
+                }
+
+            } catch (NumberFormatException ex) {
+                outputArea.setText("❌ Error: Verifique los datos numéricos (ID Cliente, ID Empleado, Total).");
+            }
+        });
+
+        VBox layout = new VBox(10, txtClienteId, txtEmpleadoId, txtMedioPago, txtTotal, txtNotas, btnGuardar);
+        layout.setPadding(new Insets(20));
+        layout.setAlignment(Pos.CENTER);
+
+        Scene escena = new Scene(layout, 350, 300);
+        ventana.setScene(escena);
+        ventana.initModality(Modality.APPLICATION_MODAL);
+        ventana.showAndWait();
     }
+
+
 
     private void ventasPorCliente() {
         outputArea.setText("📄 Ventas filtradas por cliente.");

@@ -1,22 +1,23 @@
 package Clases;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Venta implements Imprimible {
 
-    private int idVenta;         // id
-    private int idCliente;       // cliente_id
-    private LocalDate fecha;     // fecha (TEXT)
-    private BigDecimal importeTotal; // total (REAL)
-    private int idEmpleado;      // empleado_id
-    private String medioPago;    // medio_pago (TEXT)
-    private String notas;        // notas (TEXT)
+    private int idVenta;
+    private int idCliente;
+    private int idEmpleado;
+    private LocalDateTime fecha;
+    private String medioPago;
+    private BigDecimal importeTotal;
+    private String notas;
 
-    // Opcional
-    private boolean estado;      // No está en la BD, es lógico
+    private String nombreCliente;
+    private String nombreEmpleado;
 
-    public Venta(int idVenta, int idEmpleado, int idCliente, LocalDate fecha, String medioPago, BigDecimal importeTotal, String notas) {
+    public Venta(int idVenta, int idEmpleado, int idCliente, LocalDateTime fecha, String medioPago, BigDecimal importeTotal, String notas, String nombreCliente, String nombreEmpleado) {
         this.idVenta = idVenta;
         this.idEmpleado = idEmpleado;
         this.idCliente = idCliente;
@@ -24,19 +25,23 @@ public class Venta implements Imprimible {
         this.medioPago = medioPago;
         this.importeTotal = importeTotal;
         this.notas = notas;
+        this.nombreCliente = nombreCliente;
+        this.nombreEmpleado = nombreEmpleado;
     }
 
-    // Getters
     public int getIdVenta() { return idVenta; }
-    public int getIdEmpleado() { return idEmpleado; }
     public int getIdCliente() { return idCliente; }
-    public LocalDate getFecha() { return fecha; }
+    public int getIdEmpleado() { return idEmpleado; }
+    public LocalDateTime getFecha() { return fecha; }
     public String getMedioPago() { return medioPago; }
     public BigDecimal getImporteTotal() { return importeTotal; }
     public String getNotas() { return notas; }
+    public String getNombreCliente() { return nombreCliente; }
+    public String getNombreEmpleado() { return nombreEmpleado; }
 
-    // Setters si los necesitás
-    public void setFecha(LocalDate fecha) { this.fecha = fecha; }
+
+// Setters
+    public void setFecha(LocalDateTime fecha) { this.fecha = fecha; }
     public void setMedioPago(String medioPago) { this.medioPago = medioPago; }
     public void setNotas(String notas) { this.notas = notas; }
 
