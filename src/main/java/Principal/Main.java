@@ -32,7 +32,7 @@ public class Main {
             }catch(Exception e){
                 System.out.println("Opcion no permitida, solo numeros");
             }
-        }while(opcion != 5);
+        }while(opcion != 6);
 
     }
 }

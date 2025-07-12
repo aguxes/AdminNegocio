@@ -2,7 +2,7 @@ package DataBase;
 
 import Clases.Cliente;
 import Clases.Imprimible;
-import util.ClienteMapper;
+import util.Mapper;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public class ClienteDAO
              ResultSet rs = stmt.executeQuery(sql))
         {
             while (rs.next()) {
-                Cliente c = ClienteMapper.GetC(rs);
+                Cliente c = Mapper.getCliente(rs);
                 lista.add(c);
             }
         } catch (SQLException e) { System.out.println("❌ Error al cargar clientes en lista: " + e.getMessage()); }
@@ -121,7 +121,7 @@ public class ClienteDAO
         try (Connection conn = DataBaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql  ))
         {
-            ClienteMapper.SetC(stmt, cliente);
+            Mapper.setCliente(stmt, cliente);
             stmt.executeUpdate();
             System.out.println("Cliente insertado correctamente.");
         } catch (SQLException e) { System.out.println("❌ Error al insertar cliente: " + e.getMessage()); }
@@ -140,7 +140,7 @@ public class ClienteDAO
             ResultSet rs = stmtSelect.executeQuery();
 
             if (rs.next()) {
-                Cliente cliente = ClienteMapper.GetC(rs);
+                Cliente cliente = Mapper.getCliente(rs);
                 System.out.println("↩️ Deje el campo vacío si no quiere modificarlo");
 
                 System.out.print("Nuevo nombre (" + cliente.getNombre() + "): ");
@@ -184,7 +184,7 @@ public class ClienteDAO
                     }
                 }
                 try (PreparedStatement stmtUpdate = conn.prepareStatement(sqlUpdate)) {
-                    ClienteMapper.SetC(stmtUpdate, cliente);
+                    Mapper.setCliente(stmtUpdate, cliente);
 
                     int filas = stmtUpdate.executeUpdate();
                     System.out.println(filas > 0 ? "✅ Cliente modificado." : "⚠️ No se modificó ningún cliente.");
@@ -217,7 +217,7 @@ public class ClienteDAO
                 ResultSet rs = stmt.executeQuery();
 
                 while (rs.next()) {
-                    Cliente c = ClienteMapper.GetC(rs);
+                    Cliente c = Mapper.getCliente(rs);
                     listaTemp.add(c);
                 }
                 if (listaTemp.isEmpty()) { System.out.println("❌ No se encontraron clientes con ese " + campo + "."); }

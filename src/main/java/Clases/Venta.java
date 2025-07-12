@@ -3,55 +3,49 @@ package Clases;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public class Venta implements Imprimible{
-    private int idVenta;
-    private int idEmpleado;
-    private int idCliente;
-    private LocalDate fecha;
-    private int formaDePago;
-    private BigDecimal importeTotal; //es mejor BigDecimal para finanzas
-    private boolean estado; //ver para que sirve
+public class Venta implements Imprimible {
 
+    private int idVenta;         // id
+    private int idCliente;       // cliente_id
+    private LocalDate fecha;     // fecha (TEXT)
+    private BigDecimal importeTotal; // total (REAL)
+    private int idEmpleado;      // empleado_id
+    private String medioPago;    // medio_pago (TEXT)
+    private String notas;        // notas (TEXT)
 
-    public Venta(int idVenta, int idEmpleado, int idCliente, LocalDate fecha, int formaDePago, BigDecimal importeTotal, boolean estado) {
+    // Opcional
+    private boolean estado;      // No está en la BD, es lógico
+
+    public Venta(int idVenta, int idEmpleado, int idCliente, LocalDate fecha, String medioPago, BigDecimal importeTotal, String notas) {
         this.idVenta = idVenta;
         this.idEmpleado = idEmpleado;
         this.idCliente = idCliente;
         this.fecha = fecha;
-        this.formaDePago = formaDePago;
+        this.medioPago = medioPago;
         this.importeTotal = importeTotal;
-        this.estado = estado;
+        this.notas = notas;
     }
 
-    public int getIdVenta() {return idVenta;}
+    // Getters
+    public int getIdVenta() { return idVenta; }
+    public int getIdEmpleado() { return idEmpleado; }
+    public int getIdCliente() { return idCliente; }
+    public LocalDate getFecha() { return fecha; }
+    public String getMedioPago() { return medioPago; }
+    public BigDecimal getImporteTotal() { return importeTotal; }
+    public String getNotas() { return notas; }
 
-    public int getIdEmpleado() {return idEmpleado;}
-
-    public int getIdCliente() {return idCliente;}
-
-    public LocalDate getFecha() {return fecha;}
-
-    public void setFecha(LocalDate fecha) {this.fecha = fecha;}
-
-    public int getFormaDePago() {return formaDePago;}
-
-    public void setFormaDePago(int formaDePago) {this.formaDePago = formaDePago;}
-
-    public BigDecimal getImporteTotal() {return importeTotal;}
-
-    public void setImporteTotal(BigDecimal importeTotal) {this.importeTotal = importeTotal;}
-
-    public boolean isEstado() {return estado;}
-
-    public void setEstado(boolean estado) {this.estado = estado;}
+    // Setters si los necesitás
+    public void setFecha(LocalDate fecha) { this.fecha = fecha; }
+    public void setMedioPago(String medioPago) { this.medioPago = medioPago; }
+    public void setNotas(String notas) { this.notas = notas; }
 
     @Override
     public void imprimir() {
-        System.out.printf("%-8d %-10d %-10d %-12s %-12d %-12.2f %-10b\n",
-                idVenta, idEmpleado, idCliente, fecha.toString(), formaDePago,
-                importeTotal, estado
-        );
+        System.out.printf("%-5d %-10s %-10s %-15s %-15s %-15s %-15s\n",
+                idVenta, idCliente, idEmpleado, fecha, medioPago, importeTotal, notas);
     }
+
 
 
     /*

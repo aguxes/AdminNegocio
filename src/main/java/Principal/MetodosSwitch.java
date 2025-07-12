@@ -45,13 +45,13 @@ public class MetodosSwitch {
                         break;
                     case 6:
                         System.out.println("Saliendo...");
-                        bucle = 5;
+                        bucle = 6;
                         break;
                     default:
                         System.out.println("Opcion no valida, del 1 al 4");
                         break;
                 }
-            }while(opcion != 5);
+            }while(bucle != 6);
         }catch(Exception e){
             System.out.println("Opcion no permitida, solo numeros");
         }

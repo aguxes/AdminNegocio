@@ -2,7 +2,7 @@ package View;
 
 import Clases.Cliente;
 import DataBase.DataBaseConnection;
-import util.ClienteMapper;
+import util.Mapper;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ public class VentanaClientes {
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                Cliente c = ClienteMapper.GetC(rs);
+                Cliente c = Mapper.GetC(rs);
                 lista.add(c);
             }
 
@@ -93,7 +93,7 @@ public class VentanaClientes {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
 
-            if (rs.next()) { Cliente c = ClienteMapper.GetC(rs); }
+            if (rs.next()) { Cliente c = Mapper.GetC(rs); }
 
         } catch (SQLException e) {
             System.out.println("❌ Error al buscar cliente: " + e.getMessage());
@@ -134,7 +134,7 @@ public class VentanaClientes {
                 ResultSet rs = stmt.executeQuery();
 
                 while (rs.next()) {
-                    Cliente c = ClienteMapper.GetC(rs);
+                    Cliente c = Mapper.GetC(rs);
                     listaTemp.add(c);
                 }
 
@@ -161,7 +161,7 @@ public class VentanaClientes {
         try (Connection conn = DataBaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql))
         {
-            ClienteMapper.SetC(stmt, cliente);
+            Mapper.SetC(stmt, cliente);
             stmt.executeUpdate();
             resultado.append("✅ Cliente insertado correctamente.");
 
