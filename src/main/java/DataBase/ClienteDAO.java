@@ -10,7 +10,6 @@ import java.util.Scanner;
 
 public class ClienteDAO
 {
-
     public static void cargarClientesEnLista(ArrayList<Imprimible> lista) {
         String query = "SELECT * FROM clientes";
 
@@ -23,12 +22,15 @@ public class ClienteDAO
                 lista.add(c);
             }
         } catch (SQLException e) { System.out.println("❌ Error al cargar clientes en lista: " + e.getMessage()); }
-
     }
 
     public void eliminarPorId(Scanner scan) {
-        String query = "SELECT nombre FROM clientes WHERE id = ?";
-        String deletequery = "DELETE FROM clientes WHERE id = ?";
+        String query = """
+                        SELECT PE.nombre FROM Cliente c
+                        INNER JOIN Persona PE ON PE.DNI = c.DNI
+                        WHERE c.id = ?;
+                        """;
+        String deletequery = "DELETE FROM Cliente WHERE id = ?;";
         System.out.print("Ingrese el ID del cliente a eliminar: ");
         int id = scan.nextInt();
 

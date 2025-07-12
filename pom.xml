@@ -12,34 +12,31 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 <junit.version>5.10.2</junit.version>  </properties>
-
-  <dependencies>
-
+<dependencies>
+  <!-- SqlServer -->
+    <dependency>
+      <groupId>com.microsoft.sqlserver</groupId>
+      <artifactId>mssql-jdbc</artifactId>
+      <version>12.10.1.jre11</version>
+    </dependency>
     <!-- JavaFX Controls -->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
       <version>17.0.6</version>
     </dependency>
-
     <!-- JavaFX FXML -->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-fxml</artifactId>
       <version>17.0.6</version>
     </dependency>
-
     <!-- SQLite JDBC -->
-
     <dependency>
       <groupId>org.xerial</groupId>
       <artifactId>sqlite-jdbc</artifactId>
       <version>3.42.0.0</version>
     </dependency>
-
-
-
-
 
     <!-- JUnit -->
     <dependency>
@@ -48,8 +45,7 @@
       <version>5.10.2</version>
       <scope>test</scope>
     </dependency>
-  </dependencies>
-
+</dependencies>
 
   <build>
     <plugins>
