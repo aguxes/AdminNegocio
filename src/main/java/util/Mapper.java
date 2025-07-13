@@ -25,13 +25,15 @@ public class Mapper {
         );
     }
     public static void setCliente(PreparedStatement stmt, Cliente cliente) throws SQLException {
-        stmt.setInt(1, cliente.getid());
         stmt.setInt(2, cliente.getDNI());
+        stmt.setInt(1, cliente.getid());
+        stmt.setString(2, cliente.getNombre());
+        stmt.setString(2, cliente.getApellido());
+        stmt.setInt(3, cliente.getGenero());
+        stmt.setInt(4, cliente.getNacionalidad());
         stmt.setInt(3, cliente.getTipCliente());
-        stmt.setDate(4, cliente.getFechaAlta());
         stmt.setInt(5, cliente.getCantCompras());
     }
-
 
     // Mapeo de Venta
     // ========================================

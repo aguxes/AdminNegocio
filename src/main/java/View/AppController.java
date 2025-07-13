@@ -173,44 +173,54 @@ public class AppController {
         Stage ventana = new Stage();
         ventana.setTitle("Agregar Cliente");
 
+        TextField txtID = new TextField();
+        TextField txtDNI = new TextField();
         TextField txtNombre = new TextField();
         TextField txtApellido = new TextField();
-        TextField txtDNI = new TextField();
-        TextField txtEmail = new TextField();
-        TextField txtTelefono = new TextField();
-        TextField txtLocalidad = new TextField();
+        TextField txtGenero = new TextField();
+        TextField txtNacionalidad = new TextField();
+        TextField txtTipoCliente = new TextField();
+        TextField txtCantidadCompras = new TextField();
 
+        txtID.setPromptText("ID");
+        txtDNI.setPromptText("DNI");
         txtNombre.setPromptText("Nombre");
         txtApellido.setPromptText("Apellido");
-        txtDNI.setPromptText("DNI");
-        txtEmail.setPromptText("Email");
-        txtTelefono.setPromptText("Teléfono");
-        txtLocalidad.setPromptText("Localidad");
+        txtGenero.setPromptText("Género");
+        txtNacionalidad.setPromptText("Nacionalidad");
+        txtTipoCliente.setPromptText("Tipo de Cliente");
+        txtCantidadCompras.setPromptText("Cantidad de Compras");
 
         Button btnGuardar = new Button("Guardar");
 
         btnGuardar.setOnAction(e -> {
-            String nombre = txtNombre.getText().trim();
-            String apellido = txtApellido.getText().trim();
-            String dni = txtDNI.getText().trim();
-            String email = txtEmail.getText().trim();
-            String telefono = txtTelefono.getText().trim();
-            String localidad = txtLocalidad.getText().trim();
+            try {
+                int id = Integer.parseInt(txtID.getText().trim());
+                int dni = Integer.parseInt(txtDNI.getText().trim());
+                String nombre = txtNombre.getText().trim();
+                String apellido = txtApellido.getText().trim();
+                int genero = Integer.parseInt(txtGenero.getText().trim());
+                int nacionalidad = Integer.parseInt(txtNacionalidad.getText().trim());
+                int tipoCliente = Integer.parseInt(txtTipoCliente.getText().trim());
+                int cantCompras = Integer.parseInt(txtCantidadCompras.getText().trim());
 
-            // Faltaria Llamar una funcion con validaciones acá. O en el diseño usar una herramienta para validar como son los RequiredFieldValidator en el VS
+                // Faltaria Llamar una funcion con validaciones acá. O en el diseño usar una herramienta para validar como son los RequiredFieldValidator en el VS
 
-            Cliente cliente = new Cliente(nombre, apellido, dni, email, telefono, localidad);
-            ClienteDAO.insertar(cliente);
+                Cliente cliente = new Cliente(id, dni, nombre, apellido, genero, nacionalidad, tipoCliente, cantCompras);
+                ClienteDAO.insertar(cliente);
 
-            outputArea.setText("✅ Cliente agregado correctamente.");
-            ventana.close();
+                outputArea.setText("✅ Cliente agregado correctamente.");
+                ventana.close();
+            } catch (NumberFormatException ex) {
+                outputArea.setText("❌ Error: Verificá que todos los campos numéricos tengan un valor válido.");
+            }
         });
 
-        VBox layout = new VBox(10, txtNombre, txtApellido, txtDNI, txtEmail, txtTelefono, txtLocalidad, btnGuardar);
+        VBox layout = new VBox(10, txtID, txtDNI, txtNombre, txtApellido, txtGenero, txtNacionalidad, txtTipoCliente, txtCantidadCompras, btnGuardar);
         layout.setPadding(new Insets(20));
         layout.setAlignment(Pos.CENTER);
 
-        Scene escena = new Scene(layout, 350, 350);
+        Scene escena = new Scene(layout, 350, 500);
         ventana.setScene(escena);
         ventana.initModality(Modality.APPLICATION_MODAL);
         ventana.showAndWait();

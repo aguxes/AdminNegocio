@@ -8,6 +8,12 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/// Extras
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class ClienteDAO
 {
     public static void cargarClientesEnLista(ArrayList<Imprimible> lista) {
@@ -100,7 +106,7 @@ public class ClienteDAO
     public Cliente agregarClientePorConsola(Scanner scan) {
 
         System.out.print("Ingrese el dni del cliente: ");
-        int dni = scan.nextLine();
+        int dni = scan.nextInt();
 
         System.out.print("Ingrese el nombre del cliente: ");
         String nombre = scan.nextLine();
@@ -109,25 +115,37 @@ public class ClienteDAO
         String apellido = scan.nextLine();
 
         System.out.print("Ingrese el genero del cliente: ");
-        int genero = scan.nextLine();
+        int genero = scan.nextInt();
 
         System.out.print("Ingrese la nacionalidad del cliente: ");
-        int nacionalidad = scan.nextLine();
+        int nacionalidad = scan.nextInt();
 
         System.out.print("Ingrese el id del cliente: ");
-        int id = scan.nextLine();
+        int id = scan.nextInt();
 
-        System.out.print("Ingrese el tipoCliente del cliente: ");
-        int tipCliente = scan.nextLine();
+        System.out.print("Ingrese el tipo de Cliente del cliente: ");
+        int tipCliente = scan.nextInt();
 
-        System.out.print("Ingrese la fechaAlta del cliente: ");
-        Date fechaAlta = scan.nextLine();
+        System.out.print("Ingrese la fecha de alta del cliente (formato dd/MM/yyyy): ");
+        scan.nextLine(); // limpia el coso este para que no se mezclen datos.
+        String fechaStr = scan.nextLine();
+        java.sql.Date fechaSQL = null;
 
-        System.out.print("Ingrese la cantCompras del cliente: ");
-        int cantCompras = scan.nextLine();
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            Date fechaAlta = sdf.parse(fechaStr);
+            fechaSQL = new java.sql.Date(fechaAlta.getTime());
+        } catch (ParseException e) {
+            System.out.println("❌ Error al parsear la fecha. Formato incorrecto.");
+            return null;
+        }
+
+
+        System.out.print("Ingrese la cantidad de Compras del cliente: ");
+        int cantCompras = scan.nextInt();
 
         Cliente c = new Cliente(dni, nombre, apellido, genero, nacionalidad,
-        id, tipCliente, fechaAlta, cantCompras);
+        id, tipCliente, fechaSQL, cantCompras);
 
         return c;
     }
@@ -145,85 +163,129 @@ public class ClienteDAO
     }
     public void modificarClientePorId(Scanner scan, ArrayList<Imprimible> lista) {
 
-        String querySelect = "SELECT * FROM clientes WHERE id = ?";
-        String queryUPD = "UPDATE clientes SET nombre = ?, apellido = ?, dni = ?, email = ?, telefono = ?, localidad = ?, WHERE id = ?";
+        String querySelect = "SELECT * FROM Cliente WHERE id = ?";
+        String queryUPD =
+                """
+        UPDATE Cliente SET nombre = ?, apellido = ?, DNI = ?, genero = ?, nacionalidad = ?, tipCliente = ?, cantCompras = ? WHERE id = ?;
+        """;
 
-        System.out.print("Ingrese el id del cliente: ");
-        int id = Integer.parseInt(scan.nextLine());
+        System.out.print("Ingrese el ID del cliente a modificar: ");
+        int id = scan.nextInt();
+        scan.nextLine(); // Limpia el salto de línea después del nextInt()
 
         try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement stmtSelect = conn.prepareStatement(querySelect)) {
-
+             PreparedStatement stmtSelect = conn.prepareStatement(querySelect))
+        {
             stmtSelect.setInt(1, id);
             ResultSet rs = stmtSelect.executeQuery();
 
             if (rs.next()) {
-                Cliente cliente = Mapper.getCliente(rs);
+                Cliente c = Mapper.getCliente(rs);
                 System.out.println("↩️ Deje el campo vacío si no quiere modificarlo");
 
-                System.out.print("Nuevo nombre (" + cliente.getNombre() + "): ");
+                System.out.print("Nuevo nombre (" + c.getNombre() + "): ");
                 String input = scan.nextLine();
-                if (!input.isEmpty()) cliente.setNombre(input);
+                if (!input.isEmpty()) c.setNombre(input);
 
-                System.out.print("Nuevo apellido (" + cliente.getApellido() + "): ");
+                System.out.print("Nuevo apellido (" + c.getApellido() + "): ");
                 input = scan.nextLine();
-                if (!input.isEmpty()) cliente.setApellido(input);
+                if (!input.isEmpty()) c.setApellido(input);
 
-                System.out.print("Nuevo email (" + cliente.getEmail() + "): ");
-                input = scan.nextLine();
-                if (!input.isEmpty()){
-                    while (!input.contains("@") || !input.contains(".")) {
-                        System.out.print("❌ Email inválido. Ingrese un email válido: ");
-                        input = scan.nextLine();
-                    }
-                    cliente.setEmail(input);
-                }
-
-                System.out.print("Nuevo teléfono (anterior: " + cliente.getTelefono() + "): ");
-                String telStr = scan.nextLine();
-                if (!telStr.isEmpty())
-                {
-                    try { cliente.setTelefono(telStr); } catch (NumberFormatException e) {
-                        System.out.println("⚠️ Teléfono inválido. Se mantiene el valor anterior.");
+                System.out.print("Nuevo DNI (" + c.getDNI() + "): ");
+                if (scan.hasNextInt()) {
+                    c.setDNI(scan.nextInt());
+                } else {
+                    String aux = scan.nextLine();
+                    if (!aux.isEmpty()) {
+                        try {
+                            c.setDNI(Integer.parseInt(aux));
+                        } catch (NumberFormatException e) {
+                            System.out.println("⚠️ DNI inválido. Se mantiene el anterior.");
+                        }
                     }
                 }
+                scan.nextLine();
 
-                System.out.print("Nueva localidad (" + cliente.getLocalidad() + "): ");
-                input = scan.nextLine();
-                if (!input.isEmpty()) { cliente.setLocalidad(input); }
-
-                System.out.print("Nuevo DNI (" + cliente.getDNI() + "): ");
-                input = scan.nextLine();
-                if (input.isEmpty()) {
-                    try {
-                        cliente.setDNI(input);
-                    } catch (NumberFormatException e) {
-                        System.out.println("⚠️ DNI inválido. Se mantiene el valor anterior.");
+                System.out.print("Nuevo género (" + c.getGenero() + "): ");
+                if (scan.hasNextInt()) {
+                    c.setGenero(scan.nextInt());
+                } else {
+                    String aux = scan.nextLine();
+                    if (!aux.isEmpty()) {
+                        try {
+                            c.setGenero(Integer.parseInt(aux));
+                        } catch (NumberFormatException e) {
+                            System.out.println("⚠️ Género inválido. Se mantiene el anterior.");
+                        }
                     }
                 }
-                try (PreparedStatement stmtUpdate = conn.prepareStatement(queryUPD)) {
-                    Mapper.setCliente(stmtUpdate, cliente);
+                scan.nextLine();
 
-                    int filas = stmtUpdate.executeUpdate();
-                    System.out.println(filas > 0 ? "✅ Cliente modificado." : "⚠️ No se modificó ningún cliente.");
-                    lista.clear();
-                    cargarClientesEnLista(lista);
+                System.out.print("Nueva nacionalidad (" + c.getNacionalidad() + "): ");
+                if (scan.hasNextInt()) {
+                    c.setNacionalidad(scan.nextInt());
+                } else {
+                    String aux = scan.nextLine();
+                    if (!aux.isEmpty()) {
+                        try {
+                            c.setNacionalidad(Integer.parseInt(aux));
+                        } catch (NumberFormatException e) {
+                            System.out.println("⚠️ Nacionalidad inválida. Se mantiene la anterior.");
+                        }
+                    }
+                }
+                scan.nextLine();
+
+                System.out.print("Nuevo tipo de cliente (" + c.getTipCliente() + "): ");
+                if (scan.hasNextInt()) {
+                    c.setTipCliente(scan.nextInt());
+                } else {
+                    String aux = scan.nextLine();
+                    if (!aux.isEmpty()) {
+                        try {
+                            c.setTipCliente(Integer.parseInt(aux));
+                        } catch (NumberFormatException e) {
+                            System.out.println("⚠️ Tipo inválido. Se mantiene el anterior.");
+                        }
+                    }
+                }
+                scan.nextLine();
+
+                System.out.print("Nueva cantidad de compras (" + c.getCantCompras() + "): ");
+                if (scan.hasNextInt()) { c.setCantCompras(scan.nextInt()); }
+                else {
+                    String aux = scan.nextLine();
+                    if (!aux.isEmpty()) {
+                        try {
+                            c.setCantCompras(Integer.parseInt(aux));
+                        } catch (NumberFormatException e) {
+                            System.out.println("⚠️ Cantidad inválida. Se mantiene la anterior.");
+                        }
+                    }
+                    try (PreparedStatement stmtUpdate = conn.prepareStatement(queryUPD)) {
+                        Mapper.setCliente(stmtUpdate, c);
+
+                        int filas = stmtUpdate.executeUpdate();
+                        System.out.println(filas > 0 ? "✅ Cliente modificado." : "⚠️ No se modificó ningún cliente.");
+                        lista.clear();
+                        cargarClientesEnLista(lista);
+                    }
+
                 }
 
-            } else { System.out.println("❌ Cliente no encontrado con ID: " + id); }
-
-        } catch (SQLException e) { System.out.println("❌ Error en la base de datos: " + e.getMessage()); }
+            }else{ System.out.println("❌ Cliente no encontrado con ID: " + id); }
+        }catch(SQLException e) { System.out.println("❌ Error en la base de datos: " + e.getMessage()); }
     }
-
-
     public void buscarClientePorDato(Scanner scan) {
 
         ArrayList<Imprimible> listaTemp = new ArrayList<>();
-        System.out.print("Buscar por email o nombre: (Ingrese la palabra 'email' o 'nombre'): ");
+        System.out.print("Buscar por email o nombre: (Ingrese la palabra 'apellido' o 'nombre'): ");
         String campo = scan.nextLine().toLowerCase();
-        String query = "SELECT * FROM clientes WHERE " + campo + " LIKE ?";
+        String query = """
+                SELECT * FROM Cliente WHERE " + campo + " LIKE ?;
+                """;
 
-        if (campo.equals("email") || campo.equals("nombre"))
+        if (campo.equals("apellido") || campo.equals("nombre"))
         {
             System.out.print("Ingrese el " + campo + " a buscar: ");
             String valor = scan.nextLine();
@@ -245,12 +307,12 @@ public class ClienteDAO
             }
             catch (SQLException e) { System.out.println("❌ Error en la base de datos: " + e.getMessage()); }
         } else
-        { System.out.println("⚠️ Opción no válida. Debe ingresar 'email' o 'nombre'."); }
+        { System.out.println("⚠️ Opción no válida. Debe ingresar 'apellido' o 'nombre'."); }
     }
 
     // Para validaciones en ventas
     public static boolean existeCliente(int idCliente) {
-        String sql = "SELECT 1 FROM clientes WHERE id = ?";
+        String sql = "SELECT 1 FROM Cliente WHERE id = ?";
         try (Connection conn = DataBaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql))
         {

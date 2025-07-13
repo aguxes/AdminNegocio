@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class VentanaClientes {
 
     public static void cargarClientesEnLista(ArrayList<Cliente> lista) {
-        String sql = "SELECT * FROM clientes";
+        String sql = "SELECT * FROM Cliente";
 
         try (Connection conn = DataBaseConnection.getConnection();
              Statement stmt = conn.createStatement();
@@ -32,20 +32,21 @@ public class VentanaClientes {
         StringBuilder sb = new StringBuilder();
 
         // Encabezado
-        sb.append(String.format("%-5s %-15s %-15s %-15s %-35s %-15s %-15s\n",
-                "ID", "DNI", "Nombre", "Apellido", "Email", "Teléfono", "Localidad"));
+        sb.append(String.format("%-5s %-10s %-15s %-15s %-10s %-15s %-10s %-10s\n",
+                "ID", "DNI", "Nombre", "Apellido", "Género", "Nacionalidad", "Compras", "Tipo"));
         sb.append("----------------------------------------------------------------------------------------------------------\n");
 
         // Datos
         for (Cliente c : lista) {
-            sb.append(String.format("%-5d %-15s %-15s %-15s %-35s %-15s %-15s\n",
-                    c.getClienteID(),
+            sb.append(String.format("%-5d %-10d %-15s %-15s %-10d %-15d %-10d %-10d\n",
+                    c.getid(),
                     c.getDNI(),
                     c.getNombre(),
                     c.getApellido(),
-                    c.getEmail(),
-                    c.getTelefono(),
-                    c.getLocalidad()));
+                    c.getGenero(),
+                    c.getNacionalidad(),
+                    c.getCantCompras(),
+                    c.getTipCliente()));
         }
 
         return sb.toString();
@@ -54,7 +55,7 @@ public class VentanaClientes {
 
     public static String eliminarPorId(int id) {
         StringBuilder result = new StringBuilder();
-        String sql = "SELECT nombre FROM clientes WHERE id = ?";
+        String sql = "SELECT nombre FROM Cliente WHERE id = ?";
 
         try (Connection conn = DataBaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -65,7 +66,7 @@ public class VentanaClientes {
             if (rs.next()) {
                 String nombre = rs.getString("nombre");
 
-                String deleteSQL = "DELETE FROM clientes WHERE id = ?";
+                String deleteSQL = "DELETE FROM Cliente WHERE id = ?";
                 conn.setAutoCommit(false);
                 try (PreparedStatement deleteStmt = conn.prepareStatement(deleteSQL)) {
                     deleteStmt.setInt(1, id);
@@ -85,10 +86,10 @@ public class VentanaClientes {
     }
 
     public static Cliente obtenerClientePorId(int id) {
-        String sql = "SELECT * FROM clientes WHERE id = ?";
+        String query = "SELECT * FROM Cliente WHERE id = ?";
 
         try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -103,10 +104,10 @@ public class VentanaClientes {
     }
 
     public static String buscarNombrePorId(int id) {
-        String sql = "SELECT nombre, apellido FROM clientes WHERE id = ?";
+        String query = "SELECT nombre, apellido FROM Cliente WHERE id = ?";
 
         try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -125,10 +126,12 @@ public class VentanaClientes {
         ArrayList<Cliente> listaTemp = new ArrayList<>();
         StringBuilder resultado = new StringBuilder();
 
-        if (campo.equals("email") || campo.equals("nombre")) {
-            String sql = "SELECT * FROM clientes WHERE " + campo + " LIKE ?";
+        if (campo.equals("apellido") || campo.equals("nombre")) {
+            String query = """
+            SELECT * FROM Cliente WHERE " + campo + " LIKE ?;
+            """;
             try (Connection conn = DataBaseConnection.getConnection();
-                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
                 stmt.setString(1, "%" + valor + "%");
                 ResultSet rs = stmt.executeQuery();
@@ -155,11 +158,13 @@ public class VentanaClientes {
     }
 
     public static String insertar(Cliente cliente) {
-        String sql = "INSERT INTO clientes (nombre, email, telefono, localidad, apellido, dni) VALUES (?, ?, ?, ?, ?, ?)";
+        String query = """
+        INSERT INTO clientes (id, dni, nombre, apellido, tipCliente, cantCompras ) VALUES (?, ?, ?, ?, ?, ?)
+        """;
         StringBuilder resultado = new StringBuilder();
 
         try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql))
+             PreparedStatement stmt = conn.prepareStatement(query))
         {
             Mapper.setCliente(stmt, cliente);
             stmt.executeUpdate();
