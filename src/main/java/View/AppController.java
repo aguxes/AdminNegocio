@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 import Clases.Imprimible;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -204,9 +205,11 @@ public class AppController {
                 int tipoCliente = Integer.parseInt(txtTipoCliente.getText().trim());
                 int cantCompras = Integer.parseInt(txtCantidadCompras.getText().trim());
 
+                java.sql.Date fechaAlta = new java.sql.Date(System.currentTimeMillis()); // la unica forma de asignarle datetime.today en java que encontre
+
                 // Faltaria Llamar una funcion con validaciones acá. O en el diseño usar una herramienta para validar como son los RequiredFieldValidator en el VS
 
-                Cliente cliente = new Cliente(id, dni, nombre, apellido, genero, nacionalidad, tipoCliente, cantCompras);
+                Cliente cliente = new Cliente(dni, nombre, apellido, genero, nacionalidad, id, tipoCliente, fechaAlta, cantCompras); // falta fechaAlta
                 ClienteDAO.insertar(cliente);
 
                 outputArea.setText("✅ Cliente agregado correctamente.");

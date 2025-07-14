@@ -1,5 +1,5 @@
 package Clases;
-
+/*
 public class Empleado extends Persona implements Imprimible {
     private int empleadoID;
     private String fechaDeIngreso;
@@ -96,5 +96,6 @@ public class Empleado extends Persona implements Imprimible {
         } while (inputSueldo < 1);
     }
 
-     */
+
 }
+*/
