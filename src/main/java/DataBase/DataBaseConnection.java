@@ -25,6 +25,7 @@ public class DataBaseConnection {
         try { conn = DriverManager.getConnection(URL); }
         catch (SQLException e)
         {
+            e.printStackTrace();
             throw new RuntimeException("Error al conectar con la base de datos", e);
         }
     }

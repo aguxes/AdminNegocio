@@ -16,8 +16,6 @@ public class Mapper {
                 rs.getInt("DNI"),
                 rs.getString("nombre"),
                 rs.getString("apellido"),
-                rs.getInt("genero"),
-                rs.getInt("nacionalidad"),
                 rs.getInt("id"),
                 rs.getInt("tipCliente"),
                 rs.getDate("fechaAlta"),
@@ -29,8 +27,8 @@ public class Mapper {
         stmt.setInt(1, cliente.getid());
         stmt.setString(2, cliente.getNombre());
         stmt.setString(2, cliente.getApellido());
-        stmt.setInt(3, cliente.getGenero());
-        stmt.setInt(4, cliente.getNacionalidad());
+        //stmt.setInt(3, cliente.getGenero());
+        //stmt.setInt(4, cliente.getNacionalidad());
         stmt.setInt(3, cliente.getTipCliente());
         stmt.setInt(5, cliente.getCantCompras());
     }

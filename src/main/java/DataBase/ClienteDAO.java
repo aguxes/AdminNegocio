@@ -18,10 +18,9 @@ public class ClienteDAO
 {
     public static void cargarClientesEnLista(ArrayList<Imprimible> lista) {
         String query = """   
-        SELECT p.DNI, p.nombre, p.apellido, p.genero, p.nacionalidad, c.tipCliente,
+        SELECT p.DNI, c.id, p.nombre, p.apellido, c.tipCliente, c.fechaAlta, c.cantCompras
         FROM Cliente c
         INNER JOIN Persona p ON c.DNI = p.DNI;
-        LEFT JOIN TiposClientes t ON c.tipCliente = t.idTipo;
         """;
 
         try (Connection conn = DataBaseConnection.getConnection();
@@ -32,7 +31,10 @@ public class ClienteDAO
                 Cliente c = Mapper.getCliente(rs);
                 lista.add(c);
             }
-        } catch (SQLException e) { System.out.println("❌ Error al cargar clientes en lista: " + e.getMessage()); }
+        } catch (SQLException e) {
+            System.out.println("❌ Error al cargar clientes en lista: ");
+            e.printStackTrace();
+        }
     }
 
     public void eliminarPorId(Scanner scan) {
@@ -144,7 +146,7 @@ public class ClienteDAO
         System.out.print("Ingrese la cantidad de Compras del cliente: ");
         int cantCompras = scan.nextInt();
 
-        Cliente c = new Cliente(dni, nombre, apellido, genero, nacionalidad,
+        Cliente c = new Cliente(dni, nombre, apellido,
         id, tipCliente, fechaSQL, cantCompras);
 
         return c;
@@ -206,7 +208,7 @@ public class ClienteDAO
                 }
                 scan.nextLine();
 
-                System.out.print("Nuevo género (" + c.getGenero() + "): ");
+                /*System.out.print("Nuevo género (" + c.getGenero() + "): ");
                 if (scan.hasNextInt()) {
                     c.setGenero(scan.nextInt());
                 } else {
@@ -234,8 +236,7 @@ public class ClienteDAO
                         }
                     }
                 }
-                scan.nextLine();
-
+                scan.nextLine(); */
                 System.out.print("Nuevo tipo de cliente (" + c.getTipCliente() + "): ");
                 if (scan.hasNextInt()) {
                     c.setTipCliente(scan.nextInt());

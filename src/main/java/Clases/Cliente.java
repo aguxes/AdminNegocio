@@ -8,9 +8,8 @@ public class Cliente extends Persona implements Imprimible {
     private Date fechaAlta;
     private int cantCompras;
 
-    public Cliente(int dni, String nombre, String apellido, int genero, int nacionalidad,
-                   int id, int tipCliente, Date fechaAlta, int cantCompras) {
-        super(dni, nombre, apellido, genero, nacionalidad);
+    public Cliente(int dni, String nombre, String apellido, int id, int tipCliente, Date fechaAlta, int cantCompras) {
+        super(dni, nombre, apellido /*genero, nacionalidad*/);
         this.id = id;
         this.tipCliente = tipCliente;
         this.fechaAlta = fechaAlta;
@@ -31,6 +30,6 @@ public class Cliente extends Persona implements Imprimible {
     @Override
     public void imprimir() {
         System.out.printf("%-5d %-10s %-15s %-15s %-10s %-10s %-10d %-20s %-12s %-5d\n",
-                id, DNI, nombre, apellido, genero, nacionalidad, tipCliente, fechaAlta, cantCompras);
+                id, DNI, nombre, apellido, tipCliente, fechaAlta, cantCompras);
     }
 }
