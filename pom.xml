@@ -14,11 +14,11 @@
 <junit.version>5.10.2</junit.version>  </properties>
 <dependencies>
   <!-- SqlServer -->
-    <dependency>
+  <!--    <dependency>
       <groupId>com.microsoft.sqlserver</groupId>
       <artifactId>mssql-jdbc</artifactId>
       <version>12.10.1.jre11</version>
-    </dependency>
+    </dependency> -->
     <!-- JavaFX Controls -->
     <dependency>
       <groupId>org.openjfx</groupId>
