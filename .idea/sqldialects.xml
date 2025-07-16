@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/DER/CreateDatabase.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/DER/Search-Filters.sql" dialect="AZURE" />
     <file url="file://$PROJECT_DIR$/src/main/java/DataBase/ClienteDAO.java" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/src/main/java/DataBase/ProductoDAO.java" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/src/main/java/DataBase/VentaDAO.java" dialect="GenericSQL" />

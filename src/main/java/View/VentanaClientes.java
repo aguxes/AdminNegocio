@@ -11,7 +11,7 @@ public class VentanaClientes {
 
     public static void cargarClientesEnLista(ArrayList<Cliente> lista) {
         String sql = """   
-        SELECT p.DNI, c.id, p.nombre, p.apellido, c.tipCliente, c.fechaAlta, c.cantCompras
+        SELECT p.DNI, c.ID, p.nombre, p.apellido, c.idTipo, c.fechAlta, c.cantCompras
         FROM Cliente c
         INNER JOIN Persona p ON c.DNI = p.DNI;
         """;
@@ -26,7 +26,7 @@ public class VentanaClientes {
             }
 
         } catch (SQLException e) {
-            System.out.println("❌ Error al cargar clientes: " + e.getMessage());
+            System.out.println("❌ aError al cargar clientes: " + e.getMessage());
         }
     }
 

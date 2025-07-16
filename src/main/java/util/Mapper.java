@@ -16,9 +16,9 @@ public class Mapper {
                 rs.getInt("DNI"),
                 rs.getString("nombre"),
                 rs.getString("apellido"),
-                rs.getInt("id"),
-                rs.getInt("tipCliente"),
-                rs.getDate("fechaAlta"),
+                rs.getInt("ID"),
+                rs.getInt("idTipo"),
+                rs.getDate("fechAlta"),
                 rs.getInt("cantCompras")
         );
     }
