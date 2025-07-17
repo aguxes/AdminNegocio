@@ -5,6 +5,7 @@ import DataBase.DataBaseConnection;
 import util.Mapper;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class VentanaProducto {
@@ -51,6 +52,51 @@ public class VentanaProducto {
         return sb.toString();
     }
 
+    public static ArrayList<Producto> cargarProductosConDescripcion() {
+        ArrayList<Producto> lista = new ArrayList<>();
+        String sql = """
+        SELECT p.idProducto, p.nombre, p.precio, p.costo, p.stock, 
+               p.fechAlta, p.fechaBaja,
+               c.descripcion AS categoriaNombre,
+               m.descripcion AS medidaNombre
+        FROM Producto p
+        JOIN CategoriasProd c ON p.idCategoria = c.Categoria
+        JOIN MedidasProd m ON p.idMedida = m.unidadMedida
+    """;
+
+        try (Connection conn = DataBaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+
+
+            while (rs.next()) {
+                String fechaAltaStr = rs.getString("fechAlta");
+                String fechaBajaStr = rs.getString("fechaBaja");
+
+                LocalDate fechaAlta = (fechaAltaStr != null && !fechaAltaStr.isEmpty()) ? LocalDate.parse(fechaAltaStr) : null;
+                LocalDate fechaBaja = (fechaBajaStr != null && !fechaBajaStr.isEmpty()) ? LocalDate.parse(fechaBajaStr) : null;
+
+                Producto p = new Producto(
+                        rs.getInt("idProducto"),
+                        rs.getString("nombre"),
+                        rs.getDouble("precio"),
+                        rs.getDouble("costo"),
+                        rs.getInt("stock"),
+                        rs.getString("medidaNombre"),
+                        rs.getString("categoriaNombre"),
+                        fechaAlta,
+                        fechaBaja
+                );
+                lista.add(p);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("❌ Error al cargar productos con descripción: " + e.getMessage());
+        }
+
+        return lista;
+    }
 
 
 

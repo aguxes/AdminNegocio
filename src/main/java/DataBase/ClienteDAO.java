@@ -229,20 +229,22 @@ public class ClienteDAO
                 }
                 scan.nextLine(); */
                 System.out.print("Nuevo tipo de cliente (" + c.getTipCliente() + "): ");
+                /*
                 if (scan.hasNextInt()) {
+
                     c.setTipCliente(scan.nextInt());
                 } else {
                     String aux = scan.nextLine();
-                    if (!aux.isEmpty()) {
-                        try {
-                            c.setTipCliente(Integer.parseInt(aux));
-                        } catch (NumberFormatException e) {
-                            System.out.println("⚠️ Tipo inválido. Se mantiene el anterior.");
-                        }
-                    }
+                    //if (!aux.isEmpty()) {
+                        //try {
+                           // c.setTipCliente(Integer.parseInt(aux));
+                        //} catch (NumberFormatException e) {
+                        //    System.out.println("⚠️ Tipo inválido. Se mantiene el anterior.");
+                       // }
+                    //}
                 }
                 scan.nextLine();
-
+                */
                 System.out.print("Nueva cantidad de compras (" + c.getCantCompras() + "): ");
                 if (scan.hasNextInt()) { c.setCantCompras(scan.nextInt()); }
                 else {

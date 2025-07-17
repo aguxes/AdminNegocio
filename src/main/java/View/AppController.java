@@ -5,11 +5,14 @@ import Clases.Principales.*;
 import Clases.Extras.Telefono;
 
 import DataBase.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -17,6 +20,7 @@ import javafx.stage.Stage;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -168,10 +172,50 @@ public class AppController {
 
     // CLIENTES
     private void verClientes() {
-        var lista = new java.util.ArrayList<Cliente>();
-        VentanaClientes.cargarClientesEnLista(lista);
-        outputArea.setText(VentanaClientes.obtenerTextoClientes(lista));
+        contenedor.getChildren().clear();
+
+        TableView<Cliente> tabla = new TableView<>();
+        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tabla.setPlaceholder(new Label("No hay clientes cargados."));
+
+        TableColumn<Cliente, Integer> colDni = new TableColumn<>("DNI");
+        colDni.setCellValueFactory(new PropertyValueFactory<>("DNI"));
+
+        TableColumn<Cliente, String> colNombre = new TableColumn<>("Nombre");
+        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+
+        TableColumn<Cliente, String> colApellido = new TableColumn<>("Apellido");
+        colApellido.setCellValueFactory(new PropertyValueFactory<>("apellido"));
+
+        TableColumn<Cliente, Integer> colTipo = new TableColumn<>("Tipo Cliente");
+        colTipo.setCellValueFactory(new PropertyValueFactory<>("tipCliente"));
+
+        TableColumn<Cliente, Integer> colCompras = new TableColumn<>("Compras");
+        colCompras.setCellValueFactory(new PropertyValueFactory<>("cantCompras"));
+
+        TableColumn<Cliente, String> colTelefono = new TableColumn<>("Teléfono");
+        colTelefono.setCellValueFactory(data -> {
+            // Convertimos el objeto Telefono en String para la tabla
+            Telefono tel = data.getValue().getTelefono();
+            String t = (tel != null) ? String.valueOf(tel.getTelefono()) : "—";
+            return new javafx.beans.property.SimpleStringProperty(t);
+        });
+
+        tabla.getColumns().addAll( colDni, colNombre, colApellido, colTipo, colCompras, colTelefono);
+
+        // Cargar datos
+        ArrayList<Cliente> clientes = new ArrayList<>();
+        VentanaClientes.cargarClientesEnLista(clientes);
+        tabla.setItems(FXCollections.observableArrayList(clientes));
+
+        VBox layout = new VBox(10, new Label("👤 Lista de clientes"), tabla);
+        layout.setPadding(new Insets(20));
+
+        contenedor.getChildren().add(layout);
     }
+
+
+
 
     private void agregarCliente() {
         Stage ventana = new Stage();
@@ -207,7 +251,7 @@ public class AppController {
                 String apellido = txtApellido.getText().trim();
                 //int genero = Integer.parseInt(txtGenero.getText().trim());
                 //int nacionalidad = Integer.parseInt(txtNacionalidad.getText().trim());
-                int tipoCliente = Integer.parseInt(txtTipoCliente.getText().trim());
+                String tipCliente = txtNombre.getText().trim();
                 int cantCompras = Integer.parseInt(txtCantidadCompras.getText().trim());
                 long telefonox = Long.parseLong(txtTelefono.getText().trim());
 
@@ -224,7 +268,7 @@ public class AppController {
                         nombre,
                         apellido,
                         id,
-                        tipoCliente,
+                        tipCliente,
                         cantCompras,
                         telefono
                 );
@@ -255,9 +299,19 @@ public class AppController {
 
     // VENTAS
     private void verVentas() {
+        contenedor.getChildren().clear();
+
         ArrayList<Venta> lista = VentanaVentas.cargarVentasEnLista();
-        outputArea.setText(VentanaVentas.obtenerVentas(lista));
+        TextArea areaTexto = new TextArea(VentanaVentas.obtenerVentas(lista));
+        areaTexto.setEditable(false);
+        areaTexto.setWrapText(true);
+
+        VBox layout = new VBox(10, new Label("💵 Lista de Ventas"), areaTexto);
+        layout.setPadding(new Insets(20));
+
+        contenedor.getChildren().add(layout);
     }
+
 
     public void registrarVenta() {
         contenedor.getChildren().clear();
@@ -464,41 +518,66 @@ public class AppController {
         ventana.setTitle("Seleccionar Producto");
         ventana.initModality(Modality.APPLICATION_MODAL);
 
-        VBox root = new VBox(10);
-        root.setPadding(new Insets(10));
+        TableView<Producto> tabla = new TableView<>();
 
+        TableColumn<Producto, Integer> colId = new TableColumn<>("ID");
+        colId.setCellValueFactory(new PropertyValueFactory<>("productoID"));
+
+        TableColumn<Producto, String> colNombre = new TableColumn<>("Nombre");
+        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombreProducto"));
+
+        TableColumn<Producto, Double> colPrecio = new TableColumn<>("Precio");
+        colPrecio.setCellValueFactory(new PropertyValueFactory<>("precioUnitario"));
+
+        TableColumn<Producto, Double> colCosto = new TableColumn<>("Costo");
+        colCosto.setCellValueFactory(new PropertyValueFactory<>("costo"));
+
+        TableColumn<Producto, Integer> colStock = new TableColumn<>("Stock");
+        colStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
+
+        tabla.getColumns().addAll(colId, colNombre, colPrecio, colCosto, colStock);
+        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        // Obtener y cargar productos
         ArrayList<Producto> productos = new ArrayList<>();
         VentanaProducto.cargarProductosEnLista(productos);
+        tabla.setItems(FXCollections.observableArrayList(productos));
 
-        TextArea areaTexto = new TextArea(VentanaProducto.obtenerTextoProductos(productos));
-        areaTexto.setEditable(false);
-        areaTexto.setWrapText(true);
-        areaTexto.setPrefHeight(300);
-
+        // Campo de búsqueda por ID
         TextField idInput = new TextField();
         idInput.setPromptText("Ingrese ID del producto");
 
-        Button buscarBtn = new Button("🔍 Seleccionar");
-        buscarBtn.setOnAction(e -> {
+        Button btnSeleccionar = new Button("Seleccionar");
+        btnSeleccionar.setOnAction(e -> {
             try {
-                int idProducto = Integer.parseInt(idInput.getText().trim());
-                boolean existe = productos.stream().anyMatch(p -> p.getProductoID() == idProducto);
+                int idBuscado = Integer.parseInt(idInput.getText().trim());
+                Producto prod = productos.stream()
+                        .filter(p -> p.getProductoID() == idBuscado)
+                        .findFirst().orElse(null);
 
-                if (existe) {
-                    idProductoField.setText(String.valueOf(idProducto));
+                if (prod != null) {
+                    idProductoField.setText(String.valueOf(prod.getProductoID()));
                     ventana.close();
                 } else {
-                    mostrarAlerta("No se encontró ningún producto con ese ID.");
+                    mostrarAlerta("❌ No se encontró ningún producto con ese ID.");
                 }
-
             } catch (NumberFormatException ex) {
                 mostrarAlerta("ID inválido.");
             }
         });
 
-        root.getChildren().addAll(areaTexto, idInput, buscarBtn);
+        // Doble clic en fila para seleccionar
+        tabla.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2 && tabla.getSelectionModel().getSelectedItem() != null) {
+                Producto seleccionado = tabla.getSelectionModel().getSelectedItem();
+                idProductoField.setText(String.valueOf(seleccionado.getProductoID()));
+                ventana.close();
+            }
+        });
 
-        Scene scene = new Scene(root, 650, 400);
+        VBox layout = new VBox(10, tabla, idInput, btnSeleccionar);
+        layout.setPadding(new Insets(10));
+        Scene scene = new Scene(layout, 650, 450);
         ventana.setScene(scene);
         ventana.showAndWait();
     }
@@ -557,9 +636,52 @@ public class AppController {
 
 
     // INVENTARIO
-    private void verProductos() {
-        outputArea.setText("📦 Lista de productos...");
+    public void verProductos() {
+        contenedor.getChildren().clear();
+
+        TableView<Producto> tabla = new TableView<>();
+        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tabla.setPlaceholder(new Label("No hay productos cargados."));
+
+        TableColumn<Producto, Integer> colId = new TableColumn<>("ID");
+        colId.setCellValueFactory(new PropertyValueFactory<>("productoID"));
+
+        TableColumn<Producto, String> colNombre = new TableColumn<>("Nombre");
+        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombreProducto"));
+
+        TableColumn<Producto, Double> colPrecio = new TableColumn<>("Precio");
+        colPrecio.setCellValueFactory(new PropertyValueFactory<>("precioUnitario"));
+
+        TableColumn<Producto, Double> colCosto = new TableColumn<>("Costo");
+        colCosto.setCellValueFactory(new PropertyValueFactory<>("costo"));
+
+        TableColumn<Producto, Integer> colStock = new TableColumn<>("Stock");
+        colStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
+
+        TableColumn<Producto, String> colCategoria = new TableColumn<>("Categoría");
+        colCategoria.setCellValueFactory(new PropertyValueFactory<>("categoriaNombre"));
+
+        TableColumn<Producto, String> colMedida = new TableColumn<>("Medida");
+        colMedida.setCellValueFactory(new PropertyValueFactory<>("medidaNombre"));
+
+        TableColumn<Producto, LocalDate> colAlta = new TableColumn<>("Fecha Alta");
+        colAlta.setCellValueFactory(new PropertyValueFactory<>("fechaAlta"));
+
+        TableColumn<Producto, LocalDate> colBaja = new TableColumn<>("Fecha Baja");
+        colBaja.setCellValueFactory(new PropertyValueFactory<>("fechaBaja"));
+
+        tabla.getColumns().addAll(colId, colNombre, colPrecio, colCosto, colStock, colCategoria, colMedida, colAlta, colBaja);
+
+        ArrayList<Producto> lista = VentanaProducto.cargarProductosConDescripcion();
+        tabla.setItems(FXCollections.observableArrayList(lista));
+
+        VBox layout = new VBox(10, new Label("📦 Lista de productos"), tabla);
+        layout.setPadding(new Insets(20));
+
+        contenedor.getChildren().add(layout);
     }
+
+
 
     private void agregarProducto() {
         outputArea.setText("➕ Formulario para agregar producto.");

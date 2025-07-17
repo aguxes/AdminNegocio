@@ -4,11 +4,13 @@ import Clases.Extras.Telefono;
 
 public class Cliente extends Persona implements Imprimible {
     private int id;
-    private int tipCliente;
+    private String tipCliente;
     private int cantCompras;
     private Telefono telefono;
+    private String nombreTipoCliente; // opcional
 
-    public Cliente(int dni, String nombre, String apellido, int id, int tipCliente, int cantCompras, Telefono telefono) {
+
+    public Cliente(int dni, String nombre, String apellido, int id, String tipCliente, int cantCompras, Telefono telefono) {
         super(dni, nombre, apellido /*genero, nacionalidad*/);
         this.id = id;
         this.tipCliente = tipCliente;
@@ -18,8 +20,11 @@ public class Cliente extends Persona implements Imprimible {
     public int getid() { return id; }
     public void setid(int id) { this.id = id; }
 
-    public int getTipCliente() { return tipCliente; }
-    public void setTipCliente(int tipCliente) { this.tipCliente = tipCliente; }
+    public String getTipCliente() {
+        return tipCliente;
+    }
+
+    public void setTipCliente(String tipCliente) { this.tipCliente = tipCliente; }
 
     public int getCantCompras() { return cantCompras; }
     public void setCantCompras(int cantCompras) { this.cantCompras = cantCompras; }

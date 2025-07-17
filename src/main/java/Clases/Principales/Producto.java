@@ -32,6 +32,22 @@ public class Producto implements Imprimible {
         this.fechaBaja = fechaBaja;
     }
 
+    //aca se usan los atributos opcionales de arriba
+    public Producto(int productoID, String nombreProducto, double precioUnitario, double costo, int stock,
+                    String nombreUnidadMedida, String nombreCategoria,
+                    LocalDate fechaAlta, LocalDate fechaBaja) {
+        this.productoID = productoID;
+        this.nombreProducto = nombreProducto;
+        this.precioUnitario = precioUnitario;
+        this.costo = costo;
+        this.stock = stock;
+        this.nombreUnidadMedida = nombreUnidadMedida;
+        this.nombreCategoria = nombreCategoria;
+        this.fechaAlta = fechaAlta;
+        this.fechaBaja = fechaBaja;
+    }
+
+
     // Getters y setters
     public int getProductoID() { return productoID; }
     public String getNombreProducto() { return nombreProducto; }
@@ -43,6 +59,9 @@ public class Producto implements Imprimible {
     public LocalDate getFechaAlta() { return fechaAlta; }
     public LocalDate getFechaBaja() { return fechaBaja; }
 
+    public String getMedidaNombre() {return nombreUnidadMedida;}
+
+    public String getCategoriaNombre() {return nombreCategoria;}
 
 
     // Métodos para impresión

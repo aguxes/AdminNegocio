@@ -12,11 +12,21 @@ public class VentanaClientes {
 
     public static void cargarClientesEnLista(ArrayList<Cliente> lista) {
         String sql = """
-        SELECT p.DNI, c.ID, p.nombre, p.apellido, c.idTipo, c.cantCompras, t.telefono
-        FROM Cliente c
-        INNER JOIN Persona p ON c.DNI = p.DNI
-        LEFT JOIN Telefonos t ON t.idPersona = p.DNI
-        """;
+
+    SELECT
+    p.DNI,
+    p.nombre,
+    p.apellido,
+    tc.descripcion AS tipoCliente,
+    c.cantCompras,
+    t.telefono
+FROM Cliente c
+INNER JOIN Persona p ON c.DNI = p.DNI
+LEFT JOIN Telefonos t ON t.idPersona = p.DNI
+INNER JOIN TiposClientes tc ON c.idTipo = tc.tipo
+
+""";
+
 
         try (Connection conn = DataBaseConnection.getConnection();
              Statement stmt = conn.createStatement();
@@ -38,14 +48,13 @@ public class VentanaClientes {
         StringBuilder sb = new StringBuilder();
 
         // Encabezado
-        sb.append(String.format("%-5s %-10s %-15s %-15s %-10s %-10s %-15s\n",
-                "ID", "DNI", "Nombre", "Apellido", "Compras", "Tipo", "Teléfono"));
+        sb.append(String.format("%-10s %-15s %-15s %-10s %-10s %-15s\n",
+                 "DNI", "Nombre", "Apellido", "Compras", "Tipo", "Teléfono"));
         sb.append("----------------------------------------------------------------------------------------------------------\n");
 
         // Datos
         for (Cliente c : lista) {
-            sb.append(String.format("%-5d %-10d %-15s %-15s %-10d %-10d %-15s\n",
-                    c.getid(),
+            sb.append(String.format(" %-10d %-15s %-15s %-10d %-10s %-15s\n",
                     c.getDNI(),
                     c.getNombre(),
                     c.getApellido(),

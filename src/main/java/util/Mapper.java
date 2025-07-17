@@ -31,26 +31,23 @@ public class Mapper {
     // ========================================
     public static Cliente getCliente(ResultSet rs) throws SQLException {
 
-        Cliente c = new Cliente(
+        return new Cliente(
                 rs.getInt("DNI"),
                 rs.getString("nombre"),
                 rs.getString("apellido"),
-                rs.getInt("ID"),
-                rs.getInt("idTipo"),
+                rs.getInt("tipoCliente"),                // ID FK
+                rs.getString("tipoCliente"),        // Descripción del tipo
                 rs.getInt("cantCompras"),
-                new Telefono(
-                        rs.getInt("DNI"),
-                        rs.getLong("telefono")
-                )
+                new Telefono(rs.getInt("DNI"), rs.getLong("telefono"))
         );
 
-        return c;
+
     }
 
     public static void setCliente(PreparedStatement stmt, Cliente c) throws SQLException {
         stmt.setInt(2, c.getDNI());
         stmt.setInt(1, c.getid());
-        stmt.setInt(3, c.getTipCliente());
+        stmt.setString(3, c.getTipCliente());
         stmt.setInt(5, c.getCantCompras());
         //stmt.setInt(c.getTelefono());
     }
@@ -77,7 +74,7 @@ public class Mapper {
                 fecha,
                 rs.getString("medio_pago"),
                 rs.getBigDecimal("total"),
-                rs.getString("producto_nombre"), // ahora es producto, no notas
+                rs.getString("producto_nombre"),
                 rs.getString("cliente_nombre"),
                 rs.getString("empleado_nombre")
         );

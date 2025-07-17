@@ -171,3 +171,8 @@ HBox {
     -fx-text-fill: black;
     -fx-background-color: #ffffff;
 }
+
+.table-view {
+    -fx-font-size: 14px;
+    -fx-font-family: "Segoe UI";
+}

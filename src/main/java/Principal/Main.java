@@ -10,6 +10,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
+
         ArrayList<Imprimible> listaClientes = new ArrayList<>();
         ArrayList<Imprimible> listaVentas = new ArrayList<>();
         ArrayList<Imprimible> listaProdutos = new ArrayList<>();
