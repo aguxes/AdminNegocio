@@ -152,24 +152,24 @@ public class MetodosSwitch {
 
                 switch(opcion){
                     case 1: // Ver productos
-                        daoProducto.mostrarProductos();
+                        //daoProducto.mostrarProductos();
                         break;
 
                     case 2: // Agregar nuevo producto
-                        Producto p = daoProducto.agregarProductoPorConsola(scan);
-                        daoProducto.insertar(p);
+                        //Producto p = daoProducto.agregarProductoPorConsola(scan);
+                        //daoProducto.insertar(p);
                         break;
 
                     case 3: // Modificar producto
-                        daoProducto.modificarProductoPorId(scan);
+                        //daoProducto.modificarProductoPorId(scan);
                         break;
 
                     case 4: // Eliminar producto
-                        daoProducto.eliminarProductoPorId(scan);
+                        //daoProducto.eliminarProductoPorId(scan);
                         break;
 
                     case 5: // Buscar producto por nombre o código
-                        daoProducto.buscarProductoPorNombreOCodigo(scan);
+                        //daoProducto.buscarProductoPorNombreOCodigo(scan);
                         break;
                     case 6:
                         return;

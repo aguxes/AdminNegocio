@@ -12,26 +12,16 @@ import javafx.scene.layout.VBox;
 import Clases.Principales.Cliente;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-
 public class AppController {
-
     @FXML private VBox menuLateral;
     @FXML private TextArea outputArea;
-
-
-    private Cliente clienteAEliminar; // Variable temporal para eliminar
-
     @FXML
     public void initialize() {
         cargarMenuPrincipal();
     }
-
-
-
 
     private void cargarMenuPrincipal() {
         menuLateral.getChildren().clear();
@@ -160,7 +150,6 @@ public class AppController {
         ventana.showAndWait();
     }
 
-
     // CLIENTES
     private void verClientes() {
         var lista = new java.util.ArrayList<Cliente>();
@@ -230,7 +219,6 @@ public class AppController {
     private void modificarCliente() {
         outputArea.setText("✏️ Función modificar cliente (en construcción)");
     }
-
 
     // VENTAS
     private void verVentas() {
@@ -312,8 +300,6 @@ public class AppController {
         ventana.initModality(Modality.APPLICATION_MODAL);
         ventana.showAndWait();
     }
-
-
 
     private void ventasPorCliente() {
         outputArea.setText("📄 Ventas filtradas por cliente.");

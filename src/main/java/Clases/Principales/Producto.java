@@ -2,69 +2,71 @@ package Clases.Principales;
 
 import Clases.Imprimible;
 
+import java.time.LocalDate;
+
 public class Producto implements Imprimible {
     private int productoID;
     private String nombreProducto;
-    private String descripcionProducto;
     private double precioUnitario;
     private double costo;
     private int stock;
-    private String unidadMedida;
 
-    public Producto(int productoID, String nombreProducto, String descripcionProducto, double precioUnitario, double costo, int stock, String unidadMedida) {
+    private int idUnidadMedida;
+    private int idCategoria;
+    private LocalDate fechaAlta;
+    private LocalDate fechaBaja;
+
+    // Opcionales si hacés JOINs para mostrar
+    private String nombreUnidadMedida; // opcional
+    private String nombreCategoria;    // opcional
+
+    // Constructor principal
+    public Producto(int productoID, String nombreProducto, double precioUnitario, double costo, int stock,
+                    int idUnidadMedida, int idCategoria, LocalDate fechaAlta, LocalDate fechaBaja) {
         this.productoID = productoID;
         this.nombreProducto = nombreProducto;
-        this.descripcionProducto = descripcionProducto;
         this.precioUnitario = precioUnitario;
         this.costo = costo;
         this.stock = stock;
-        this.unidadMedida = unidadMedida;
+        this.idUnidadMedida = idUnidadMedida;
+        this.idCategoria = idCategoria;
+        this.fechaAlta = fechaAlta;
+        this.fechaBaja = fechaBaja;
     }
 
-    public Producto(String nombreProducto, String descripcionProducto, double precioUnitario, double costo, int stock, String unidadMedida) {
-        this(0, nombreProducto, descripcionProducto, precioUnitario, costo, stock, unidadMedida);
-    }
+    // Getters y setters
+    public int getProductoID() { return productoID; }
+    public String getNombreProducto() { return nombreProducto; }
+    public double getPrecioUnitario() { return precioUnitario; }
+    public double getCosto() { return costo; }
+    public int getStock() { return stock; }
+    public int getIdUnidadMedida() { return idUnidadMedida; }
+    public int getIdCategoria() { return idCategoria; }
+    public LocalDate getFechaAlta() { return fechaAlta; }
+    public LocalDate getFechaBaja() { return fechaBaja; }
 
-    public double getCosto() {return costo;}
 
-    public void setCosto(double costo) {this.costo = costo;}
 
-    public String getUnidadMedida() {return unidadMedida;}
-
-    public void setUnidadMedida(String unidadMedida) {this.unidadMedida = unidadMedida;}
-
-    public String getDescripcionProducto() {return descripcionProducto;}
-
-    public void setDescripcionProducto(String descripcionProducto) {this.descripcionProducto = descripcionProducto;}
-
-    public int getProductoID() {return productoID;}
-
-    public void setProductoID(int productoID) {this.productoID = productoID;}
-
-    public String getNombreProducto() {return nombreProducto;}
-
-    public void setNombreProducto(String nombreProducto) {this.nombreProducto = nombreProducto;}
-
-    public double getPrecioUnitario() {return precioUnitario;}
-
-    public void setPrecioUnitario(double precioUnitario) {this.precioUnitario = precioUnitario;}
-
-    public int getStock() {return stock;}
-
-    public void setStock(int stock) {this.stock = stock;}
-
-    @Override
-    public void imprimir() {
-        System.out.printf("%-5d %-20s %-40s %-10.2f %-10.2f %-10d %-15s\n",
-                productoID, nombreProducto, descripcionProducto, precioUnitario, costo, stock, unidadMedida);
-    }
-
-    @Override
+    // Métodos para impresión
     public void imprimirEncabezado() {
-        System.out.printf("%-5s %-20s %-40s %-10s %-10s %-10s %-15s\n",
-                "ID", "Nombre", "Descripción", "Precio", "Costo", "Stock", "Unidad");
-        System.out.println("-------------------------------------------------------------------------------------------------");
+        System.out.printf("%-5s %-20s %-10s %-10s %-10s\n",
+                "ID", "Nombre", "Precio", "Costo", "Stock");
+        System.out.println("---------------------------------------------------");
     }
+    public void imprimir() {
+        System.out.printf("%-5d %-20s %-10.2f %-10.2f %-10d\n",
+                productoID, nombreProducto, precioUnitario, costo, stock);
+    }
+}
+
+
+
+
+
+
+
+
+
     /*
         int Producto::getID() { return productoID; }
     const char* Producto::getNombre() { return nombreProducto; }
@@ -166,4 +168,4 @@ public class Producto implements Imprimible {
         Menu::setColor(7);
     }
     */
-}
+

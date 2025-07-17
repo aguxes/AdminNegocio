@@ -20,7 +20,7 @@ public class App extends Application {
         // 👉 Conectás el CSS acá
         scene.getStylesheets().add(App.class.getResource("/Estilos/estilos.css").toExternalForm());
 
-        stage.setTitle("Que lees virgo");
+        stage.setTitle("Admin Negocio");
         stage.setScene(scene);
         stage.show();
     }

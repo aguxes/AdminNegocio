@@ -14,6 +14,9 @@ public class Venta implements Imprimible {
     private String medioPago;
     private BigDecimal importeTotal;
     private String notas;
+    private int idProducto;
+    private int idFormaDePago;
+    private BigDecimal subtotal;
 
     private String nombreCliente;
     private String nombreEmpleado;
@@ -45,6 +48,9 @@ public class Venta implements Imprimible {
     public void setFecha(LocalDateTime fecha) { this.fecha = fecha; }
     public void setMedioPago(String medioPago) { this.medioPago = medioPago; }
     public void setNotas(String notas) { this.notas = notas; }
+    public int getIdProducto() {return idProducto;}
+    public int getIdFormaDePago() {return idFormaDePago;}
+    public BigDecimal getSubtotal() {return subtotal;}
 
     @Override
     public void imprimir() {

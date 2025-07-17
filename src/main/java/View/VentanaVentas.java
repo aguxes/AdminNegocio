@@ -15,13 +15,16 @@ public class VentanaVentas {
         ArrayList<Venta> lista = new ArrayList<>();
 
         String sql = """
-                SELECT v.id, v.cliente_id, v.empleado_id, v.fecha, v.total, v.medio_pago, v.notas,
-                c.nombre || ' ' || c.apellido AS cliente_nombre,
-                e.nombre || ' ' || e.puesto AS empleado_nombre
-                FROM ventas v
-                INNER JOIN clientes c ON v.cliente_id = c.id
-                INNER JOIN empleados e ON v.empleado_id = e.id;
-                """;
+        SELECT v.nFactura, v.idC, v.idE, v.fecha, v.total, fp.descripcion AS medio_pago, v.subtotal,
+               pc.nombre || ' ' || pc.apellido AS cliente_nombre,
+               pe.nombre || ' ' || pe.apellido AS empleado_nombre
+                FROM Venta v
+                INNER JOIN Cliente c ON v.idC = c.ID
+                INNER JOIN Persona pc ON c.DNI = pc.DNI
+                INNER JOIN Empleado e ON v.idE = e.ID
+                INNER JOIN Persona pe ON e.DNI = pe.DNI
+                INNER JOIN FormaDePagos fp ON v.formaDePago = fp.idPago;
+    """;
 
         try (Connection conn = DataBaseConnection.getConnection();
              var stmt = conn.createStatement();

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ProductoDAO {
+   /*
     public void mostrarProductos() {
         ArrayList<Imprimible> temp = new ArrayList<>();
         String sql = "SELECT * FROM productos";
@@ -173,5 +174,5 @@ public class ProductoDAO {
             System.out.println("❌ Error al buscar producto: " + e.getMessage());
         }
     }
-
+*/
 }
