@@ -1,8 +1,7 @@
 package DataBase;
 
-import Clases.Cliente;
 import Clases.Imprimible;
-import Clases.Producto;
+import Clases.Principales.Producto;
 
 import java.sql.*;
 import java.util.ArrayList;

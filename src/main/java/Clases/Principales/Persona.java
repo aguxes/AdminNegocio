@@ -1,11 +1,11 @@
-package Clases;
+package Clases.Principales;
 
 public class Persona {
     protected int DNI;
     protected String nombre;
     protected String apellido;
-    //protected int genero;
-    //protected int nacionalidad;
+    //protected Genero genero;
+    //protected Paises nacionalidad;
 
     public Persona(int dni, String nombre, String apellido /*int genero, int nacionalidad*/) {
         this.DNI = dni;

@@ -1,4 +1,4 @@
-package Clases;
+package Clases.Principales;
 /*
 public class Empleado extends Persona implements Imprimible {
     private int empleadoID;

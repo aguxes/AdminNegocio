@@ -1,4 +1,4 @@
-package Clases;
+package Clases.Extras;
 
 public class Telefono {
     private int idPersona;  // DNI en este caso

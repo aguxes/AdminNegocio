@@ -2,12 +2,11 @@ package DataBase;
 
 //import Clases.Empleado;
 import Clases.Imprimible;
-import Clases.Venta;
+import Clases.Principales.Venta;
 import util.Mapper;
 
 import java.sql.*;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Scanner;
 

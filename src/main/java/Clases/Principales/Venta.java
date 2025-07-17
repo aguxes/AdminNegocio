@@ -1,6 +1,7 @@
-package Clases;
+package Clases.Principales;
 
-import java.io.Serializable;
+import Clases.Imprimible;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 

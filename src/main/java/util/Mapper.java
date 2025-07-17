@@ -1,8 +1,9 @@
 package util;
 
-import Clases.Cliente;
-import Clases.Telefono;
-import Clases.Venta;
+import Clases.Principales.Persona;
+import Clases.Principales.Cliente;
+import Clases.Extras.Telefono;
+import Clases.Principales.Venta;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -10,6 +11,21 @@ import java.time.format.DateTimeFormatter;
 
 public class Mapper {
 
+    // Mapeo de Persona
+    // ========================================
+    public static Persona getPersona (ResultSet rs) throws SQLException {
+        Persona p = new Persona (
+                rs.getInt("DNI"),
+                rs.getString("nombre"),
+                rs.getString("apellido")
+        );
+        return p;
+    }
+    public static void setPersona(PreparedStatement stmt, Persona p) throws SQLException {
+        stmt.setInt(1, p.getDNI());
+        stmt.setString(2, p.getNombre());
+        stmt.setString(3, p.getApellido());
+    }
     // Mapeo de Cliente
     // ========================================
     public static Cliente getCliente(ResultSet rs) throws SQLException {
@@ -29,15 +45,13 @@ public class Mapper {
 
         return c;
     }
-    public static void setCliente(PreparedStatement stmt, Cliente cliente) throws SQLException {
-        stmt.setInt(2, cliente.getDNI());
-        stmt.setInt(1, cliente.getid());
-        stmt.setString(2, cliente.getNombre());
-        stmt.setString(2, cliente.getApellido());
-        //stmt.setInt(3, cliente.getGenero());
-        //stmt.setInt(4, cliente.getNacionalidad());
-        stmt.setInt(3, cliente.getTipCliente());
-        stmt.setInt(5, cliente.getCantCompras());
+    public static void setCliente(PreparedStatement stmt, Cliente c) throws SQLException {
+        stmt.setInt(2, c.getDNI());
+        stmt.setInt(1, c.getid());
+        stmt.setString(2, c.getNombre());
+        stmt.setString(2, c.getApellido());
+        stmt.setInt(3, c.getTipCliente());
+        stmt.setInt(5, c.getCantCompras());
     }
 
     // Mapeo de Venta

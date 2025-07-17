@@ -1,6 +1,6 @@
 package View;
 
-import Clases.Cliente;
+import Clases.Principales.Cliente;
 import DataBase.DataBaseConnection;
 import util.Mapper;
 

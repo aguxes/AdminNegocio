@@ -1,6 +1,5 @@
 package Principal;
 
-import Clases.Cliente;
 import Clases.*;
 import DataBase.*;
 

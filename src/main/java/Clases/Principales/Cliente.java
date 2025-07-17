@@ -1,6 +1,7 @@
-package Clases;
+package Clases.Principales;
 
-import java.sql.Date;
+import Clases.Imprimible;
+import Clases.Extras.Telefono;
 
 public class Cliente extends Persona implements Imprimible {
     private int id;

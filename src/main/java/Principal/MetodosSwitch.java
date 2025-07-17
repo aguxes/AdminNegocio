@@ -1,5 +1,6 @@
 package Principal;
 import Clases.*;
+import Clases.Principales.Producto;
 import DataBase.ClienteDAO;
 import DataBase.ProductoDAO;
 import DataBase.ReportesDAO;

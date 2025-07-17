@@ -1,4 +1,6 @@
-package Clases;
+package Clases.Principales;
+
+import Clases.Imprimible;
 
 public class Producto implements Imprimible {
     private int productoID;

@@ -1,6 +1,6 @@
 package DataBase;
 
-import Clases.Cliente;
+import Clases.Principales.Cliente;
 import Clases.Imprimible;
 import util.Mapper;
 
@@ -9,10 +9,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /// Extras
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class ClienteDAO
 {

@@ -1,6 +1,6 @@
 package View;
 
-import Clases.Venta;
+import Clases.Principales.Venta;
 import DataBase.*;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -9,13 +9,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import Clases.Cliente;
+import Clases.Principales.Cliente;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import Clases.Imprimible;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
