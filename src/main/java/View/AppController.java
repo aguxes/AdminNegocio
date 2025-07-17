@@ -1,6 +1,11 @@
 package View;
 
+import Clases.Principales.Persona;
+import Clases.Principales.Cliente;
 import Clases.Principales.Venta;
+
+import Clases.Extras.Telefono;
+
 import DataBase.*;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -9,7 +14,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import Clases.Principales.Cliente;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.math.BigDecimal;
@@ -169,6 +173,7 @@ public class AppController {
         //TextField txtNacionalidad = new TextField();
         TextField txtTipoCliente = new TextField();
         TextField txtCantidadCompras = new TextField();
+        TextField txtTelefono = new TextField();
 
         txtID.setPromptText("ID");
         txtDNI.setPromptText("DNI");
@@ -178,12 +183,13 @@ public class AppController {
         //txtNacionalidad.setPromptText("Nacionalidad");
         txtTipoCliente.setPromptText("Tipo de Cliente");
         txtCantidadCompras.setPromptText("Cantidad de Compras");
+        txtTelefono.setPromptText("Telefono");
 
         Button btnGuardar = new Button("Guardar");
 
         btnGuardar.setOnAction(e -> {
             try {
-                int id = Integer.parseInt(txtID.getText().trim());
+                int id = Integer.parseInt(txtID.getText().trim()); //es autogenerado
                 int dni = Integer.parseInt(txtDNI.getText().trim());
                 String nombre = txtNombre.getText().trim();
                 String apellido = txtApellido.getText().trim();
@@ -191,15 +197,29 @@ public class AppController {
                 //int nacionalidad = Integer.parseInt(txtNacionalidad.getText().trim());
                 int tipoCliente = Integer.parseInt(txtTipoCliente.getText().trim());
                 int cantCompras = Integer.parseInt(txtCantidadCompras.getText().trim());
+                long telefonox = Long.parseLong(txtTelefono.getText().trim());
 
+                Telefono telefono = new Telefono(dni, telefonox);
                 // la unica forma de asignarle datetime.today en java que encontre
 
                 // Faltaria Llamar una funcion con validaciones acá. O en el diseño usar una herramienta para validar como son los RequiredFieldValidator en el VS
 
                 //Cliente cliente = new Cliente(dni, nombre, apellido, id, tipoCliente, cantCompras); // falta fechaAlta
                 //ClienteDAO.insertar(cliente);
-                VentanaClientes.insertar()
-                outputArea.setText(VentanaClientes.insertar());
+
+                Cliente c = new Cliente(
+                        dni,
+                        nombre,
+                        apellido,
+                        id,
+                        tipoCliente,
+                        cantCompras,
+                        telefono
+                );
+                Persona p = c;
+
+                VentanaClientes.insertar(c, p);
+                outputArea.setText(VentanaClientes.insertar(c, p));
                 outputArea.setText("✅ Cliente agregado correctamente.");
                 ventana.close();
             } catch (NumberFormatException ex) {
@@ -207,7 +227,7 @@ public class AppController {
             }
         });
 
-        VBox layout = new VBox(10, txtID, txtDNI, txtNombre, txtApellido, /* txtGenero, txtNacionalidad, */ txtTipoCliente, txtCantidadCompras, btnGuardar);
+        VBox layout = new VBox(10, txtID, txtDNI, txtNombre, txtApellido, /* txtGenero, txtNacionalidad, */ txtTipoCliente, txtCantidadCompras, txtTelefono, btnGuardar);
         layout.setPadding(new Insets(20));
         layout.setAlignment(Pos.CENTER);
 

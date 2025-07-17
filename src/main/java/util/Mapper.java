@@ -53,6 +53,7 @@ public class Mapper {
         stmt.setInt(1, c.getid());
         stmt.setInt(3, c.getTipCliente());
         stmt.setInt(5, c.getCantCompras());
+        //stmt.setInt(c.getTelefono());
     }
 
     // Mapeo de Venta
