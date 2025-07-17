@@ -375,8 +375,6 @@ public class AppController {
         contenedor.getChildren().add(form);
     }
 
-
-
     private void mostrarVentanaSeleccionCliente(TextField idClienteField) {
         Stage ventana = new Stage();
         ventana.setTitle("Seleccionar Cliente");
@@ -419,7 +417,6 @@ public class AppController {
         ventana.setScene(scene);
         ventana.showAndWait();
     }
-
     private void mostrarVentanaSeleccionEmpleado(TextField idEmpleadoField) {
         Stage ventana = new Stage();
         ventana.setTitle("Seleccionar Empleado");
@@ -462,7 +459,6 @@ public class AppController {
         ventana.setScene(scene);
         ventana.showAndWait();
     }
-
     private void mostrarVentanaSeleccionProducto(TextField idProductoField) {
         Stage ventana = new Stage();
         ventana.setTitle("Seleccionar Producto");
@@ -506,7 +502,6 @@ public class AppController {
         ventana.setScene(scene);
         ventana.showAndWait();
     }
-
     private void mostrarAlerta(String mensaje) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Información");
@@ -517,8 +512,49 @@ public class AppController {
 
 
     private void ventasPorCliente() {
-        outputArea.setText("📄 Ventas filtradas por cliente.");
+        Stage ventana = new Stage();
+        ventana.setTitle("Ventas por Cliente");
+        ventana.initModality(Modality.APPLICATION_MODAL);
+
+        VBox layout = new VBox(10);
+        layout.setPadding(new Insets(15));
+
+        // Mostrar lista de clientes
+        ArrayList<Cliente> clientes = new ArrayList<>();
+        VentanaClientes.cargarClientesEnLista(clientes);
+        TextArea areaTexto = new TextArea(VentanaClientes.obtenerTextoClientes(clientes));
+        areaTexto.setEditable(false);
+        areaTexto.setWrapText(true);
+        areaTexto.setPrefHeight(300);
+
+        // Campo para ingresar DNI
+        TextField dniInput = new TextField();
+        dniInput.setPromptText("Ingrese DNI del cliente");
+
+        Button buscarBtn = new Button("🔍 Buscar Ventas");
+        buscarBtn.setOnAction(e -> {
+            try {
+                int dni = Integer.parseInt(dniInput.getText().trim());
+                Integer id = VentanaClientes.obtenerIdClientePorDni(dni);
+
+                if (id != null) {
+                    ArrayList<Venta> ventas = VentanaVentas.obtenerVentasPorCliente(id);
+                    outputArea.setText(VentanaVentas.obtenerVentas(ventas));
+                    ventana.close();
+                } else {
+                    mostrarAlerta("❌ No se encontró ningún cliente con ese DNI.");
+                }
+            } catch (NumberFormatException ex) {
+                mostrarAlerta("❌ DNI inválido.");
+            }
+        });
+
+        layout.getChildren().addAll(areaTexto, dniInput, buscarBtn);
+        Scene escena = new Scene(layout, 600, 450);
+        ventana.setScene(escena);
+        ventana.showAndWait();
     }
+
 
     // INVENTARIO
     private void verProductos() {

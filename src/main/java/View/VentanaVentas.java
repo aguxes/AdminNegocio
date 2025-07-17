@@ -5,6 +5,8 @@ import DataBase.DataBaseConnection;
 import util.Mapper;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -74,6 +76,46 @@ public class VentanaVentas {
         if (input == null || input.isEmpty()) return "";
         return input.substring(0, 1).toUpperCase() + input.substring(1).toLowerCase();
     }
+
+    public static ArrayList<Venta> obtenerVentasPorCliente(int idCliente) {
+        ArrayList<Venta> lista = new ArrayList<>();
+
+        //esta consulta me la paso chat, debe poder mejorarse pero no se bien como
+        String sql = """
+        SELECT v.nFactura, v.idC, v.idE, v.fecha, v.total, v.subtotal,
+               fp.descripcion AS medio_pago,
+               pc.nombre || ' ' || pc.apellido AS cliente_nombre,
+               pe.nombre || ' ' || pe.apellido AS empleado_nombre,
+               pr.nombre AS producto_nombre
+        FROM Venta v
+        JOIN Cliente c ON v.idC = c.ID
+        JOIN Persona pc ON c.DNI = pc.DNI
+        JOIN Empleado e ON v.idE = e.ID
+        JOIN Persona pe ON e.DNI = pe.DNI
+        JOIN FormaDePagos fp ON v.formaDePago = fp.idPago
+        JOIN Producto pr ON v.idProd = pr.idProducto
+        WHERE v.idC = ?;
+    """;
+
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, idCliente);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Venta v = Mapper.getVenta(rs);
+                lista.add(v);
+            }
+
+        } catch (Exception ex) {
+            System.out.println("❌ Error al obtener ventas del cliente: " + ex.getMessage());
+        }
+
+        return lista;
+    }
+
+
 
 
 }
