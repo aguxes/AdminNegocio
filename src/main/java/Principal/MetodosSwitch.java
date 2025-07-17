@@ -78,8 +78,8 @@ public class MetodosSwitch {
                         break;
 
                     case 2: // Agregar nuevo cliente
-                        Cliente nuevo = daoCliente.agregarClientePorConsola(scan);
-                        ClienteDAO.insertar(nuevo);
+                        //Cliente nuevo = daoCliente.agregarClientePorConsola(scan);
+                       // ClienteDAO.insertar(nuevo);
                         break;
 
                     case 3: // Modificar datos de un cliente

@@ -104,40 +104,39 @@ public class ClienteDAO
             System.out.println("Lista Vacia");
         }
     }
+    /*
+        public Cliente agregarClientePorConsola(Scanner scan) {
 
-    public Cliente agregarClientePorConsola(Scanner scan) {
+            System.out.print("Ingrese el dni del cliente: ");
+            int dni = scan.nextInt();
 
-        System.out.print("Ingrese el dni del cliente: ");
-        int dni = scan.nextInt();
+            System.out.print("Ingrese el nombre del cliente: ");
+            String nombre = scan.nextLine();
 
-        System.out.print("Ingrese el nombre del cliente: ");
-        String nombre = scan.nextLine();
+            System.out.print("Ingrese el apellido del cliente: ");
+            String apellido = scan.nextLine();
 
-        System.out.print("Ingrese el apellido del cliente: ");
-        String apellido = scan.nextLine();
+            System.out.print("Ingrese el genero del cliente: ");
+            int genero = scan.nextInt();
 
-        System.out.print("Ingrese el genero del cliente: ");
-        int genero = scan.nextInt();
+            System.out.print("Ingrese la nacionalidad del cliente: ");
+            int nacionalidad = scan.nextInt();
 
-        System.out.print("Ingrese la nacionalidad del cliente: ");
-        int nacionalidad = scan.nextInt();
+            System.out.print("Ingrese el id del cliente: ");
+            int id = scan.nextInt();
 
-        System.out.print("Ingrese el id del cliente: ");
-        int id = scan.nextInt();
-
-        System.out.print("Ingrese el tipo de Cliente del cliente: ");
-        int tipCliente = scan.nextInt();
+            System.out.print("Ingrese el tipo de Cliente del cliente: ");
+            int tipCliente = scan.nextInt();
 
 
-        System.out.print("Ingrese la cantidad de Compras del cliente: ");
-        int cantCompras = scan.nextInt();
+            System.out.print("Ingrese la cantidad de Compras del cliente: ");
+            int cantCompras = scan.nextInt();
 
-        Cliente c = new Cliente(dni, nombre, apellido,
-        id, tipCliente, cantCompras);
+            Cliente c = new Cliente(dni, nombre, apellido, id, tipCliente, cantCompras);
 
-        return c;
-    }
-
+            return c;
+        }
+    */
     public static void insertar(Cliente cliente) {
         String sql = "INSERT INTO Cliente (id, DNI, tipCliente, cantCompras) VALUES (?, ?, ?, ?, ?)";
 

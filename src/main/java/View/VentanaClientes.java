@@ -10,7 +10,12 @@ import java.util.ArrayList;
 public class VentanaClientes {
 
     public static void cargarClientesEnLista(ArrayList<Cliente> lista) {
-        String sql = "SELECT p.DNI, c.ID, p.nombre, p.apellido, c.idTipo, c.cantCompras FROM Cliente c INNER JOIN Persona p ON c.DNI = p.DNI;";
+        String sql = """
+        SELECT p.DNI, c.ID, p.nombre, p.apellido, c.idTipo, c.cantCompras, t.telefono
+        FROM Cliente c
+        INNER JOIN Persona p ON c.DNI = p.DNI
+        LEFT JOIN Telefonos t ON t.idPersona = p.DNI
+        """;
 
         try (Connection conn = DataBaseConnection.getConnection();
              Statement stmt = conn.createStatement();
@@ -32,13 +37,13 @@ public class VentanaClientes {
         StringBuilder sb = new StringBuilder();
 
         // Encabezado
-        sb.append(String.format("%-5s %-10s %-15s %-15s %-10s %-10s\n",
-                "ID", "DNI", "Nombre", "Apellido", "Compras", "Tipo"));
+        sb.append(String.format("%-5s %-10s %-15s %-15s %-10s %-10s %-15s\n",
+                "ID", "DNI", "Nombre", "Apellido", "Compras", "Tipo", "Teléfono"));
         sb.append("----------------------------------------------------------------------------------------------------------\n");
 
         // Datos
         for (Cliente c : lista) {
-            sb.append(String.format("%-5d %-10d %-15s %-15s %-10d %-10d\n",
+            sb.append(String.format("%-5d %-10d %-15s %-15s %-10d %-10d %-15d\n",
                     c.getid(),
                     c.getDNI(),
                     c.getNombre(),
@@ -46,7 +51,9 @@ public class VentanaClientes {
                     //c.getGenero(),
                     //c.getNacionalidad(),
                     c.getCantCompras(),
-                    c.getTipCliente()));
+                    c.getTipCliente(),
+                    c.getTelefono()
+            ));
         }
 
         return sb.toString();

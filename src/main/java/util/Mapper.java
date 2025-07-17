@@ -18,7 +18,8 @@ public class Mapper {
                 rs.getString("apellido"),
                 rs.getInt("ID"),
                 rs.getInt("idTipo"),
-                rs.getInt("cantCompras")
+                rs.getInt("cantCompras"),
+                rs.getLong("telefono")
         );
     }
     public static void setCliente(PreparedStatement stmt, Cliente cliente) throws SQLException {

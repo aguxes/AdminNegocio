@@ -209,8 +209,8 @@ public class AppController {
 
                 // Faltaria Llamar una funcion con validaciones acá. O en el diseño usar una herramienta para validar como son los RequiredFieldValidator en el VS
 
-                Cliente cliente = new Cliente(dni, nombre, apellido, id, tipoCliente, cantCompras); // falta fechaAlta
-                ClienteDAO.insertar(cliente);
+                //Cliente cliente = new Cliente(dni, nombre, apellido, id, tipoCliente, cantCompras); // falta fechaAlta
+                //ClienteDAO.insertar(cliente);
 
                 outputArea.setText("✅ Cliente agregado correctamente.");
                 ventana.close();
