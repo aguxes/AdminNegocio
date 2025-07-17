@@ -13,19 +13,21 @@ public class Mapper {
 
     // Mapeo de Persona
     // ========================================
-    public static Persona getPersona (ResultSet rs) throws SQLException {
-        Persona p = new Persona (
+    public static Persona getPersona(ResultSet rs) throws SQLException {
+        Persona p = new Persona(
                 rs.getInt("DNI"),
                 rs.getString("nombre"),
                 rs.getString("apellido")
         );
         return p;
     }
+
     public static void setPersona(PreparedStatement stmt, Persona p) throws SQLException {
         stmt.setInt(1, p.getDNI());
         stmt.setString(2, p.getNombre());
         stmt.setString(3, p.getApellido());
     }
+
     // Mapeo de Cliente
     // ========================================
     public static Cliente getCliente(ResultSet rs) throws SQLException {
@@ -45,11 +47,10 @@ public class Mapper {
 
         return c;
     }
+
     public static void setCliente(PreparedStatement stmt, Cliente c) throws SQLException {
         stmt.setInt(2, c.getDNI());
         stmt.setInt(1, c.getid());
-        stmt.setString(2, c.getNombre());
-        stmt.setString(2, c.getApellido());
         stmt.setInt(3, c.getTipCliente());
         stmt.setInt(5, c.getCantCompras());
     }
@@ -63,7 +64,7 @@ public class Mapper {
     public static Venta getVenta(ResultSet rs) throws SQLException {
         String fechaTexto = rs.getString("fecha");
 
-        // Si la fecha no tiene hora (ej: "2025-06-19"), le pone hora cero
+        // Agrega hora si sólo tiene la fecha
         if (fechaTexto.length() <= 10) {
             fechaTexto += " 00:00:00";
         }
@@ -71,32 +72,26 @@ public class Mapper {
         LocalDateTime fecha = LocalDateTime.parse(fechaTexto, FORMATTER);
 
         return new Venta(
-                rs.getInt("id"),
-                rs.getInt("empleado_id"),
-                rs.getInt("cliente_id"),
+                rs.getInt("nFactura"),               // ID de la venta
+                rs.getInt("idE"),                    // ID del empleado
+                rs.getInt("idC"),                    // ID del cliente
                 fecha,
-                rs.getString("medio_pago"),
-                rs.getBigDecimal("total"),
-                rs.getString("notas") != null ? rs.getString("notas") : "",
-                rs.getString("cliente_nombre"),
-                rs.getString("empleado_nombre")
+                rs.getString("medio_pago"),          // Forma de pago (alias del SELECT)
+                rs.getBigDecimal("total"),           // Total
+                "",
+                rs.getString("cliente_nombre"),      // nombre del cliente (JOIN con Persona)
+                rs.getString("empleado_nombre")      // nombre del empleado (JOIN con Persona)
         );
     }
-    //Mira que bueno, con esto cuadno pones el mouse arriba del nombre de la funcion te explica que necesita y para que sirve
-    /**
-      📤 Prepara los parámetros de un PreparedStatement a partir de un objeto Venta
-      Este método se usa cuando queremos insertar o actualizar una venta en la base de datos
 
-      @param stmt  PreparedStatement con la consulta preparada
-      @param venta Objeto Venta cuyos datos vamos a guardar
-      @throws SQLException Si ocurre un error al setear los parámetros
-     */
+    // Este método sirve si vas a insertar una nueva venta
     public static void setVenta(PreparedStatement stmt, Venta venta) throws SQLException {
-        stmt.setInt(1, venta.getIdCliente());
-        stmt.setString(2, venta.getFecha().format(FORMATTER));
-        stmt.setBigDecimal(3, venta.getImporteTotal());
-        stmt.setInt(4, venta.getIdEmpleado());
-        stmt.setString(5, venta.getMedioPago());
-        stmt.setString(6, venta.getNotas());
+        //  stmt.setInt(1, venta.getIdProducto()); // ahora sí existe
+        stmt.setInt(2, venta.getIdEmpleado());
+        stmt.setInt(3, venta.getIdCliente());
+        stmt.setString(4, venta.getFecha().format(FORMATTER));
+        //   stmt.setInt(5, venta.getIdFormaDePago());  // ahora existe
+        //   stmt.setBigDecimal(6, venta.getSubtotal()); // ahora existe
+        stmt.setBigDecimal(7, venta.getImporteTotal());
     }
 }

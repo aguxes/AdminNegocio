@@ -1,5 +1,6 @@
 package DataBase;
 
+import Clases.Principales.Persona;
 import Clases.Principales.Cliente;
 import Clases.Imprimible;
 import util.Mapper;
@@ -133,14 +134,23 @@ public class ClienteDAO
             return c;
         }
     */
-    public static void insertar(Cliente cliente) {
-        String sql = "INSERT INTO Cliente (id, DNI, tipCliente, cantCompras) VALUES (?, ?, ?, ?, ?)";
-
+    public static void insertar(Cliente cliente, Persona persona) {
+        String queryP = """
+        INSERT INTO Persona (dni, nombre, apellido ) VALUES (?, ?, ?)
+        """;
+        String queryC = """
+        INSERT INTO Cliente (id, dni, tipCliente, cantCompras ) VALUES (?, ?, ?, ?, ?, ?)
+        """;
         try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql))
+             PreparedStatement stmtP = conn.prepareStatement(queryP);
+             PreparedStatement stmtC = conn.prepareStatement(queryC))
         {
-            Mapper.setCliente(stmt, cliente);
-            stmt.executeUpdate();
+            Mapper.setPersona(stmtP, persona);
+            Mapper.setCliente(stmtC, cliente);
+
+            stmtP.executeUpdate();
+            stmtC.executeUpdate();
+
             System.out.println("Cliente insertado correctamente.");
         } catch (SQLException e) { System.out.println("❌ Error al insertar cliente: " + e.getMessage()); }
     }

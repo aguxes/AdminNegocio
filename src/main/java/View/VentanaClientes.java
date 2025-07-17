@@ -1,5 +1,6 @@
 package View;
 
+import Clases.Principales.Persona;
 import Clases.Principales.Cliente;
 import DataBase.DataBaseConnection;
 import util.Mapper;
@@ -164,17 +165,26 @@ public class VentanaClientes {
         return resultado.toString();
     }
 
-    public static String insertar(Cliente cliente) {
-        String query = """
-        INSERT INTO clientes (id, dni, nombre, apellido, tipCliente, cantCompras ) VALUES (?, ?, ?, ?, ?, ?)
+    public static String insertar(Cliente cliente, Persona persona) {
+        String queryP = """
+        INSERT INTO Persona (dni, nombre, apellido ) VALUES (?, ?, ?)
+        """;
+        String queryC = """
+        INSERT INTO Cliente (id, dni, tipCliente, cantCompras ) VALUES (?, ?, ?, ?, ?, ?)
         """;
         StringBuilder resultado = new StringBuilder();
 
         try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query))
+             PreparedStatement stmtP = conn.prepareStatement(queryP);
+             PreparedStatement stmtC = conn.prepareStatement(queryC))
+
         {
-            Mapper.setCliente(stmt, cliente);
-            stmt.executeUpdate();
+            Mapper.setPersona(stmtP, persona);
+            Mapper.setCliente(stmtC, cliente);
+
+            stmtP.executeUpdate();
+            stmtC.executeUpdate();
+
             resultado.append("✅ Cliente insertado correctamente.");
 
         } catch (SQLException e) { resultado.append("❌ Error al insertar cliente: ").append(e.getMessage()); }
