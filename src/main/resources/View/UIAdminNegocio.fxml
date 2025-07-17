@@ -18,8 +18,9 @@
     </VBox>
 
     <!-- 📌 Contenido principal -->
-    <VBox spacing="20.0" styleClass="contenido-principal" HBox.hgrow="ALWAYS">
-        <padding>
+    <VBox fx:id="contenidoPrincipal" spacing="20.0" styleClass="contenido-principal" HBox.hgrow="ALWAYS">
+
+    <padding>
             <Insets top="20" left="20" right="20" bottom="20"/>
         </padding>
 

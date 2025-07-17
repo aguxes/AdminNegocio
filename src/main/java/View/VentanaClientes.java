@@ -191,4 +191,20 @@ public class VentanaClientes {
 
         return resultado.toString();
     }
+
+    public static Integer obtenerIdClientePorDni(int dni) {
+        String sql = "SELECT ID FROM Cliente WHERE DNI = ?";
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, dni);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) return rs.getInt("ID");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+
 }
