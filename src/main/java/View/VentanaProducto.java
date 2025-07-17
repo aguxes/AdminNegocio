@@ -30,13 +30,12 @@ public class VentanaProducto {
         }
     }
 
-
     public static String obtenerTextoProductos(ArrayList<Producto> lista) {
         if (lista.isEmpty()) return "Lista vacía.";
 
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("%-5s %-20s %-10s %-10s %-10s\n", "ID", "Nombre", "Precio", "Costo", "Stock"));
-        sb.append("-------------------------------------------------------------\n");
+        sb.append("=".repeat(65)).append("\n");
 
         for (Producto p : lista) {
             sb.append(String.format("%-5d %-20s %-10.2f %-10.2f %-10d\n",
@@ -48,6 +47,7 @@ public class VentanaProducto {
             ));
         }
 
+        sb.append("\nTotal de productos: ").append(lista.size());
         return sb.toString();
     }
 

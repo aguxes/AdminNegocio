@@ -18,12 +18,7 @@
     -fx-background-color: #ecf0f1;
 }
 
-.area-salida {
-    -fx-font-family: "Courier New";
-    -fx-font-size: 14px;
-    -fx-text-fill: black;
-    -fx-background-color: #ffffff;
-}
+
 
 /* Estilo general para formularios */
 VBox{
@@ -166,7 +161,13 @@ HBox {
     -fx-padding: 6 15;
     -fx-background-radius: 6;
 }
-
 .boton-cancelar:hover {
     -fx-background-color: #c0392b;
+}
+
+.area-salida {
+    -fx-font-family: "Courier New";
+    -fx-font-size: 14px;
+    -fx-text-fill: black;
+    -fx-background-color: #ffffff;
 }

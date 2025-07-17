@@ -131,6 +131,9 @@ public class Mapper {
 
     //PRODUCTO
     public static Producto getProducto(ResultSet rs) throws SQLException {
+        String fechaBajaRaw = rs.getString("fechaBaja");
+        LocalDate fechaBaja = (fechaBajaRaw == null || fechaBajaRaw.isBlank()) ? null : LocalDate.parse(fechaBajaRaw);
+
         return new Producto(
                 rs.getInt("idProducto"),
                 rs.getString("nombre"),
@@ -140,8 +143,9 @@ public class Mapper {
                 rs.getInt("idMedida"),
                 rs.getInt("idCategoria"),
                 LocalDate.parse(rs.getString("fechAlta")),
-                rs.getString("fechaBaja") != null ? LocalDate.parse(rs.getString("fechaBaja")) : null
+                fechaBaja
         );
     }
+
 
 }
