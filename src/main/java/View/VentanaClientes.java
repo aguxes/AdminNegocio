@@ -10,18 +10,11 @@ import java.util.ArrayList;
 public class VentanaClientes {
 
     public static void cargarClientesEnLista(ArrayList<Cliente> lista) {
-        String sql = "SELECT p.DNI, c.ID, p.nombre, p.apellido, c.idTipo, c.fechAlta, c.cantCompras FROM Cliente c INNER JOIN Persona p ON c.DNI = p.DNI;";
+        String sql = "SELECT p.DNI, c.ID, p.nombre, p.apellido, c.idTipo, c.cantCompras FROM Cliente c INNER JOIN Persona p ON c.DNI = p.DNI;";
 
         try (Connection conn = DataBaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-
-            Date fechaTexto = rs.getDate("fechAlta");
-
-            // Si la fecha no tiene hora (ej: "2025-06-19"), le pone hora cero
-            //if (fechaTexto.length() <= 10) {
-                //fechaTexto += " 00:00:00";
-            //}
 
             while (rs.next()) {
                 Cliente c = Mapper.getCliente(rs);

@@ -18,7 +18,6 @@ public class Mapper {
                 rs.getString("apellido"),
                 rs.getInt("ID"),
                 rs.getInt("idTipo"),
-                rs.getDate("fechAlta"),
                 rs.getInt("cantCompras")
         );
     }

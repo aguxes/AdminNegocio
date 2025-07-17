@@ -18,7 +18,7 @@ public class ClienteDAO
 {
     public static void cargarClientesEnLista(ArrayList<Imprimible> lista) {
         String query = """   
-        SELECT p.DNI, c.id, p.nombre, p.apellido, c.tipCliente, c.fechaAlta, c.cantCompras
+        SELECT p.DNI, c.id, p.nombre, p.apellido, c.tipCliente, c.cantCompras
         FROM Cliente c
         INNER JOIN Persona p ON c.DNI = p.DNI;
         """;
@@ -128,32 +128,18 @@ public class ClienteDAO
         System.out.print("Ingrese el tipo de Cliente del cliente: ");
         int tipCliente = scan.nextInt();
 
-        System.out.print("Ingrese la fecha de alta del cliente (formato dd/MM/yyyy): ");
-        scan.nextLine(); // limpia el coso este para que no se mezclen datos.
-        String fechaStr = scan.nextLine();
-        java.sql.Date fechaSQL = null;
-
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            Date fechaAlta = sdf.parse(fechaStr);
-            fechaSQL = new java.sql.Date(fechaAlta.getTime());
-        } catch (ParseException e) {
-            System.out.println("❌ Error al parsear la fecha. Formato incorrecto.");
-            return null;
-        }
-
 
         System.out.print("Ingrese la cantidad de Compras del cliente: ");
         int cantCompras = scan.nextInt();
 
         Cliente c = new Cliente(dni, nombre, apellido,
-        id, tipCliente, fechaSQL, cantCompras);
+        id, tipCliente, cantCompras);
 
         return c;
     }
 
     public static void insertar(Cliente cliente) {
-        String sql = "INSERT INTO Cliente (id, DNI, tipCliente, fechaAlta, cantCompras) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Cliente (id, DNI, tipCliente, cantCompras) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DataBaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql))
