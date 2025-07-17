@@ -165,8 +165,8 @@ public class AppController {
         TextField txtDNI = new TextField();
         TextField txtNombre = new TextField();
         TextField txtApellido = new TextField();
-        TextField txtGenero = new TextField();
-        TextField txtNacionalidad = new TextField();
+        //TextField txtGenero = new TextField();
+        //TextField txtNacionalidad = new TextField();
         TextField txtTipoCliente = new TextField();
         TextField txtCantidadCompras = new TextField();
 
@@ -174,8 +174,8 @@ public class AppController {
         txtDNI.setPromptText("DNI");
         txtNombre.setPromptText("Nombre");
         txtApellido.setPromptText("Apellido");
-        txtGenero.setPromptText("Género");
-        txtNacionalidad.setPromptText("Nacionalidad");
+        //txtGenero.setPromptText("Género");
+        //txtNacionalidad.setPromptText("Nacionalidad");
         txtTipoCliente.setPromptText("Tipo de Cliente");
         txtCantidadCompras.setPromptText("Cantidad de Compras");
 
@@ -187,18 +187,19 @@ public class AppController {
                 int dni = Integer.parseInt(txtDNI.getText().trim());
                 String nombre = txtNombre.getText().trim();
                 String apellido = txtApellido.getText().trim();
-                int genero = Integer.parseInt(txtGenero.getText().trim());
-                int nacionalidad = Integer.parseInt(txtNacionalidad.getText().trim());
+                //int genero = Integer.parseInt(txtGenero.getText().trim());
+                //int nacionalidad = Integer.parseInt(txtNacionalidad.getText().trim());
                 int tipoCliente = Integer.parseInt(txtTipoCliente.getText().trim());
                 int cantCompras = Integer.parseInt(txtCantidadCompras.getText().trim());
 
-                java.sql.Date fechaAlta = new java.sql.Date(System.currentTimeMillis()); // la unica forma de asignarle datetime.today en java que encontre
+                // la unica forma de asignarle datetime.today en java que encontre
 
                 // Faltaria Llamar una funcion con validaciones acá. O en el diseño usar una herramienta para validar como son los RequiredFieldValidator en el VS
 
                 //Cliente cliente = new Cliente(dni, nombre, apellido, id, tipoCliente, cantCompras); // falta fechaAlta
                 //ClienteDAO.insertar(cliente);
-
+                VentanaClientes.insertar()
+                outputArea.setText(VentanaClientes.insertar());
                 outputArea.setText("✅ Cliente agregado correctamente.");
                 ventana.close();
             } catch (NumberFormatException ex) {
@@ -206,7 +207,7 @@ public class AppController {
             }
         });
 
-        VBox layout = new VBox(10, txtID, txtDNI, txtNombre, txtApellido, txtGenero, txtNacionalidad, txtTipoCliente, txtCantidadCompras, btnGuardar);
+        VBox layout = new VBox(10, txtID, txtDNI, txtNombre, txtApellido, /* txtGenero, txtNacionalidad, */ txtTipoCliente, txtCantidadCompras, btnGuardar);
         layout.setPadding(new Insets(20));
         layout.setAlignment(Pos.CENTER);
 
