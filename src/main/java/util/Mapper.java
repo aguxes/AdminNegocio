@@ -1,11 +1,10 @@
 package util;
 
-import Clases.Principales.Persona;
-import Clases.Principales.Cliente;
+import Clases.Principales.*;
 import Clases.Extras.Telefono;
-import Clases.Principales.Venta;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -95,4 +94,54 @@ public class Mapper {
         stmt.setBigDecimal(6, venta.getSubtotal()); // ahora existe
         stmt.setBigDecimal(7, venta.getImporteTotal());
     }
+
+    //EMPLEADO
+
+    public static Empleado getEmpleado(ResultSet rs) throws SQLException {
+        int empleadoID = rs.getInt("ID");
+        int dni = rs.getInt("DNI");
+        String nombre = rs.getString("nombre");
+        String apellido = rs.getString("apellido");
+        int rolID = rs.getInt("idRol");
+        double sueldo = rs.getDouble("Sueldo");
+        int vacaciones = rs.getInt("Vacaciones");
+        int faltas = rs.getInt("Faltas");
+        String fechaIngreso = rs.getString("FechaIngreso");
+        String fechaEgreso = rs.getString("FechaEgreso");
+        boolean activo = rs.getInt("Activo") == 1;
+
+        return new Empleado(
+                dni, nombre, apellido, empleadoID, dni, rolID,
+                sueldo, vacaciones, faltas, fechaIngreso, fechaEgreso, activo
+        );
+    }
+
+    public static void setEmpleado(PreparedStatement stmt, Empleado e) throws SQLException {
+        stmt.setInt(1, e.getEmpleadoID());
+        stmt.setInt(2, e.getDNI());
+        stmt.setInt(3, e.getRolID());
+        stmt.setDouble(4, e.getSueldo());
+        stmt.setInt(5, e.getVacacionesActivas());
+        stmt.setInt(6, e.getFaltas());
+        stmt.setString(7, e.getFechaDeIngreso());
+        stmt.setString(8, e.getFechaDeEgreso());
+        stmt.setInt(9, e.isActivo() ? 1 : 0);
+    }
+
+
+    //PRODUCTO
+    public static Producto getProducto(ResultSet rs) throws SQLException {
+        return new Producto(
+                rs.getInt("idProducto"),
+                rs.getString("nombre"),
+                rs.getDouble("precio"),
+                rs.getDouble("costo"),
+                rs.getInt("stock"),
+                rs.getInt("idMedida"),
+                rs.getInt("idCategoria"),
+                LocalDate.parse(rs.getString("fechAlta")),
+                rs.getString("fechaBaja") != null ? LocalDate.parse(rs.getString("fechaBaja")) : null
+        );
+    }
+
 }

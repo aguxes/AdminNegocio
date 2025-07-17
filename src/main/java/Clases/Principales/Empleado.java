@@ -1,46 +1,74 @@
 package Clases.Principales;
-/*
+
 public class Empleado extends Persona implements Imprimible {
     private int empleadoID;
+    private int dni;
+    private int rolID;
+    private double sueldo;
+    private int vacacionesActivas;
+    private int faltas;
     private String fechaDeIngreso;
-    private String asistencias;
-    private String vacacionesActivas;
-    private int sueldo;
+    private String fechaDeEgreso;
+    private boolean activo;
 
-    public Empleado(String nombre, String dni, String apellido, String email, String telefono, String localidad, String fechaDeIngreso, int empleadoID, String asistencias, String vacacionesActivas, int sueldo) {
-        super(nombre, dni, apellido, email, telefono, localidad);
-        this.fechaDeIngreso = fechaDeIngreso;
+    public Empleado(int dni, String nombre, String apellido, int empleadoID, int dni1,
+                    int rolID, double sueldo, int vacacionesActivas, int faltas, String fechaDeIngreso,
+                    String fechaDeEgreso, boolean activo) {
+
+        super(dni, nombre, apellido);
         this.empleadoID = empleadoID;
-        this.asistencias = asistencias;
-        this.vacacionesActivas = vacacionesActivas;
+        this.dni = dni1;
+        this.rolID = rolID;
         this.sueldo = sueldo;
+        this.vacacionesActivas = vacacionesActivas;
+        this.faltas = faltas;
+        this.fechaDeIngreso = fechaDeIngreso;
+        this.fechaDeEgreso = fechaDeEgreso;
+        this.activo = activo;
     }
-
-    public int getEmpleadoID() {return empleadoID;}
-
-    public void setEmpleadoID(int empleadoID) {this.empleadoID = empleadoID;}
-
-    public String getFechaDeIngreso() {return fechaDeIngreso;}
-
-    public void setFechaDeIngreso(String fechaDeIngreso) {this.fechaDeIngreso = fechaDeIngreso;}
-
-    public String getAsistencias() {return asistencias;}
-
-    public void setAsistencias(String asistencias) {this.asistencias = asistencias;}
-
-    public String getVacacionesActivas() {return vacacionesActivas;}
-
-    public void setVacacionesActivas(String vacacionesActivas) {this.vacacionesActivas = vacacionesActivas;}
-
-    public int getSueldo() {return sueldo;}
-
-    public void setSueldo(int sueldo) {this.sueldo = sueldo;}
 
     @Override
     public void imprimir() {
-        System.out.printf("%-5d %-15s %-15s %-25s %-12d %-15s %-15s %-12s %-10s %-8d\n",
-                empleadoID, nombre, apellido, email, telefono, localidad, fechaDeIngreso, asistencias, vacacionesActivas, sueldo);
+
     }
+
+    public int getEmpleadoID() {
+        return empleadoID;
+    }
+
+    public int getDni() {
+        return dni;
+    }
+
+    public int getRolID() {
+        return rolID;
+    }
+
+    public double getSueldo() {
+        return sueldo;
+    }
+
+    public int getVacacionesActivas() {
+        return vacacionesActivas;
+    }
+
+    public int getFaltas() {
+        return faltas;
+    }
+
+    public String getFechaDeIngreso() {
+        return fechaDeIngreso;
+    }
+
+    public String getFechaDeEgreso() {
+        return fechaDeEgreso;
+    }
+
+    public boolean isActivo() {
+        return activo;
+    }
+}
+
     /*
     public void mostrarEmpleado() {
         System.out.println("      ID EMPLEADO: " + getID());

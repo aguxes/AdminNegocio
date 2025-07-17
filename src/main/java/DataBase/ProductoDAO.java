@@ -1,12 +1,5 @@
 package DataBase;
 
-import Clases.Imprimible;
-import Clases.Principales.Producto;
-
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.Scanner;
-
 public class ProductoDAO {
    /*
     public void mostrarProductos() {

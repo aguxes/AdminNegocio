@@ -1,7 +1,5 @@
 package Clases.Principales;
 
-import Clases.Imprimible;
-
 import java.time.LocalDate;
 
 public class Producto implements Imprimible {

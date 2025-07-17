@@ -1,4 +1,4 @@
-package Clases;
+package Clases.Principales;
 
 public interface Imprimible {
 

@@ -1,6 +1,6 @@
 package Principal;
 
-import Clases.*;
+import Clases.Principales.Imprimible;
 import DataBase.*;
 
 

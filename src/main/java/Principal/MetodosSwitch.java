@@ -1,6 +1,5 @@
 package Principal;
-import Clases.*;
-import Clases.Principales.Producto;
+import Clases.Principales.Imprimible;
 import DataBase.ClienteDAO;
 import DataBase.ProductoDAO;
 import DataBase.ReportesDAO;
@@ -11,7 +10,7 @@ import java.util.Scanner;
 
 public class MetodosSwitch {
 
-    public static int menuPrincipal(Scanner scan, ArrayList<Imprimible> listaClientes,ArrayList<Imprimible> listaVentas , ArrayList<Imprimible> listaProcuto, ArrayList<Imprimible> listaReportes,  ClienteDAO daoCliente, VentaDAO daoVenta, ProductoDAO daoProdcuto, ReportesDAO daoReportes) {
+    public static int menuPrincipal(Scanner scan, ArrayList<Imprimible> listaClientes, ArrayList<Imprimible> listaVentas , ArrayList<Imprimible> listaProcuto, ArrayList<Imprimible> listaReportes, ClienteDAO daoCliente, VentaDAO daoVenta, ProductoDAO daoProdcuto, ReportesDAO daoReportes) {
 
         int opcion = 0, bucle = 0;
         try{

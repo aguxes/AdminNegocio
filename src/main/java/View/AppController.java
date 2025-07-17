@@ -1,8 +1,6 @@
 package View;
 
-import Clases.Principales.Persona;
-import Clases.Principales.Cliente;
-import Clases.Principales.Venta;
+import Clases.Principales.*;
 
 import Clases.Extras.Telefono;
 
@@ -17,11 +15,25 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+
+
+
 public class AppController {
     @FXML private VBox menuLateral;
     @FXML private TextArea outputArea;
+    @FXML
+    private VBox contenidoPrincipal;
+    @FXML
+    private VBox contenedor;
+
+    private TextField txtClienteId;
+    private TextField txtEmpleadoId;
+
     @FXML
     public void initialize() {
         cargarMenuPrincipal();
@@ -247,80 +259,262 @@ public class AppController {
         outputArea.setText(VentanaVentas.obtenerVentas(lista));
     }
 
+    public void registrarVenta() {
+        contenedor.getChildren().clear();
 
-    private void registrarVenta() {
-        Stage ventana = new Stage();
-        ventana.setTitle("Registrar Venta");
+        VBox form = new VBox(10);
+        form.setPadding(new Insets(20));
+        form.getStyleClass().add("form-box");
+
+        Label titulo = new Label("📋 Registrar Venta");
+        titulo.getStyleClass().add("titulo-principal");
+
+        TextField txtFactura = new TextField();
+        txtFactura.setPromptText("N° Factura");
+        txtFactura.getStyleClass().add("text-field");
+
+        TextField txtProductoId = new TextField();
+        txtProductoId.setPromptText("ID Producto");
+        txtProductoId.getStyleClass().add("text-field");
+
+        Button btnAgregarProducto = new Button(" Agregar Producto");
+        btnAgregarProducto.getStyleClass().add("boton-secundario");
+        btnAgregarProducto.setOnAction(e -> mostrarVentanaSeleccionProducto(txtProductoId));
 
         TextField txtClienteId = new TextField();
-        TextField txtEmpleadoId = new TextField();
-        TextField txtMedioPago = new TextField();
-        TextField txtTotal = new TextField();
-        TextField txtNotas = new TextField();
-
         txtClienteId.setPromptText("ID Cliente");
+        txtClienteId.getStyleClass().add("text-field");
+
+        TextField txtEmpleadoId = new TextField();
         txtEmpleadoId.setPromptText("ID Empleado");
-        txtMedioPago.setPromptText("Medio de Pago");
+        txtEmpleadoId.getStyleClass().add("text-field");
+
+        ComboBox<String> medioPago = new ComboBox<>();
+        medioPago.getItems().addAll("Efectivo", "Crédito", "Débito", "Transferencia");
+        medioPago.setPromptText("Medio de Pago");
+        medioPago.getStyleClass().add("choice-box");
+
+        TextField txtTotal = new TextField();
         txtTotal.setPromptText("Total");
-        txtNotas.setPromptText("Notas (opcional)");
+        txtTotal.getStyleClass().add("text-field");
 
-        Button btnGuardar = new Button("Guardar Venta");
+        Button btnAgregarCliente = new Button(" Agregar Cliente");
+        btnAgregarCliente.getStyleClass().add("boton-secundario");
+        btnAgregarCliente.setOnAction(e -> mostrarVentanaSeleccionCliente(txtClienteId));
 
-        btnGuardar.setOnAction(e -> {
-            try {
+        Button btnAgregarEmpleado = new Button(" Agregar Empleado");
+        btnAgregarEmpleado.getStyleClass().add("boton-secundario");
+        btnAgregarEmpleado.setOnAction(e -> mostrarVentanaSeleccionEmpleado(txtEmpleadoId));
+
+        Button btnRegistrar = new Button("✅ Registrar Venta");
+        btnRegistrar.getStyleClass().add("boton-accion");
+        btnRegistrar.setOnAction(e -> {
+            try (Connection conn = DataBaseConnection.getConnection()) {
+                int nFactura = Integer.parseInt(txtFactura.getText().trim());
                 int clienteId = Integer.parseInt(txtClienteId.getText().trim());
                 int empleadoId = Integer.parseInt(txtEmpleadoId.getText().trim());
-                String medioPago = txtMedioPago.getText().trim();
+                String medio = medioPago.getValue();
                 BigDecimal total = new BigDecimal(txtTotal.getText().trim());
-                String notas = txtNotas.getText().trim();
+                BigDecimal subtotal = total;
+                int productoId = Integer.parseInt(txtProductoId.getText().trim());
 
-                // Validaciones de qeue xista clinete y empleado
-                if (!ClienteDAO.existeCliente(clienteId)) {
-                    outputArea.setText("❌ Error: El ID de Cliente no existe.");
-                    return;
-                }
-                if (!EmpleadoDAO.existeEmpleado(empleadoId)) {
-                    outputArea.setText("❌ Error: El ID de Empleado no existe.");
-                    return;
-                }
+                int idPago = switch (medio) {
+                    case "Efectivo" -> 1;
+                    case "Crédito" -> 2;
+                    case "Débito" -> 3;
+                    case "Transferencia" -> 4;
+                    default -> throw new IllegalArgumentException("Forma de pago inválida.");
+                };
 
-                LocalDateTime fechaActual = LocalDateTime.now();
+                String sql = "INSERT INTO Venta (nFactura, idProd, idC, idE, formaDePago, fecha, subtotal, total) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setInt(1, nFactura);
+                stmt.setInt(2, productoId);
+                stmt.setInt(3, clienteId);
+                stmt.setInt(4, empleadoId);
+                stmt.setInt(5, idPago);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                stmt.setString(6, LocalDateTime.now().format(formatter));
+                stmt.setBigDecimal(7, subtotal);
+                stmt.setBigDecimal(8, total);
 
-                Venta nuevaVenta = new Venta(
-                        0, // ID autogenerado
-                        empleadoId,
-                        clienteId,
-                        fechaActual,
-                        medioPago,
-                        total,
-                        notas,
-                        "",
-                        ""
-                );
+                stmt.executeUpdate();
+                mostrarAlerta("✅ Venta registrada correctamente.");
+                contenedor.getChildren().clear();  // Vaciamos el formulario
+                contenedor.getChildren().add(outputArea); // Volvemos a mostrar el área de texto
 
-                boolean ventaCreado = VentaDAO.insertarVenta(nuevaVenta);
-
-                if (ventaCreado) {
-                    outputArea.setText("✅ Venta registrada correctamente.");
-                    ventana.close();
-                } else {
-                    outputArea.setText("❌ Error al registrar la venta.");
-                }
-
-            } catch (NumberFormatException ex) {
-                outputArea.setText("❌ Error: Verifique los datos numéricos (ID Cliente, ID Empleado, Total).");
+            } catch (Exception ex) {
+                mostrarAlerta("❌ Error: " + ex.getMessage());
             }
         });
 
-        VBox layout = new VBox(10, txtClienteId, txtEmpleadoId, txtMedioPago, txtTotal, txtNotas, btnGuardar);
-        layout.setPadding(new Insets(20));
-        layout.setAlignment(Pos.CENTER);
+        form.getChildren().addAll(
+                titulo,
+                txtFactura,
+                new HBox(10, txtProductoId, btnAgregarProducto),
+                new HBox(10, txtClienteId, btnAgregarCliente),
+                new HBox(10, txtEmpleadoId, btnAgregarEmpleado),
+                medioPago,
+                txtTotal,
+                btnRegistrar
+        );
 
-        Scene escena = new Scene(layout, 350, 300);
-        ventana.setScene(escena);
+        Button btnCancelar = new Button("❌ Cancelar Venta");
+        btnCancelar.getStyleClass().add("boton-cancelar");
+        btnCancelar.setOnAction(e -> {
+            contenedor.getChildren().clear();
+            contenedor.getChildren().add(outputArea);
+        });
+
+        HBox filaCancelar = new HBox(btnCancelar);
+        filaCancelar.setAlignment(Pos.BOTTOM_RIGHT);
+
+        form.getChildren().add(filaCancelar);
+
+
+        contenedor.getChildren().add(form);
+    }
+
+
+
+    private void mostrarVentanaSeleccionCliente(TextField idClienteField) {
+        Stage ventana = new Stage();
+        ventana.setTitle("Seleccionar Cliente");
         ventana.initModality(Modality.APPLICATION_MODAL);
+
+        VBox root = new VBox(10);
+        root.setPadding(new Insets(10));
+
+        ArrayList<Cliente> clientes = new ArrayList<>();
+        VentanaClientes.cargarClientesEnLista(clientes);
+
+        TextArea areaTexto = new TextArea(VentanaClientes.obtenerTextoClientes(clientes));
+        areaTexto.setEditable(false);
+        areaTexto.setWrapText(true);
+        areaTexto.setPrefHeight(300);
+
+        TextField dniInput = new TextField();
+        dniInput.setPromptText("Ingrese DNI del cliente");
+
+        Button buscarBtn = new Button("🔍 Buscar");
+        buscarBtn.setOnAction(e -> {
+            try {
+                int dni = Integer.parseInt(dniInput.getText().trim());
+                Integer id = VentanaClientes.obtenerIdClientePorDni(dni);
+
+                if (id != null) {
+                    idClienteField.setText(id.toString());
+                    ventana.close();
+                } else {
+                    mostrarAlerta("No se encontró ningún cliente con ese DNI.");
+                }
+            } catch (NumberFormatException ex) {
+                mostrarAlerta("DNI inválido.");
+            }
+        });
+
+        root.getChildren().addAll(areaTexto, dniInput, buscarBtn);
+
+        Scene scene = new Scene(root, 600, 400);
+        ventana.setScene(scene);
         ventana.showAndWait();
     }
+
+    private void mostrarVentanaSeleccionEmpleado(TextField idEmpleadoField) {
+        Stage ventana = new Stage();
+        ventana.setTitle("Seleccionar Empleado");
+        ventana.initModality(Modality.APPLICATION_MODAL);
+
+        VBox root = new VBox(10);
+        root.setPadding(new Insets(10));
+
+        ArrayList<Empleado> empleados = new ArrayList<>();
+        VentanaEmpleado.cargarEmpleadosEnLista(empleados);
+
+        TextArea areaTexto = new TextArea(VentanaEmpleado.obtenerTextoEmpleados(empleados));
+        areaTexto.setEditable(false);
+        areaTexto.setWrapText(true);
+        areaTexto.setPrefHeight(300);
+
+        TextField dniInput = new TextField();
+        dniInput.setPromptText("Ingrese DNI del empleado");
+
+        Button buscarBtn = new Button("🔍 Buscar");
+        buscarBtn.setOnAction(e -> {
+            try {
+                int dni = Integer.parseInt(dniInput.getText().trim());
+                Integer id = VentanaEmpleado.obtenerIdEmpleadoPorDni(dni);
+
+                if (id != null) {
+                    idEmpleadoField.setText(id.toString());
+                    ventana.close();
+                } else {
+                    mostrarAlerta("No se encontró ningún empleado con ese DNI.");
+                }
+            } catch (NumberFormatException ex) {
+                mostrarAlerta("DNI inválido.");
+            }
+        });
+
+        root.getChildren().addAll(areaTexto, dniInput, buscarBtn);
+
+        Scene scene = new Scene(root, 600, 400);
+        ventana.setScene(scene);
+        ventana.showAndWait();
+    }
+
+    private void mostrarVentanaSeleccionProducto(TextField idProductoField) {
+        Stage ventana = new Stage();
+        ventana.setTitle("Seleccionar Producto");
+        ventana.initModality(Modality.APPLICATION_MODAL);
+
+        VBox root = new VBox(10);
+        root.setPadding(new Insets(10));
+
+        ArrayList<Producto> productos = new ArrayList<>();
+        VentanaProducto.cargarProductosEnLista(productos);
+
+        TextArea areaTexto = new TextArea(VentanaProducto.obtenerTextoProductos(productos));
+        areaTexto.setEditable(false);
+        areaTexto.setWrapText(true);
+        areaTexto.setPrefHeight(300);
+
+        TextField idInput = new TextField();
+        idInput.setPromptText("Ingrese ID del producto");
+
+        Button buscarBtn = new Button("🔍 Seleccionar");
+        buscarBtn.setOnAction(e -> {
+            try {
+                int idProducto = Integer.parseInt(idInput.getText().trim());
+                boolean existe = productos.stream().anyMatch(p -> p.getProductoID() == idProducto);
+
+                if (existe) {
+                    idProductoField.setText(String.valueOf(idProducto));
+                    ventana.close();
+                } else {
+                    mostrarAlerta("No se encontró ningún producto con ese ID.");
+                }
+
+            } catch (NumberFormatException ex) {
+                mostrarAlerta("ID inválido.");
+            }
+        });
+
+        root.getChildren().addAll(areaTexto, idInput, buscarBtn);
+
+        Scene scene = new Scene(root, 650, 400);
+        ventana.setScene(scene);
+        ventana.showAndWait();
+    }
+
+    private void mostrarAlerta(String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Información");
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
+
 
     private void ventasPorCliente() {
         outputArea.setText("📄 Ventas filtradas por cliente.");

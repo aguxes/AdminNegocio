@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<HBox prefWidth="1300.0" prefHeight="1000.0"
+<HBox prefWidth="1400.0" prefHeight="1100.0"
       xmlns="http://javafx.com/javafx/23.0.1"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="View.AppController">
@@ -18,7 +18,7 @@
     </VBox>
 
     <!-- 📌 Contenido principal -->
-    <VBox fx:id="contenidoPrincipal" spacing="20.0" styleClass="contenido-principal" HBox.hgrow="ALWAYS">
+    <VBox fx:id="contenedor" spacing="20.0" styleClass="contenido-principal" HBox.hgrow="ALWAYS">
 
     <padding>
             <Insets top="20" left="20" right="20" bottom="20"/>

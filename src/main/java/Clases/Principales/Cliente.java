@@ -1,6 +1,5 @@
 package Clases.Principales;
 
-import Clases.Imprimible;
 import Clases.Extras.Telefono;
 
 public class Cliente extends Persona implements Imprimible {

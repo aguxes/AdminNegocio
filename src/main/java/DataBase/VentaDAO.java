@@ -1,7 +1,7 @@
 package DataBase;
 
 //import Clases.Empleado;
-import Clases.Imprimible;
+import Clases.Principales.Imprimible;
 import Clases.Principales.Venta;
 import util.Mapper;
 

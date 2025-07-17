@@ -2,7 +2,7 @@ package DataBase;
 
 import Clases.Principales.Persona;
 import Clases.Principales.Cliente;
-import Clases.Imprimible;
+import Clases.Principales.Imprimible;
 import util.Mapper;
 
 import java.sql.*;
