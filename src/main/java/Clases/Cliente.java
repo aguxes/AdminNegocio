@@ -6,9 +6,9 @@ public class Cliente extends Persona implements Imprimible {
     private int id;
     private int tipCliente;
     private int cantCompras;
-    private long telefono;
+    private Telefono telefono;
 
-    public Cliente(int dni, String nombre, String apellido, int id, int tipCliente, int cantCompras, long telefono) {
+    public Cliente(int dni, String nombre, String apellido, int id, int tipCliente, int cantCompras, Telefono telefono) {
         super(dni, nombre, apellido /*genero, nacionalidad*/);
         this.id = id;
         this.tipCliente = tipCliente;
@@ -24,8 +24,8 @@ public class Cliente extends Persona implements Imprimible {
     public int getCantCompras() { return cantCompras; }
     public void setCantCompras(int cantCompras) { this.cantCompras = cantCompras; }
 
-    public long getTelefono() { return telefono; }
-    public void setTelefono(long telefono) { this.telefono = telefono; }
+    public Telefono getTelefono() { return telefono; }
+    public void setTelefono(Telefono telefono) { this.telefono = telefono; }
 
     @Override
     public void imprimir() {

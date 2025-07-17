@@ -43,7 +43,7 @@ public class VentanaClientes {
 
         // Datos
         for (Cliente c : lista) {
-            sb.append(String.format("%-5d %-10d %-15s %-15s %-10d %-10d %-15d\n",
+            sb.append(String.format("%-5d %-10d %-15s %-15s %-10d %-10d %-15s\n",
                     c.getid(),
                     c.getDNI(),
                     c.getNombre(),

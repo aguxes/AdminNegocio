@@ -1,6 +1,7 @@
 package util;
 
 import Clases.Cliente;
+import Clases.Telefono;
 import Clases.Venta;
 
 import java.sql.*;
@@ -12,15 +13,21 @@ public class Mapper {
     // Mapeo de Cliente
     // ========================================
     public static Cliente getCliente(ResultSet rs) throws SQLException {
-        return new Cliente (
+
+        Cliente c = new Cliente(
                 rs.getInt("DNI"),
                 rs.getString("nombre"),
                 rs.getString("apellido"),
                 rs.getInt("ID"),
                 rs.getInt("idTipo"),
                 rs.getInt("cantCompras"),
-                rs.getLong("telefono")
+                new Telefono(
+                        rs.getInt("DNI"),
+                        rs.getLong("telefono")
+                )
         );
+
+        return c;
     }
     public static void setCliente(PreparedStatement stmt, Cliente cliente) throws SQLException {
         stmt.setInt(2, cliente.getDNI());
