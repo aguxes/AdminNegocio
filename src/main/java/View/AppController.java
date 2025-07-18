@@ -249,7 +249,7 @@ public class AppController {
 
         btnGuardar.setOnAction(e -> {
             try {
-                int id = Integer.parseInt(txtID.getText().trim()); //es autogenerado
+                int id = Integer.parseInt(txtID.getText().trim()); //es autogenerado de la base de datos
                 int dni = Integer.parseInt(txtDNI.getText().trim());
                 String nombre = txtNombre.getText().trim();
                 String apellido = txtApellido.getText().trim();
@@ -261,12 +261,6 @@ public class AppController {
 
                 TiposClientes tipo = new TiposClientes(tipoId, "desc");
                 Telefono telefono = new Telefono(dni, telefonox);
-                // la unica forma de asignarle datetime.today en java que encontre
-
-                // Faltaria Llamar una funcion con validaciones acá. O en el diseño usar una herramienta para validar como son los RequiredFieldValidator en el VS
-
-                //Cliente cliente = new Cliente(dni, nombre, apellido, id, tipoCliente, cantCompras); // falta fechaAlta
-                //ClienteDAO.insertar(cliente);
 
                 Cliente c = new Cliente(
                         dni,

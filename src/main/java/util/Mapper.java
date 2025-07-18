@@ -54,6 +54,7 @@ public class Mapper {
         stmt.setInt(2, c.getDNI());
         stmt.setInt(1, c.getid());
         stmt.setInt(3, c.getTipo().getTipo());
+        stmt.setString(3, c.getTipo().getDescripcion());
         stmt.setInt(5, c.getCantCompras());
         stmt.setLong(6, c.getTelefono().getTelefono());
     }
