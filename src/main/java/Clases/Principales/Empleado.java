@@ -5,14 +5,14 @@ public class Empleado extends Persona implements Imprimible {
     private int dni;
     private int rolID;
     private double sueldo;
-    private int vacacionesActivas;
+    private boolean vacacionesActivas;
     private int faltas;
     private String fechaDeIngreso;
     private String fechaDeEgreso;
     private boolean activo;
 
     public Empleado(int dni, String nombre, String apellido, int empleadoID, int dni1,
-                    int rolID, double sueldo, int vacacionesActivas, int faltas, String fechaDeIngreso,
+                    int rolID, double sueldo, boolean vacacionesActivas, int faltas, String fechaDeIngreso,
                     String fechaDeEgreso, boolean activo) {
 
         super(dni, nombre, apellido);
@@ -48,7 +48,7 @@ public class Empleado extends Persona implements Imprimible {
         return sueldo;
     }
 
-    public int getVacacionesActivas() {
+    public boolean getVacacionesActivas() {
         return vacacionesActivas;
     }
 

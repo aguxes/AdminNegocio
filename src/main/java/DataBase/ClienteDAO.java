@@ -228,7 +228,7 @@ public class ClienteDAO
                     }
                 }
                 scan.nextLine(); */
-                System.out.print("Nuevo tipo de cliente (" + c.getTipCliente() + "): ");
+                //System.out.print("Nuevo tipo de cliente (" + c.getTipCliente() + "): ");
                 /*
                 if (scan.hasNextInt()) {
 

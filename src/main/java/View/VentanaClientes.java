@@ -61,7 +61,7 @@ INNER JOIN TiposClientes tc ON c.idTipo = tc.tipo
                     //c.getGenero(),
                     //c.getNacionalidad(),
                     c.getCantCompras(),
-                    c.getTipCliente(),
+                    c.getTipo().getDescripcion(),
                     c.getTelefono()
             ));
         }

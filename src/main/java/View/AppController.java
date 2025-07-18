@@ -1,5 +1,6 @@
 package View;
 
+import Clases.Extras.TiposClientes;
 import Clases.Principales.*;
 
 import Clases.Extras.Telefono;
@@ -251,10 +252,11 @@ public class AppController {
                 String apellido = txtApellido.getText().trim();
                 //int genero = Integer.parseInt(txtGenero.getText().trim());
                 //int nacionalidad = Integer.parseInt(txtNacionalidad.getText().trim());
-                String tipCliente = txtNombre.getText().trim();
+                int tipoId = Integer.parseInt(txtTipoCliente.getText().trim());
                 int cantCompras = Integer.parseInt(txtCantidadCompras.getText().trim());
                 long telefonox = Long.parseLong(txtTelefono.getText().trim());
 
+                TiposClientes tipo = new TiposClientes(tipoId, "desc");
                 Telefono telefono = new Telefono(dni, telefonox);
                 // la unica forma de asignarle datetime.today en java que encontre
 
@@ -268,7 +270,7 @@ public class AppController {
                         nombre,
                         apellido,
                         id,
-                        tipCliente,
+                        tipo,
                         cantCompras,
                         telefono
                 );

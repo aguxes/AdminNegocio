@@ -88,11 +88,11 @@ CREATE TABLE Empleado (
     DNI INTEGER NOT NULL UNIQUE,
     idRol INTEGER NOT NULL,
     Sueldo REAL,
-    Vacaciones INTEGER NOT NULL DEFAULT 0,
+    Vacaciones INTEGER NOT NULL DEFAULT 0 CHECK (esActivo IN (0,1)),
     Faltas INTEGER,
     FechaIngreso TEXT NOT NULL,
     FechaEgreso TEXT NOT NULL,
-    Activo INTEGER NOT NULL DEFAULT 0,
+    Activo INTEGER NOT NULL DEFAULT 0 CHECK (esActivo IN (0,1)),
     FOREIGN KEY (DNI) REFERENCES Persona(DNI),
     FOREIGN KEY (idRol) REFERENCES Roles(Rol)
 );

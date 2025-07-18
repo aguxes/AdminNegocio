@@ -2,6 +2,7 @@ package util;
 
 import Clases.Principales.*;
 import Clases.Extras.Telefono;
+import Clases.Extras.TiposClientes;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -31,14 +32,19 @@ public class Mapper {
     // ========================================
     public static Cliente getCliente(ResultSet rs) throws SQLException {
 
+        TiposClientes tipo = new TiposClientes(
+                rs.getInt("tipo"),
+                rs.getString("descripcion")
+        );
+        Telefono t = new Telefono(rs.getInt("DNI"), rs.getLong("telefono"));
         return new Cliente(
                 rs.getInt("DNI"),
                 rs.getString("nombre"),
                 rs.getString("apellido"),
-                rs.getInt("tipoCliente"),                // ID FK
-                rs.getString("tipoCliente"),        // Descripción del tipo
+                rs.getInt("id"),
+                tipo,
                 rs.getInt("cantCompras"),
-                new Telefono(rs.getInt("DNI"), rs.getLong("telefono"))
+                t
         );
 
 
@@ -47,9 +53,9 @@ public class Mapper {
     public static void setCliente(PreparedStatement stmt, Cliente c) throws SQLException {
         stmt.setInt(2, c.getDNI());
         stmt.setInt(1, c.getid());
-        stmt.setString(3, c.getTipCliente());
+        stmt.setInt(3, c.getTipo().getTipo());
         stmt.setInt(5, c.getCantCompras());
-        //stmt.setInt(c.getTelefono());
+        stmt.setLong(6, c.getTelefono().getTelefono());
     }
 
     // Mapeo de Venta
@@ -101,7 +107,7 @@ public class Mapper {
         String apellido = rs.getString("apellido");
         int rolID = rs.getInt("idRol");
         double sueldo = rs.getDouble("Sueldo");
-        int vacaciones = rs.getInt("Vacaciones");
+        boolean vacaciones = rs.getBoolean("Vacaciones");
         int faltas = rs.getInt("Faltas");
         String fechaIngreso = rs.getString("FechaIngreso");
         String fechaEgreso = rs.getString("FechaEgreso");
@@ -118,7 +124,7 @@ public class Mapper {
         stmt.setInt(2, e.getDNI());
         stmt.setInt(3, e.getRolID());
         stmt.setDouble(4, e.getSueldo());
-        stmt.setInt(5, e.getVacacionesActivas());
+        stmt.setBoolean(5, e.getVacacionesActivas());
         stmt.setInt(6, e.getFaltas());
         stmt.setString(7, e.getFechaDeIngreso());
         stmt.setString(8, e.getFechaDeEgreso());
