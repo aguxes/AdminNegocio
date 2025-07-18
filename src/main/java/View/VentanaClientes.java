@@ -34,24 +34,23 @@ INNER JOIN TiposClientes tc ON c.idTipo = tc.tipo
         }
     }
 
-    public static String obtenerTextoClientes(ArrayList<Cliente> lista) {
-        if (lista.isEmpty()) return "Lista vacía.";
+    public static String obtenerClientes(ArrayList<Cliente> lista) {
+        if (lista == null || lista.isEmpty()) return "Lista vacía.";
 
         StringBuilder sb = new StringBuilder();
 
         // Encabezado
-        sb.append(String.format("%-10s %-15s %-15s %-10s %-10s %-15s\n",
-                 "DNI", "Nombre", "Apellido", "Compras", "Tipo", "Teléfono"));
+        sb.append(String.format(" %-5s %-10s %-15s %-15s %-10s %-10s %-15s\n",
+                 "ID", "DNI", "Nombre", "Apellido", "Compras", "Tipo", "Teléfono"));
         sb.append("----------------------------------------------------------------------------------------------------------\n");
 
         // Datos
         for (Cliente c : lista) {
-            sb.append(String.format(" %-10d %-15s %-15s %-10d %-10s %-15s\n",
+            sb.append(String.format(" %-5d %-10d %-15s %-15s %-10d %-10s %-15s\n",
+                    c.getid(),
                     c.getDNI(),
                     c.getNombre(),
                     c.getApellido(),
-                    //c.getGenero(),
-                    //c.getNacionalidad(),
                     c.getCantCompras(),
                     c.getTipo().getDescripcion(),
                     c.getTelefono()
@@ -60,7 +59,6 @@ INNER JOIN TiposClientes tc ON c.idTipo = tc.tipo
 
         return sb.toString();
     }
-
 
     public static String eliminarPorId(int id) {
         StringBuilder result = new StringBuilder();
@@ -153,7 +151,7 @@ INNER JOIN TiposClientes tc ON c.idTipo = tc.tipo
                 if (listaTemp.isEmpty()) {
                     resultado.append("❌ No se encontraron clientes con ese ").append(campo);
                 } else {
-                    resultado.append(obtenerTextoClientes(listaTemp));
+                    resultado.append(obtenerClientes(listaTemp));
                 }
 
             } catch (SQLException e) {

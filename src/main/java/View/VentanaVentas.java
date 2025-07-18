@@ -1,13 +1,11 @@
 package View;
 
+import Clases.Principales.Cliente;
 import Clases.Principales.Venta;
 import DataBase.DataBaseConnection;
 import util.Mapper;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
@@ -30,19 +28,17 @@ public class VentanaVentas {
         LEFT JOIN FormaDePagos fp ON v.formaDePago = fp.idPago
         LEFT JOIN Producto pr ON v.idProd = pr.idProducto;
         """;
-
-
         try (Connection conn = DataBaseConnection.getConnection();
-             var stmt = conn.createStatement();
-             var rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                Venta venta = Mapper.getVenta(rs);
-                lista.add(venta);
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql)) {
+                while (rs.next()) {
+                    Venta v = Mapper.getVenta(rs);
+                    lista.add(v);
+                }
+            } catch (SQLException e) {
+                System.out.println("❌ Error al cargar ventas: " + e.getMessage());
             }
-        } catch (SQLException e) {
-            System.out.println("❌ Error al cargar ventas: " + e.getMessage());
-        }
-        return lista;
+            return lista;
     }
 
     public static String obtenerVentas(ArrayList<Venta> lista) {
@@ -111,11 +107,6 @@ public class VentanaVentas {
         } catch (Exception ex) {
             System.out.println("❌ Error al obtener ventas del cliente: " + ex.getMessage());
         }
-
         return lista;
     }
-
-
-
-
 }

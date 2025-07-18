@@ -46,10 +46,7 @@ public class Mapper {
                 rs.getInt("cantCompras"),
                 tel
         );
-
-
     }
-
     public static void setCliente(PreparedStatement stmt, Cliente c) throws SQLException {
         stmt.setInt(2, c.getDNI());
         stmt.setInt(1, c.getid());

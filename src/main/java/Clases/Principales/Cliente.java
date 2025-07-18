@@ -18,6 +18,11 @@ public class Cliente extends Persona implements Imprimible {
         this.cantCompras = cantCompras;
         this.telefono = telefono;
     }
+
+    public Cliente() { // Constructor vacío
+        super(0, "", "");
+    }
+
     public int getid() { return id; }
     public void setid(int id) { this.id = id; }
 

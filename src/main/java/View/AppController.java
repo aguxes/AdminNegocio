@@ -24,6 +24,7 @@ import util.Mapper;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -194,8 +195,6 @@ public class AppController {
         TableColumn<Cliente, String> colTipo = new TableColumn<>("Tipo Cliente");
         colTipo.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTipo().getDescripcion()));
 
-
-
         TableColumn<Cliente, Integer> colCompras = new TableColumn<>("Compras");
         colCompras.setCellValueFactory(new PropertyValueFactory<>("cantCompras"));
 
@@ -220,10 +219,110 @@ public class AppController {
         contenedor.getChildren().add(layout);
     }
 
+    private void agregarCliente()
+    {
+        TextField txtCantidadCompras = new TextField();
+        TextField txtTelefono = new TextField();
+
+        contenedor.getChildren().clear();
+
+        VBox form = new VBox(10);
+        form.setPadding(new Insets(20));
+        form.getStyleClass().add("form-box");
+
+        Label titulo = new Label("📋 Registrar Cliente");
+        titulo.getStyleClass().add("titulo-principal");
+
+        TextField txtDNI = new TextField();
+        txtDNI.setPromptText("DNI");
+        txtDNI.getStyleClass().add("text-field");
+
+        TextField txtNombre = new TextField();
+        txtNombre.setPromptText("Nombre");
+        txtNombre.getStyleClass().add("text-field");
+
+        TextField txtApellido = new TextField();
+        txtApellido.setPromptText("Apellido");
+        txtApellido.getStyleClass().add("text-field");
+
+        TextField txtTipo = new TextField();
+        txtTipo.setPromptText("Tipo de Cliente");
+        txtTipo.getStyleClass().add("text-field");
+
+        TextField txtCantdCompras = new TextField();
+        txtCantidadCompras.setPromptText("Cantidad de Compras");
+        txtCantidadCompras.getStyleClass().add("text-field");
+
+        Button btnRegistrarc = new Button("✅ Registrar Cliente");
+        btnRegistrarc.getStyleClass().add("boton-accion");
+        btnRegistrarc.setOnAction(e -> {
+            try (Connection conn = DataBaseConnection.getConnection()) {
+                int DNI = Integer.parseInt(txtDNI.getText().trim());
+                String Nombre = txtNombre.getText().trim();
+                String Apellido = txtApellido.getText().trim();
+                int tipoId = Integer.parseInt(txtTipo.getText().trim());
+                int cantCompras = Integer.parseInt(txtCantdCompras.getText().trim());
+
+                TiposClientes tipo = new TiposClientes(tipoId, "");
+                Cliente c = new Cliente();
+                c.setDNI(DNI);
+                c.setNombre(Nombre);
+                c.setApellido(Apellido);
+                c.setTipCliente(tipo);
+                c.setCantCompras(cantCompras);
+
+                String queryP = """
+                INSERT INTO Persona (dni, nombre, apellido ) VALUES (?, ?, ?)
+                """;
+                String queryC = """
+                INSERT INTO Cliente (dni, idTipo, cantCompras ) VALUES (?, ?, ?, ?)
+                """;
+
+                 PreparedStatement stmtP = conn.prepareStatement(queryP);
+                 PreparedStatement stmtC = conn.prepareStatement(queryC);
+
+                    Mapper.setPersona(stmtP, c);
+                    Mapper.setCliente(stmtC, c);
+
+                    stmtP.executeUpdate();
+                    stmtC.executeUpdate();
+
+                mostrarAlerta("✅ Cliente registrado correctamente.");
+                contenedor.getChildren().clear();  // Vaciamos el formulario
+                contenedor.getChildren().add(outputArea); // Volvemos a mostrar el área de texto
+
+            } catch (Exception ex) {
+                mostrarAlerta("❌ Error: " + ex.getMessage());
+            }
+        });
+
+        form.getChildren().addAll(
+                titulo,
+                txtDNI,
+                txtNombre,
+                txtApellido,
+                txtTipo,
+                txtCantdCompras,
+                btnRegistrarc
+        );
+
+        Button btnCancelar = new Button("❌ Cancelar nuevo Cliente");
+        btnCancelar.getStyleClass().add("boton-cancelar");
+        btnCancelar.setOnAction(e -> {
+            contenedor.getChildren().clear();
+            contenedor.getChildren().add(outputArea);
+        });
+
+        HBox filaCancelar = new HBox(btnCancelar);
+        filaCancelar.setAlignment(Pos.BOTTOM_RIGHT);
+
+        form.getChildren().add(filaCancelar);
 
 
-
-    private void agregarCliente() {
+        contenedor.getChildren().add(form);
+    }
+    /// Forma anterior para insertar Cliente, NO FUNCA
+    /*
         Stage ventana = new Stage();
         ventana.setTitle("Agregar Cliente");
 
@@ -284,7 +383,7 @@ public class AppController {
             }
         });
 
-        VBox layout = new VBox(10, txtID, txtDNI, txtNombre, txtApellido, /* txtGenero, txtNacionalidad, */ txtTipoCliente, txtCantidadCompras, txtTelefono, btnGuardar);
+        VBox layout = new VBox(10, txtID, txtDNI, txtNombre, txtApellido, /* txtGenero, txtNacionalidad, txtTipoCliente, txtCantidadCompras, txtTelefono, btnGuardar);
         layout.setPadding(new Insets(20));
         layout.setAlignment(Pos.CENTER);
 
@@ -292,8 +391,7 @@ public class AppController {
         ventana.setScene(escena);
         ventana.initModality(Modality.APPLICATION_MODAL);
         ventana.showAndWait();
-    }
-
+    }*/
     private void modificarCliente() {
         outputArea.setText("✏️ Función modificar cliente (en construcción)");
     }
@@ -442,7 +540,7 @@ public class AppController {
         ArrayList<Cliente> clientes = new ArrayList<>();
         VentanaClientes.cargarClientesEnLista(clientes);
 
-        TextArea areaTexto = new TextArea(VentanaClientes.obtenerTextoClientes(clientes));
+        TextArea areaTexto = new TextArea(VentanaClientes.obtenerClientes(clientes));
         areaTexto.setEditable(false);
         areaTexto.setWrapText(true);
         areaTexto.setPrefHeight(300);
@@ -603,7 +701,7 @@ public class AppController {
         // Mostrar lista de clientes
         ArrayList<Cliente> clientes = new ArrayList<>();
         VentanaClientes.cargarClientesEnLista(clientes);
-        TextArea areaTexto = new TextArea(VentanaClientes.obtenerTextoClientes(clientes));
+        TextArea areaTexto = new TextArea(VentanaClientes.obtenerClientes(clientes));
         areaTexto.setEditable(false);
         areaTexto.setWrapText(true);
         areaTexto.setPrefHeight(300);
