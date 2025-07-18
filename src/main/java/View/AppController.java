@@ -6,6 +6,7 @@ import Clases.Principales.*;
 import Clases.Extras.Telefono;
 
 import DataBase.*;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -188,8 +189,10 @@ public class AppController {
         TableColumn<Cliente, String> colApellido = new TableColumn<>("Apellido");
         colApellido.setCellValueFactory(new PropertyValueFactory<>("apellido"));
 
-        TableColumn<Cliente, Integer> colTipo = new TableColumn<>("Tipo Cliente");
-        colTipo.setCellValueFactory(new PropertyValueFactory<>("tipCliente"));
+        TableColumn<Cliente, String> colTipo = new TableColumn<>("Tipo Cliente");
+        colTipo.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTipo().getDescripcion()));
+
+
 
         TableColumn<Cliente, Integer> colCompras = new TableColumn<>("Compras");
         colCompras.setCellValueFactory(new PropertyValueFactory<>("cantCompras"));

@@ -14,11 +14,13 @@ import java.util.Scanner;
 public class ClienteDAO
 {
     public static void cargarClientesEnLista(ArrayList<Imprimible> lista) {
-        String query = """   
-        SELECT p.DNI, c.id, p.nombre, p.apellido, c.tipCliente, c.cantCompras
-        FROM Cliente c
-        INNER JOIN Persona p ON c.DNI = p.DNI;
-        """;
+        String query = """
+SELECT p.DNI, p.nombre, p.apellido, tc.tipo, tc.descripcion, c.id, c.cantCompras, t.telefono
+FROM Cliente c
+INNER JOIN Persona p ON c.DNI = p.DNI
+LEFT JOIN Telefonos t ON t.idPersona = p.DNI
+INNER JOIN TiposClientes tc ON c.idTipo = tc.tipo
+""";
 
         try (Connection conn = DataBaseConnection.getConnection();
              Statement stmt = conn.createStatement();
@@ -139,7 +141,7 @@ public class ClienteDAO
         INSERT INTO Persona (dni, nombre, apellido ) VALUES (?, ?, ?)
         """;
         String queryC = """
-        INSERT INTO Cliente (id, dni, tipCliente, cantCompras ) VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO Cliente (id, dni, idTipo, cantCompras ) VALUES (?, ?, ?, ?, ?, ?)
         """;
         try (Connection conn = DataBaseConnection.getConnection();
              PreparedStatement stmtP = conn.prepareStatement(queryP);
@@ -159,7 +161,7 @@ public class ClienteDAO
         String querySelect = "SELECT * FROM Cliente WHERE id = ?";
         String queryUPD =
                 """
-        UPDATE Cliente SET nombre = ?, apellido = ?, DNI = ?, genero = ?, nacionalidad = ?, tipCliente = ?, cantCompras = ? WHERE id = ?;
+        UPDATE Cliente SET nombre = ?, apellido = ?, DNI = ?, genero = ?, nacionalidad = ?, idTipo = ?, cantCompras = ? WHERE id = ?;
         """;
 
         System.out.print("Ingrese el ID del cliente a modificar: ");
