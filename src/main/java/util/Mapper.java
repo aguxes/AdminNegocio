@@ -32,19 +32,19 @@ public class Mapper {
     // ========================================
     public static Cliente getCliente(ResultSet rs) throws SQLException {
 
-        TiposClientes tipo = new TiposClientes(
+        TiposClientes tipoC = new TiposClientes(
                 rs.getInt("tipo"),
                 rs.getString("descripcion")
         );
-        Telefono t = new Telefono(rs.getInt("DNI"), rs.getLong("telefono"));
+        Telefono tel = new Telefono(rs.getInt("DNI"), rs.getLong("telefono"));
         return new Cliente(
                 rs.getInt("DNI"),
                 rs.getString("nombre"),
                 rs.getString("apellido"),
                 rs.getInt("id"),
-                tipo,
+                tipoC,
                 rs.getInt("cantCompras"),
-                t
+                tel
         );
 
 
@@ -73,7 +73,6 @@ public class Mapper {
         }
 
         LocalDateTime fecha = LocalDateTime.parse(fechaTexto, FORMATTER);
-
         return new Venta(
                 rs.getInt("nFactura"),
                 rs.getInt("idE"),
@@ -90,13 +89,15 @@ public class Mapper {
 
     // Este método sirve si vas a insertar una nueva venta
     public static void setVenta(PreparedStatement stmt, Venta venta) throws SQLException {
-        stmt.setInt(1, venta.getIdProducto()); // ahora sí existe
-        stmt.setInt(2, venta.getIdEmpleado());
+        stmt.setInt(1, venta.getIdVenta());
+        stmt.setInt(2, venta.getIdProducto());
         stmt.setInt(3, venta.getIdCliente());
-        stmt.setString(4, venta.getFecha().format(FORMATTER));
-        stmt.setInt(5, venta.getIdFormaDePago());  // ahora existe
-        stmt.setBigDecimal(6, venta.getSubtotal()); // ahora existe
-        stmt.setBigDecimal(7, venta.getImporteTotal());
+        stmt.setInt(4, venta.getIdEmpleado());
+        stmt.setInt(5, venta.getIdFormaDePago());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        stmt.setString(6, LocalDateTime.now().format(formatter));
+        stmt.setBigDecimal(7, venta.getSubtotal());
+        stmt.setBigDecimal(8, venta.getImporteTotal());
     }
 
     //EMPLEADO

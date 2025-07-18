@@ -86,6 +86,7 @@ public class VentaDAO {
                 double total = precioUnitario * cantidad;
 
                 // Paso 3: Insertar en tabla ventas
+                /*
                 LocalDateTime fecha = LocalDateTime.now();
                 Venta venta = new Venta( // ESTO TA MAL PERO NO SE COMO HACELL
                         0,
@@ -97,9 +98,9 @@ public class VentaDAO {
                         "",
                         "",
                         ""
-                );
+                );*/
                 PreparedStatement stmtVenta = conn.prepareStatement(queryInsertV, Statement.RETURN_GENERATED_KEYS);
-                Mapper.setVenta(stmtVenta, venta);
+                //Mapper.setVenta(stmtVenta, venta);
                 stmtVenta.executeUpdate();
 
                 ResultSet generatedKeys = stmtVenta.getGeneratedKeys();

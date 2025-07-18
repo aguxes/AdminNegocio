@@ -19,6 +19,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import util.Mapper;
+
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -379,18 +381,19 @@ public class AppController {
                     default -> throw new IllegalArgumentException("Forma de pago inválida.");
                 };
 
+                Venta venta = new Venta();
+                venta.setIdVenta(nFactura);
+                venta.setIdProducto(productoId);
+                venta.setIdCliente(clienteId);
+                venta.setIdEmpleado(empleadoId);
+                venta.setIdFormaDePago(idPago);
+                venta.setSubtotal(total);
+                venta.setImporteTotal(total);
+
                 String sql = "INSERT INTO Venta (nFactura, idProd, idC, idE, formaDePago, fecha, subtotal, total) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                 PreparedStatement stmt = conn.prepareStatement(sql);
-                stmt.setInt(1, nFactura);
-                stmt.setInt(2, productoId);
-                stmt.setInt(3, clienteId);
-                stmt.setInt(4, empleadoId);
-                stmt.setInt(5, idPago);
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                stmt.setString(6, LocalDateTime.now().format(formatter));
-                stmt.setBigDecimal(7, subtotal);
-                stmt.setBigDecimal(8, total);
 
+                Mapper.setVenta(stmt, venta);
                 stmt.executeUpdate();
                 mostrarAlerta("✅ Venta registrada correctamente.");
                 contenedor.getChildren().clear();  // Vaciamos el formulario

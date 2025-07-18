@@ -6,20 +6,20 @@ import java.time.LocalDateTime;
 public class Venta implements Imprimible {
 
     private int idVenta;
+    private int idProducto;
     private int idCliente;
     private int idEmpleado;
     private LocalDateTime fecha;
     private String medioPago;
-    private BigDecimal importeTotal;
-    private String notas;
-    private int idProducto;
     private int idFormaDePago;
     private BigDecimal subtotal;
+    private BigDecimal importeTotal;
+    private String notas;
 
-    private String nombreCliente;
-    private String nombreEmpleado;
+    private final String nombreCliente;
+    private final String nombreEmpleado;
 
-    public Venta(int idVenta, int idEmpleado, int idCliente, LocalDateTime fecha, String medioPago, BigDecimal importeTotal, String notas, String nombreCliente, String nombreEmpleado) {
+    public Venta (int idVenta, int idEmpleado, int idCliente, LocalDateTime fecha, String medioPago, BigDecimal importeTotal, String notas, String nombreCliente, String nombreEmpleado) {
         this.idVenta = idVenta;
         this.idEmpleado = idEmpleado;
         this.idCliente = idCliente;
@@ -30,25 +30,37 @@ public class Venta implements Imprimible {
         this.nombreCliente = nombreCliente;
         this.nombreEmpleado = nombreEmpleado;
     }
-
+    public Venta() { //Constructor vacío
+        this.nombreCliente = "";
+        this.nombreEmpleado = "";
+    }
+    //Getters
     public int getIdVenta() { return idVenta; }
+    public int getIdProducto() {return idProducto;}
     public int getIdCliente() { return idCliente; }
     public int getIdEmpleado() { return idEmpleado; }
     public LocalDateTime getFecha() { return fecha; }
+    public int getIdFormaDePago() {return idFormaDePago;}
     public String getMedioPago() { return medioPago; }
+    public BigDecimal getSubtotal() {return subtotal;}
     public BigDecimal getImporteTotal() { return importeTotal; }
     public String getNotas() { return notas; }
     public String getNombreCliente() { return nombreCliente; }
     public String getNombreEmpleado() { return nombreEmpleado; }
 
 
-// Setters
+
+    // Setters
+    public void setIdVenta(int idVenta) { this.idVenta = idVenta; }
+    public void setIdProducto(int idProducto) { this.idProducto = idProducto; }
+    public void setIdCliente(int idCliente) { this.idCliente = idCliente;}
+    public void setIdEmpleado(int idEmpleado) { this.idEmpleado = idEmpleado; }
     public void setFecha(LocalDateTime fecha) { this.fecha = fecha; }
+    public void setIdFormaDePago(int idFormaDePago) { this.idFormaDePago = idFormaDePago; }
     public void setMedioPago(String medioPago) { this.medioPago = medioPago; }
+    public void setSubtotal(BigDecimal subtotal) { this.subtotal = subtotal; }
+    public void setImporteTotal(BigDecimal importeTotal) { this.importeTotal = importeTotal; }
     public void setNotas(String notas) { this.notas = notas; }
-    public int getIdProducto() {return idProducto;}
-    public int getIdFormaDePago() {return idFormaDePago;}
-    public BigDecimal getSubtotal() {return subtotal;}
 
     @Override
     public void imprimir() {
