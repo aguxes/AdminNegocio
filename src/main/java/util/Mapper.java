@@ -32,11 +32,8 @@ public class Mapper {
     // ========================================
     public static Cliente getCliente(ResultSet rs) throws SQLException {
 
-        TiposClientes tipoC = new TiposClientes(
-                rs.getInt("tipo"),
-                rs.getString("descripcion")
-        );
-        Telefono tel = new Telefono(rs.getInt("DNI"), rs.getLong("telefono"));
+        TiposClientes tipoC = new TiposClientes( rs.getInt("tipo"), rs.getString("descripcion")); // Extra de la clase cliente
+        Telefono tel = new Telefono(rs.getInt("DNI"), rs.getLong("telefono")); // Extra de la clase cliente
         return new Cliente(
                 rs.getInt("DNI"),
                 rs.getString("nombre"),
@@ -48,12 +45,9 @@ public class Mapper {
         );
     }
     public static void setCliente(PreparedStatement stmt, Cliente c) throws SQLException {
-        stmt.setInt(2, c.getDNI());
-        stmt.setInt(1, c.getid());
-        stmt.setInt(3, c.getTipo().getTipo());
-        stmt.setString(3, c.getTipo().getDescripcion());
-        stmt.setInt(5, c.getCantCompras());
-        stmt.setLong(6, c.getTelefono().getTelefono());
+        stmt.setInt(1, c.getDNI());
+        stmt.setInt(2, c.getTipo().getTipo());
+        stmt.setInt(3, c.getCantCompras());
     }
 
     // Mapeo de Venta
@@ -148,6 +142,17 @@ public class Mapper {
                 fechaBaja
         );
     }
-
-
+    // Entidades secundarias
+    //Mapeo Telefono
+    public static Telefono getTelefono(ResultSet rs) throws SQLException {
+       Telefono t = new Telefono(
+                rs.getInt("idPersona"),
+                rs.getLong("telefono")
+        );
+        return t;
+    }
+    public static void setTelefono(PreparedStatement stmt, Cliente c) throws SQLException {
+        stmt.setInt(1, c.getDNI());
+        stmt.setLong(2, c.getTelefono().getTelefono());
+    }
 }

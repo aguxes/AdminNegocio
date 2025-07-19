@@ -12,12 +12,12 @@ public class VentanaClientes {
 
     public static void cargarClientesEnLista(ArrayList<Cliente> lista) {
         String sql = """
-    SELECT p.DNI, p.nombre, p.apellido,  tc.tipo, tc.descripcion, c.id, c.cantCompras, t.telefono
-    FROM Cliente c
-    INNER JOIN Persona p ON c.DNI = p.DNI
-    LEFT JOIN Telefonos t ON t.idPersona = p.DNI
-    INNER JOIN TiposClientes tc ON c.idTipo = tc.tipo
-    """;
+        SELECT c.ID, p.DNI, p.nombre, p.apellido, tc.tipo, tc.descripcion, c.cantCompras, t.telefono
+        FROM Cliente c
+         INNER JOIN Persona p ON c.DNI = p.DNI
+         LEFT JOIN Telefonos t ON t.idPersona = p.DNI
+         INNER JOIN TiposClientes tc ON c.idTipo = tc.tipo
+        """;
 
 
         try (Connection conn = DataBaseConnection.getConnection();
@@ -47,7 +47,7 @@ public class VentanaClientes {
         // Datos
         for (Cliente c : lista) {
             sb.append(String.format(" %-5d %-10d %-15s %-15s %-10d %-10s %-15s\n",
-                    c.getid(),
+                    c.getId(),
                     c.getDNI(),
                     c.getNombre(),
                     c.getApellido(),

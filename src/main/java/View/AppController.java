@@ -192,6 +192,9 @@ public class AppController {
         TableColumn<Cliente, String> colApellido = new TableColumn<>("Apellido");
         colApellido.setCellValueFactory(new PropertyValueFactory<>("apellido"));
 
+        TableColumn<Cliente, Integer> colId = new TableColumn<>("ID");
+        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
+
         TableColumn<Cliente, String> colTipo = new TableColumn<>("Tipo Cliente");
         colTipo.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTipo().getDescripcion()));
 
@@ -201,7 +204,7 @@ public class AppController {
         TableColumn<Cliente, String> colTelefono = new TableColumn<>("Teléfono");
         colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
 
-        tabla.getColumns().addAll( colDni, colNombre, colApellido, colTipo, colCompras, colTelefono);
+        tabla.getColumns().addAll( colId, colDni, colNombre, colApellido, colTipo, colCompras, colTelefono);
 
         // Cargar datos
         ArrayList<Cliente> clientes = new ArrayList<>();
@@ -216,9 +219,6 @@ public class AppController {
 
     private void agregarCliente()
     {
-        TextField txtCantidadCompras = new TextField();
-        TextField txtTelefono = new TextField();
-
         contenedor.getChildren().clear();
 
         VBox form = new VBox(10);
@@ -244,9 +244,13 @@ public class AppController {
         txtTipo.setPromptText("Tipo de Cliente");
         txtTipo.getStyleClass().add("text-field");
 
-        TextField txtCantdCompras = new TextField();
-        txtCantidadCompras.setPromptText("Cantidad de Compras");
-        txtCantidadCompras.getStyleClass().add("text-field");
+        TextField txtCantCompras = new TextField();
+        txtCantCompras.setPromptText("Cantidad de Compras");
+        txtCantCompras.getStyleClass().add("text-field");
+
+        TextField txtTelefono = new TextField();
+        txtTelefono.setPromptText("Teléfono");
+        txtTelefono.getStyleClass().add("text-field");
 
         Button btnRegistrarc = new Button("✅ Registrar Cliente");
         btnRegistrarc.getStyleClass().add("boton-accion");
@@ -256,31 +260,41 @@ public class AppController {
                 String Nombre = txtNombre.getText().trim();
                 String Apellido = txtApellido.getText().trim();
                 int tipoId = Integer.parseInt(txtTipo.getText().trim());
-                int cantCompras = Integer.parseInt(txtCantdCompras.getText().trim());
+                int cantCompras = Integer.parseInt(txtCantCompras.getText().trim());
+                Long telefono = Long.parseLong(txtTelefono.getText().trim());
 
                 TiposClientes tipo = new TiposClientes(tipoId, "");
+                Telefono tel = new Telefono(DNI, telefono);
+
                 Cliente c = new Cliente();
                 c.setDNI(DNI);
                 c.setNombre(Nombre);
                 c.setApellido(Apellido);
                 c.setTipCliente(tipo);
                 c.setCantCompras(cantCompras);
+                c.setTelefono(tel);
 
                 String queryP = """
                 INSERT INTO Persona (dni, nombre, apellido ) VALUES (?, ?, ?)
                 """;
                 String queryC = """
-                INSERT INTO Cliente (dni, idTipo, cantCompras ) VALUES (?, ?, ?, ?)
+                INSERT INTO Cliente (dni, idTipo, cantCompras ) VALUES (?, ?, ?)
+                """;
+                String queryT = """
+                INSERT INTO Telefonos (idPersona, telefono) VALUES (?, ?)
                 """;
 
                  PreparedStatement stmtP = conn.prepareStatement(queryP);
                  PreparedStatement stmtC = conn.prepareStatement(queryC);
+                 PreparedStatement stmtT = conn.prepareStatement(queryT);
 
                     Mapper.setPersona(stmtP, c);
                     Mapper.setCliente(stmtC, c);
+                    Mapper.setTelefono(stmtT, c);
 
                     stmtP.executeUpdate();
                     stmtC.executeUpdate();
+                    stmtT.executeUpdate();
 
                 mostrarAlerta("✅ Cliente registrado correctamente.");
                 contenedor.getChildren().clear();
@@ -297,7 +311,8 @@ public class AppController {
                 txtNombre,
                 txtApellido,
                 txtTipo,
-                txtCantdCompras,
+                txtCantCompras,
+                txtTelefono,
                 btnRegistrarc
         );
 
@@ -316,77 +331,6 @@ public class AppController {
 
         contenedor.getChildren().add(form);
     }
-    /// Forma anterior para insertar Cliente, NO FUNCA
-    /*
-        Stage ventana = new Stage();
-        ventana.setTitle("Agregar Cliente");
-
-        TextField txtID = new TextField();
-        TextField txtDNI = new TextField();
-        TextField txtNombre = new TextField();
-        TextField txtApellido = new TextField();
-        //TextField txtGenero = new TextField();
-        //TextField txtNacionalidad = new TextField();
-        TextField txtTipoCliente = new TextField();
-        TextField txtCantidadCompras = new TextField();
-        TextField txtTelefono = new TextField();
-
-        txtID.setPromptText("ID");
-        txtDNI.setPromptText("DNI");
-        txtNombre.setPromptText("Nombre");
-        txtApellido.setPromptText("Apellido");
-        //txtGenero.setPromptText("Género");
-        //txtNacionalidad.setPromptText("Nacionalidad");
-        txtTipoCliente.setPromptText("Tipo de Cliente");
-        txtCantidadCompras.setPromptText("Cantidad de Compras");
-        txtTelefono.setPromptText("Telefono");
-
-        Button btnGuardar = new Button("Guardar");
-
-        btnGuardar.setOnAction(e -> {
-            try {
-                int id = Integer.parseInt(txtID.getText().trim()); //es autogenerado de la base de datos
-                int dni = Integer.parseInt(txtDNI.getText().trim());
-                String nombre = txtNombre.getText().trim();
-                String apellido = txtApellido.getText().trim();
-                //int genero = Integer.parseInt(txtGenero.getText().trim());
-                //int nacionalidad = Integer.parseInt(txtNacionalidad.getText().trim());
-                int tipoId = Integer.parseInt(txtTipoCliente.getText().trim());
-                int cantCompras = Integer.parseInt(txtCantidadCompras.getText().trim());
-                long telefonox = Long.parseLong(txtTelefono.getText().trim());
-
-                TiposClientes tipo = new TiposClientes(tipoId, "desc");
-                Telefono telefono = new Telefono(dni, telefonox);
-
-                Cliente c = new Cliente(
-                        dni,
-                        nombre,
-                        apellido,
-                        id,
-                        tipo,
-                        cantCompras,
-                        telefono
-                );
-                Persona p = c;
-
-                VentanaClientes.insertar(c, p);
-                outputArea.setText(VentanaClientes.insertar(c, p));
-                outputArea.setText("✅ Cliente agregado correctamente.");
-                ventana.close();
-            } catch (NumberFormatException ex) {
-                outputArea.setText("❌ Error: Verificá que todos los campos numéricos tengan un valor válido.");
-            }
-        });
-
-        VBox layout = new VBox(10, txtID, txtDNI, txtNombre, txtApellido, /* txtGenero, txtNacionalidad, txtTipoCliente, txtCantidadCompras, txtTelefono, btnGuardar);
-        layout.setPadding(new Insets(20));
-        layout.setAlignment(Pos.CENTER);
-
-        Scene escena = new Scene(layout, 350, 500);
-        ventana.setScene(escena);
-        ventana.initModality(Modality.APPLICATION_MODAL);
-        ventana.showAndWait();
-    }*/
     private void modificarCliente() {
         outputArea.setText("✏️ Función modificar cliente (en construcción)");
     }

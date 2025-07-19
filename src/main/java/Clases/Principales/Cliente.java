@@ -8,11 +8,10 @@ public class Cliente extends Persona implements Imprimible {
     private TiposClientes tipo;
     private int cantCompras;
     private Telefono telefono;
-    private String nombreTipoCliente; // opcional
 
 
     public Cliente(int dni, String nombre, String apellido, int id, TiposClientes tipo, int cantCompras, Telefono telefono) {
-        super(dni, nombre, apellido /*genero, nacionalidad*/);
+        super(dni, nombre, apellido );
         this.id = id;
         this.tipo = tipo;
         this.cantCompras = cantCompras;
@@ -23,7 +22,7 @@ public class Cliente extends Persona implements Imprimible {
         super(0, "", "");
     }
 
-    public int getid() { return id; }
+    public int getId() { return id; }
     public void setid(int id) { this.id = id; }
 
     public TiposClientes getTipo() { return tipo; }
