@@ -18,9 +18,7 @@ public class Cliente extends Persona implements Imprimible {
         this.telefono = telefono;
     }
 
-    public Cliente() { // Constructor vacío
-        super(0, "", "");
-    }
+    public Cliente() { super(0, "", ""); }// Constructor vacío
 
     public int getId() { return id; }
     public void setid(int id) { this.id = id; }
@@ -36,7 +34,20 @@ public class Cliente extends Persona implements Imprimible {
 
     @Override
     public void imprimir() {
-        System.out.printf("%-5d %-10s %-15s %-15s %-10s %-10s %-10d %-20s %-5d\n",
-                id, DNI, nombre, apellido, tipo, cantCompras);
+        System.out.printf("%-5s %-10s %-15s %-15s %-15s %-12s %-15s\n",
+                "ID", "DNI", "Nombre", "Apellido", "Tipo", "Compras", "Teléfono");
+        System.out.println("-------------------------------------------------------------------------------");
+
+        System.out.printf("%-5d %-10d %-15s %-15s %-15s %-12d %-15s\n",
+                id,
+                getDNI(),
+                getNombre(),
+                getApellido(),
+                tipo != null ? tipo.getDescripcion() : "N/A",
+                cantCompras,
+                telefono != null ? String.valueOf(telefono.getTelefono()) : "N/A"
+        );
     }
+
+
 }

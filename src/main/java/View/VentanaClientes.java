@@ -40,7 +40,7 @@ public class VentanaClientes {
 
         // Encabezado
         sb.append(String.format(" %-5s %-10s %-15s %-15s %-10s %-10s %-15s\n",
-                 "ID", "DNI", "Nombre", "Apellido", "Compras", "Tipo", "Teléfono"));
+                "ID", "DNI", "Nombre", "Apellido", "Compras", "Tipo", "Teléfono"));
         sb.append("----------------------------------------------------------------------------------------------------------\n");
 
         // Datos
@@ -55,15 +55,18 @@ public class VentanaClientes {
                     c.getTelefono()
             ));
         }
-
         return sb.toString();
     }
 
     public static String eliminarPorId(int id) {
         StringBuilder result = new StringBuilder();
-        String sql = "SELECT nombre FROM Cliente WHERE id = ?";
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        String query = """
+        SELECT p.nombre FROM Cliente c
+        INNER JOIN Persona p ON p.DNI = c.DNI
+         WHERE c.id = ?
+        """;
+        String deleteSQL = "DELETE FROM Cliente WHERE id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -71,7 +74,6 @@ public class VentanaClientes {
             if (rs.next()) {
                 String nombre = rs.getString("nombre");
 
-                String deleteSQL = "DELETE FROM Cliente WHERE id = ?";
                 conn.setAutoCommit(false);
                 try (PreparedStatement deleteStmt = conn.prepareStatement(deleteSQL)) {
                     deleteStmt.setInt(1, id);
@@ -91,22 +93,23 @@ public class VentanaClientes {
     }
 
     public static Cliente obtenerClientePorId(int id) {
-        String query = "SELECT * FROM Cliente WHERE id = ?";
-
+        String query = """
+        SELECT p.nombre FROM Cliente c
+        INNER JOIN Persona p ON p.DNI = c.DNI
+         WHERE c.id = ?
+        """;
+        StringBuilder result = new StringBuilder();
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
 
-            if (rs.next()) { Cliente c = Mapper.getCliente(rs); }
-
-        } catch (SQLException e) {
-            System.out.println("❌ Error al buscar cliente: " + e.getMessage());
-        }
+            if ( rs.next() ) { return Mapper.getCliente(rs); }
+            else { result.append ("⚠️ No se encontró ningún cliente con ese ID."); }
+        } catch ( SQLException e ) { System.out.println("❌ Error al buscar cliente: " + e.getMessage()); }
 
         return null;
     }
-
     public static String buscarNombrePorId(int id) {
         String query = "SELECT nombre, apellido FROM Cliente WHERE id = ?";
 
@@ -129,10 +132,28 @@ public class VentanaClientes {
         ArrayList<Cliente> listaTemp = new ArrayList<>();
         StringBuilder resultado = new StringBuilder();
 
-        if (campo.equals("apellido") || campo.equals("nombre")) {
-            String query = """
-            SELECT * FROM Cliente WHERE " + campo + " LIKE ?;
-            """;
+        String campoSQL = switch (campo) {
+            case "nombre", "apellido", "DNI" -> "p." + campo;
+            case "ID", "cantCompras"         -> "c." + campo;
+            case "tipo"                      -> "tc.descripcion"; // NO FUNCA
+            case "telefono"                  -> "t.telefono"; // NO FUNCA
+            default                          -> null;
+        };
+
+        if (campoSQL == null) {
+            resultado.append("⚠️ Opción no válida. Campos válidos: nombre, apellido, DNI, ID, cantCompras, tipo, telefono.");
+            return resultado.toString();
+        }
+        else
+        {
+        String query =
+            "SELECT c.ID, p.DNI, p.nombre, p.apellido, tc.tipo, tc.descripcion, c.cantCompras, t.telefono " +
+            "FROM Cliente c " +
+            "INNER JOIN Persona p ON p.DNI = c.DNI " +
+            "LEFT JOIN Telefonos t ON t.idPersona = p.DNI " +
+            "INNER JOIN TiposClientes tc ON c.idTipo = tc.tipo " +
+            "WHERE " + campoSQL + " LIKE ?";
+
             try (PreparedStatement stmt = conn.prepareStatement(query)) {
 
                 stmt.setString(1, "%" + valor + "%");
@@ -152,8 +173,6 @@ public class VentanaClientes {
             } catch (SQLException e) {
                 resultado.append("❌ Error en la base de datos: ").append(e.getMessage());
             }
-        } else {
-            resultado.append("⚠️ Opción no válida. Debe ser 'email' o 'nombre'.");
         }
 
         return resultado.toString();

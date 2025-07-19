@@ -58,15 +58,15 @@ public class AppController {
                 crearBoton("Reportes", e -> mostrarSubmenuReportes())
         );
     }
-
+    // SUBMENÚS
     private void mostrarSubmenuClientes() {
         menuLateral.getChildren().clear();
         menuLateral.getChildren().addAll(
                 crearBoton("Ver Clientes", e -> verClientes()),
                 crearBoton("Agregar Cliente", e -> agregarCliente()),
                 crearBoton("Modificar Cliente", e -> modificarCliente()),
-                crearBoton("Eliminar Cliente", e -> abrirVentanaEliminarCliente()),
-                crearBoton("Buscar Cliente", e -> abrirVentanaBuscarCliente()),
+                crearBoton("Eliminar Cliente", e -> EliminarCliente()),
+                crearBoton("Buscar Cliente", e -> BuscarCliente()),
                 crearBoton("🔙 Volver", e -> cargarMenuPrincipal())
         );
     }
@@ -100,123 +100,7 @@ public class AppController {
                 crearBoton("🔙 Volver", e -> cargarMenuPrincipal())
         );
     }
-
-    public void abrirVentanaBuscarCliente() {
-        Stage ventana = new Stage();
-        ventana.setTitle("Buscar Cliente");
-
-        Label lblCampo = new Label("Buscar por:");
-        ChoiceBox<String> choiceCampo = new ChoiceBox<>();
-        choiceCampo.getItems().addAll("nombre", "email");
-        choiceCampo.setValue("nombre");
-
-        TextField txtValor = new TextField();
-        txtValor.setPromptText("Ej: Juan o juan@mail.com");
-
-        Button btnBuscar = new Button("Buscar");
-        btnBuscar.setOnAction(e -> {
-            String campo = choiceCampo.getValue();
-            String valor = txtValor.getText();
-
-            String resultado = VentanaClientes.buscarClientePorDato(campo, valor);
-            outputArea.setText(resultado);
-
-            ventana.close(); // Se cierra si querés automático al buscar
-        });
-
-        VBox layout = new VBox(10, lblCampo, choiceCampo, txtValor, btnBuscar);
-        layout.setPadding(new Insets(20));
-        layout.setAlignment(Pos.CENTER);
-
-        Scene escena = new Scene(layout, 300, 200);
-        ventana.setScene(escena);
-        ventana.initModality(Modality.APPLICATION_MODAL);
-        ventana.showAndWait();
-    }
-
-    public void abrirVentanaEliminarCliente() {
-        Stage ventana = new Stage();
-        ventana.setTitle("Eliminar Cliente");
-
-        TextField txtId = new TextField();
-        txtId.setPromptText("ID del cliente");
-
-        Label lblConfirmacion = new Label();
-
-        Button btnBuscar = new Button("Buscar");
-        btnBuscar.setOnAction(e -> {
-            int id = Integer.parseInt(txtId.getText());
-            String nombre = VentanaClientes.buscarNombrePorId(id);
-            if (nombre != null) {
-                lblConfirmacion.setText("¿Eliminar a " + nombre + "?");
-            } else {
-                lblConfirmacion.setText("Cliente no encontrado.");
-            }
-        });
-
-        Button btnEliminar = new Button("Sí, eliminar");
-        btnEliminar.setOnAction(e -> {
-            VentanaClientes.eliminarPorId(Integer.parseInt(txtId.getText()));
-            ventana.close();
-        });
-
-        Button btnCancelar = new Button("Cancelar");
-        btnCancelar.setOnAction(e -> ventana.close());
-
-        HBox botones = new HBox(10, btnEliminar, btnCancelar);
-        botones.setAlignment(Pos.CENTER);
-
-        VBox layout = new VBox(10, new Label("ID Cliente:"), txtId, btnBuscar, lblConfirmacion, botones);
-        layout.setPadding(new Insets(20));
-        layout.setAlignment(Pos.CENTER);
-
-        Scene escena = new Scene(layout, 300, 250);
-        ventana.setScene(escena);
-        ventana.initModality(Modality.APPLICATION_MODAL);
-        ventana.showAndWait();
-    }
-
-    // CLIENTES
-    private void verClientes() {
-        contenedor.getChildren().clear();
-
-        TableView<Cliente> tabla = new TableView<>();
-        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        tabla.setPlaceholder(new Label("No hay clientes cargados."));
-
-        TableColumn<Cliente, Integer> colDni = new TableColumn<>("DNI");
-        colDni.setCellValueFactory(new PropertyValueFactory<>("DNI"));
-
-        TableColumn<Cliente, String> colNombre = new TableColumn<>("Nombre");
-        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-
-        TableColumn<Cliente, String> colApellido = new TableColumn<>("Apellido");
-        colApellido.setCellValueFactory(new PropertyValueFactory<>("apellido"));
-
-        TableColumn<Cliente, Integer> colId = new TableColumn<>("ID");
-        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
-
-        TableColumn<Cliente, String> colTipo = new TableColumn<>("Tipo Cliente");
-        colTipo.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTipo().getDescripcion()));
-
-        TableColumn<Cliente, Integer> colCompras = new TableColumn<>("Compras");
-        colCompras.setCellValueFactory(new PropertyValueFactory<>("cantCompras"));
-
-        TableColumn<Cliente, String> colTelefono = new TableColumn<>("Teléfono");
-        colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
-
-        tabla.getColumns().addAll( colId, colDni, colNombre, colApellido, colTipo, colCompras, colTelefono);
-
-        // Cargar datos
-        ArrayList<Cliente> clientes = new ArrayList<>();
-        VentanaClientes.cargarClientesEnLista(clientes);
-        tabla.setItems(FXCollections.observableArrayList(clientes));
-
-        VBox layout = new VBox(10, new Label("👤 Lista de clientes"), tabla);
-        layout.setPadding(new Insets(20));
-
-        contenedor.getChildren().add(layout);
-    }
+    //CLIENTE
 
     private void agregarCliente()
     {
@@ -285,17 +169,17 @@ public class AppController {
                 INSERT INTO Telefonos (idPersona, telefono) VALUES (?, ?)
                 """;
 
-                 PreparedStatement stmtP = conn.prepareStatement(queryP);
-                 PreparedStatement stmtC = conn.prepareStatement(queryC);
-                 PreparedStatement stmtT = conn.prepareStatement(queryT);
+                PreparedStatement stmtP = conn.prepareStatement(queryP);
+                PreparedStatement stmtC = conn.prepareStatement(queryC);
+                PreparedStatement stmtT = conn.prepareStatement(queryT);
 
-                    Mapper.setPersona(stmtP, c);
-                    Mapper.setCliente(stmtC, c);
-                    Mapper.setTelefono(stmtT, c);
+                Mapper.setPersona(stmtP, c);
+                Mapper.setCliente(stmtC, c);
+                Mapper.setTelefono(stmtT, c);
 
-                    stmtP.executeUpdate();
-                    stmtC.executeUpdate();
-                    stmtT.executeUpdate();
+                stmtP.executeUpdate();
+                stmtC.executeUpdate();
+                stmtT.executeUpdate();
 
                 mostrarAlerta("✅ Cliente registrado correctamente.");
                 contenedor.getChildren().clear();
@@ -332,9 +216,127 @@ public class AppController {
 
         contenedor.getChildren().add(form);
     }
+
     private void modificarCliente() {
         outputArea.setText("✏️ Función modificar cliente (en construcción)");
     }
+
+    private void verClientes() {
+        contenedor.getChildren().clear();
+
+        TableView<Cliente> tabla = new TableView<>();
+        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tabla.setPlaceholder(new Label("No hay clientes cargados."));
+
+        TableColumn<Cliente, Integer> colDni = new TableColumn<>("DNI");
+        colDni.setCellValueFactory(new PropertyValueFactory<>("DNI"));
+
+        TableColumn<Cliente, String> colNombre = new TableColumn<>("Nombre");
+        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+
+        TableColumn<Cliente, String> colApellido = new TableColumn<>("Apellido");
+        colApellido.setCellValueFactory(new PropertyValueFactory<>("apellido"));
+
+        TableColumn<Cliente, Integer> colId = new TableColumn<>("ID");
+        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
+
+        TableColumn<Cliente, String> colTipo = new TableColumn<>("Tipo Cliente");
+        colTipo.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTipo().getDescripcion()));
+
+        TableColumn<Cliente, Integer> colCompras = new TableColumn<>("Compras");
+        colCompras.setCellValueFactory(new PropertyValueFactory<>("cantCompras"));
+
+        TableColumn<Cliente, String> colTelefono = new TableColumn<>("Teléfono");
+        colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
+
+        tabla.getColumns().addAll( colId, colDni, colNombre, colApellido, colTipo, colCompras, colTelefono);
+
+        // Cargar datos
+        ArrayList<Cliente> clientes = new ArrayList<>();
+        VentanaClientes.cargarClientesEnLista(clientes);
+        tabla.setItems(FXCollections.observableArrayList(clientes));
+
+        VBox layout = new VBox(10, new Label("👤 Lista de clientes"), tabla);
+        layout.setPadding(new Insets(20));
+
+        contenedor.getChildren().add(layout);
+    }
+
+    public void BuscarCliente() {
+        Stage ventana = new Stage();
+        ventana.setTitle("Buscar Cliente");
+
+        Label lblCampo = new Label("Buscar por:");
+        ChoiceBox<String> choiceCampo = new ChoiceBox<>();
+        choiceCampo.getItems().addAll("nombre", "apellido", "ID", "DNI", "Tipo", "cantCompras", "teléfono");
+        choiceCampo.setValue("--Selccione--");
+
+        TextField txtValor = new TextField();
+        txtValor.setPromptText("Ej: Juan o 2");
+
+        Button btnBuscar = new Button("Buscar");
+        btnBuscar.setOnAction(e -> {
+            String campo = choiceCampo.getValue();
+            String valor = txtValor.getText();
+
+            String resultado = VentanaClientes.buscarClientePorDato(campo, valor);
+            outputArea.setText(resultado);
+
+            ventana.close(); // Se cierra si querés automático al buscar
+        });
+
+        VBox layout = new VBox(10, lblCampo, choiceCampo, txtValor, btnBuscar);
+        layout.setPadding(new Insets(20));
+        layout.setAlignment(Pos.CENTER);
+
+        Scene escena = new Scene(layout, 300, 200);
+        ventana.setScene(escena);
+        ventana.initModality(Modality.APPLICATION_MODAL);
+        ventana.showAndWait();
+    }
+
+    public void EliminarCliente() {
+        Stage ventana = new Stage();
+        ventana.setTitle("Eliminar Cliente");
+
+        TextField txtId = new TextField();
+        txtId.setPromptText("ID del cliente");
+
+        Label lblConfirmacion = new Label();
+
+        Button btnBuscar = new Button("Buscar");
+        btnBuscar.setOnAction(e -> {
+            int id = Integer.parseInt(txtId.getText());
+            String nombre = VentanaClientes.buscarNombrePorId(id);
+            if (nombre != null) {
+                lblConfirmacion.setText("¿Eliminar a " + nombre + "?");
+            } else {
+                lblConfirmacion.setText("Cliente no encontrado.");
+            }
+        });
+
+        Button btnEliminar = new Button("Sí, eliminar");
+        btnEliminar.setOnAction(e -> {
+            VentanaClientes.eliminarPorId(Integer.parseInt(txtId.getText()));
+            ventana.close();
+        });
+
+        Button btnCancelar = new Button("Cancelar");
+        btnCancelar.setOnAction(e -> ventana.close());
+
+        HBox botones = new HBox(10, btnEliminar, btnCancelar);
+        botones.setAlignment(Pos.CENTER);
+
+        VBox layout = new VBox(10, new Label("ID Cliente:"), txtId, btnBuscar, lblConfirmacion, botones);
+        layout.setPadding(new Insets(20));
+        layout.setAlignment(Pos.CENTER);
+
+        Scene escena = new Scene(layout, 300, 250);
+        ventana.setScene(escena);
+        ventana.initModality(Modality.APPLICATION_MODAL);
+        ventana.showAndWait();
+    }
+
 
     // VENTAS
     private void verVentas() {

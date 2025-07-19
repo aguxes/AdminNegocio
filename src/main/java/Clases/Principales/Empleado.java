@@ -28,10 +28,8 @@ public class Empleado extends Persona implements Imprimible {
     }
 
     @Override
-    public void imprimir() {
-
-    }
-
+    public void imprimir() { }
+    public Empleado() { super(0, "", ""); } // Constructor vacío
     public int getEmpleadoID() {
         return empleadoID;
     }

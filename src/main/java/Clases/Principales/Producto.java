@@ -47,6 +47,7 @@ public class Producto implements Imprimible {
         this.fechaBaja = fechaBaja;
     }
 
+    public Producto() { }// Constructor vacío
 
     // Getters y setters
     public int getProductoID() { return productoID; }
