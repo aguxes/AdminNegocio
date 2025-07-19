@@ -199,12 +199,7 @@ public class AppController {
         colCompras.setCellValueFactory(new PropertyValueFactory<>("cantCompras"));
 
         TableColumn<Cliente, String> colTelefono = new TableColumn<>("Teléfono");
-        colTelefono.setCellValueFactory(data -> {
-            // Convertimos el objeto Telefono en String para la tabla
-            Telefono tel = data.getValue().getTelefono();
-            String t = (tel != null) ? String.valueOf(tel.getTelefono()) : "—";
-            return new javafx.beans.property.SimpleStringProperty(t);
-        });
+        colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
 
         tabla.getColumns().addAll( colDni, colNombre, colApellido, colTipo, colCompras, colTelefono);
 
@@ -288,8 +283,8 @@ public class AppController {
                     stmtC.executeUpdate();
 
                 mostrarAlerta("✅ Cliente registrado correctamente.");
-                contenedor.getChildren().clear();  // Vaciamos el formulario
-                contenedor.getChildren().add(outputArea); // Volvemos a mostrar el área de texto
+                contenedor.getChildren().clear();
+                contenedor.getChildren().add(outputArea);
 
             } catch (Exception ex) {
                 mostrarAlerta("❌ Error: " + ex.getMessage());
