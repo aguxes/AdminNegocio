@@ -9,7 +9,7 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class VentanaClientes {
-
+    private static final Connection conn = DataBaseConnection.getConnection();
     public static void cargarClientesEnLista(ArrayList<Cliente> lista) {
         String sql = """
         SELECT c.ID, p.DNI, p.nombre, p.apellido, tc.tipo, tc.descripcion, c.cantCompras, t.telefono
@@ -20,8 +20,7 @@ public class VentanaClientes {
         """;
 
 
-        try (Connection conn = DataBaseConnection.getConnection();
-             Statement stmt = conn.createStatement();
+        try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
@@ -64,8 +63,7 @@ public class VentanaClientes {
         StringBuilder result = new StringBuilder();
         String sql = "SELECT nombre FROM Cliente WHERE id = ?";
 
-        try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -95,8 +93,7 @@ public class VentanaClientes {
     public static Cliente obtenerClientePorId(int id) {
         String query = "SELECT * FROM Cliente WHERE id = ?";
 
-        try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -113,8 +110,7 @@ public class VentanaClientes {
     public static String buscarNombrePorId(int id) {
         String query = "SELECT nombre, apellido FROM Cliente WHERE id = ?";
 
-        try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -137,8 +133,7 @@ public class VentanaClientes {
             String query = """
             SELECT * FROM Cliente WHERE " + campo + " LIKE ?;
             """;
-            try (Connection conn = DataBaseConnection.getConnection();
-                 PreparedStatement stmt = conn.prepareStatement(query)) {
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
 
                 stmt.setString(1, "%" + valor + "%");
                 ResultSet rs = stmt.executeQuery();
@@ -169,12 +164,11 @@ public class VentanaClientes {
         INSERT INTO Persona (dni, nombre, apellido ) VALUES (?, ?, ?)
         """;
         String queryC = """
-        INSERT INTO Cliente (id, dni, idTipo, cantCompras ) VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO Cliente (dni, idTipo, cantCompras ) VALUES (?, ?, ?)
         """;
         StringBuilder resultado = new StringBuilder();
 
-        try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement stmtP = conn.prepareStatement(queryP);
+        try (PreparedStatement stmtP = conn.prepareStatement(queryP);
              PreparedStatement stmtC = conn.prepareStatement(queryC))
 
         {
@@ -193,8 +187,7 @@ public class VentanaClientes {
 
     public static Integer obtenerIdClientePorDni(int dni) {
         String sql = "SELECT ID FROM Cliente WHERE DNI = ?";
-        try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, dni);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) return rs.getInt("ID");

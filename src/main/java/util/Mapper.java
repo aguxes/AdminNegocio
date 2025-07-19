@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Mapper {
+    // Entidades Primarias
 
     // Mapeo de Persona
     // ========================================

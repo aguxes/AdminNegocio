@@ -31,8 +31,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 
-
 public class AppController {
+    private static final Connection conn = DataBaseConnection.getConnection();
+
     @FXML private VBox menuLateral;
     @FXML private TextArea outputArea;
     @FXML
@@ -255,7 +256,7 @@ public class AppController {
         Button btnRegistrarc = new Button("✅ Registrar Cliente");
         btnRegistrarc.getStyleClass().add("boton-accion");
         btnRegistrarc.setOnAction(e -> {
-            try (Connection conn = DataBaseConnection.getConnection()) {
+            try {
                 int DNI = Integer.parseInt(txtDNI.getText().trim());
                 String Nombre = txtNombre.getText().trim();
                 String Apellido = txtApellido.getText().trim();
@@ -401,7 +402,7 @@ public class AppController {
         Button btnRegistrar = new Button("✅ Registrar Venta");
         btnRegistrar.getStyleClass().add("boton-accion");
         btnRegistrar.setOnAction(e -> {
-            try (Connection conn = DataBaseConnection.getConnection()) {
+            try {
                 int nFactura = Integer.parseInt(txtFactura.getText().trim());
                 int clienteId = Integer.parseInt(txtClienteId.getText().trim());
                 int empleadoId = Integer.parseInt(txtEmpleadoId.getText().trim());

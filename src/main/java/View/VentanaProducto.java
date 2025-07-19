@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class VentanaProducto {
-
+    private static final Connection conn = DataBaseConnection.getConnection();
     public static void cargarProductosEnLista(ArrayList<Producto> lista) {
         String sql = """
         SELECT idProducto, nombre, precio, costo, stock,
@@ -17,8 +17,7 @@ public class VentanaProducto {
         FROM Producto
     """;
 
-        try (Connection conn = DataBaseConnection.getConnection();
-             Statement stmt = conn.createStatement();
+        try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
@@ -64,8 +63,7 @@ public class VentanaProducto {
         JOIN MedidasProd m ON p.idMedida = m.unidadMedida
     """;
 
-        try (Connection conn = DataBaseConnection.getConnection();
-             Statement stmt = conn.createStatement();
+        try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
 
@@ -94,16 +92,13 @@ public class VentanaProducto {
         } catch (SQLException e) {
             System.out.println("❌ Error al cargar productos con descripción: " + e.getMessage());
         }
-
         return lista;
     }
 
 
-
     public static Integer obtenerIdProductoPorNombre(String nombre) {
         String sql = "SELECT idProducto FROM Producto WHERE nombre = ?";
-        try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, nombre);
             ResultSet rs = stmt.executeQuery();

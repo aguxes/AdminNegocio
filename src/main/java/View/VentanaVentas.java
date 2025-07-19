@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 
 public class VentanaVentas {
-
+    private static final Connection conn = DataBaseConnection.getConnection();
     public static ArrayList<Venta> cargarVentasEnLista() {
         ArrayList<Venta> lista = new ArrayList<>();
 
@@ -28,8 +28,7 @@ public class VentanaVentas {
         LEFT JOIN FormaDePagos fp ON v.formaDePago = fp.idPago
         LEFT JOIN Producto pr ON v.idProd = pr.idProducto;
         """;
-        try (Connection conn = DataBaseConnection.getConnection();
-            Statement stmt = conn.createStatement();
+        try (Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql)) {
                 while (rs.next()) {
                     Venta v = Mapper.getVenta(rs);
@@ -93,8 +92,7 @@ public class VentanaVentas {
         WHERE v.idC = ?;
     """;
 
-        try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, idCliente);
             ResultSet rs = stmt.executeQuery();

@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class VentanaEmpleado {
-
+    private static final Connection conn = DataBaseConnection.getConnection();
     public static void cargarEmpleadosEnLista(ArrayList<Empleado> lista) {
         String sql = """
         SELECT e.ID, e.DNI, p.nombre, p.apellido, e.idRol, e.Sueldo,
@@ -17,8 +17,7 @@ public class VentanaEmpleado {
         INNER JOIN Persona p ON e.DNI = p.DNI
         """;
 
-        try (Connection conn = DataBaseConnection.getConnection();
-             Statement stmt = conn.createStatement();
+        try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
@@ -53,8 +52,7 @@ public class VentanaEmpleado {
 
     public static Integer obtenerIdEmpleadoPorDni(int dni) {
         String sql = "SELECT ID FROM Empleado WHERE DNI = ?";
-        try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, dni);
             ResultSet rs = stmt.executeQuery();
