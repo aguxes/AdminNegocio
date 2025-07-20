@@ -2,6 +2,7 @@ package Clases.Principales;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Venta implements Imprimible {
 
@@ -34,6 +35,12 @@ public class Venta implements Imprimible {
         this.nombreCliente = "";
         this.nombreEmpleado = "";
     }
+
+    public String getFechaFormateada() {
+        return fecha != null ? fecha.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) : "";
+    }
+
+
     //Getters
     public int getIdVenta() { return idVenta; }
     public int getIdProducto() {return idProducto;}

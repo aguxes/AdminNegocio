@@ -40,6 +40,8 @@ public class VentanaVentas {
             return lista;
     }
 
+
+
     public static String obtenerVentas(ArrayList<Venta> lista) {
         if (lista == null || lista.isEmpty()) return "Lista de ventas vacía.";
 
@@ -107,4 +109,20 @@ public class VentanaVentas {
         }
         return lista;
     }
+
+    //Ver si la dejamos aca o en VentanaProducto
+    public static boolean actualizarStockProducto(int id, int cantidadVendida) {
+        try {
+            String sql = "UPDATE Producto SET stock = stock - ? WHERE idProducto = ? AND stock >= ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, cantidadVendida);
+            stmt.setInt(2, id);
+            stmt.setInt(3, cantidadVendida);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }

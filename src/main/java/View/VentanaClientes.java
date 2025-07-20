@@ -110,10 +110,17 @@ public class VentanaClientes {
 
         return null;
     }
-    public static String buscarNombrePorId(int id) {
-        String query = "SELECT nombre, apellido FROM Cliente WHERE id = ?";
 
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+    public static String buscarNombrePorId(int id) {
+        String query = """
+        SELECT p.nombre, p.apellido
+        FROM Cliente c
+        JOIN Persona p ON c.DNI = p.DNI
+        WHERE c.ID = ?
+    """;
+
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -128,55 +135,45 @@ public class VentanaClientes {
 
         return null;
     }
-    public static String buscarClientePorDato(String campo, String valor) {
-        ArrayList<Cliente> listaTemp = new ArrayList<>();
-        StringBuilder resultado = new StringBuilder();
 
+    //Ahora devuelve un arrayList para podes hacer la muestra de datos copada
+    public static ArrayList<Cliente> buscarClientePorDato(String campo, String valor) {
+        ArrayList<Cliente> listaTemp = new ArrayList<>();
         String campoSQL = switch (campo) {
             case "nombre", "apellido", "DNI" -> "p." + campo;
             case "ID", "cantCompras"         -> "c." + campo;
-            case "tipo"                      -> "tc.descripcion"; // NO FUNCA
-            case "telefono"                  -> "t.telefono"; // NO FUNCA
+            case "tipo"                      -> "tc.descripcion";
+            case "telefono"                  -> "t.telefono";
             default                          -> null;
         };
 
-        if (campoSQL == null) {
-            resultado.append("⚠️ Opción no válida. Campos válidos: nombre, apellido, DNI, ID, cantCompras, tipo, telefono.");
-            return resultado.toString();
-        }
-        else
-        {
+        if (campoSQL == null) return listaTemp;
+
         String query =
-            "SELECT c.ID, p.DNI, p.nombre, p.apellido, tc.tipo, tc.descripcion, c.cantCompras, t.telefono " +
-            "FROM Cliente c " +
-            "INNER JOIN Persona p ON p.DNI = c.DNI " +
-            "LEFT JOIN Telefonos t ON t.idPersona = p.DNI " +
-            "INNER JOIN TiposClientes tc ON c.idTipo = tc.tipo " +
-            "WHERE " + campoSQL + " LIKE ?";
+                "SELECT c.ID, p.DNI, p.nombre, p.apellido, tc.tipo, tc.descripcion, c.cantCompras, t.telefono " +
+                        "FROM Cliente c " +
+                        "INNER JOIN Persona p ON p.DNI = c.DNI " +
+                        "LEFT JOIN Telefonos t ON t.idPersona = p.DNI " +
+                        "INNER JOIN TiposClientes tc ON c.idTipo = tc.tipo " +
+                        "WHERE " + campoSQL + " LIKE ?";
 
-            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, "%" + valor + "%");
+            ResultSet rs = stmt.executeQuery();
 
-                stmt.setString(1, "%" + valor + "%");
-                ResultSet rs = stmt.executeQuery();
-
-                while (rs.next()) {
-                    Cliente c = Mapper.getCliente(rs);
-                    listaTemp.add(c);
-                }
-
-                if (listaTemp.isEmpty()) {
-                    resultado.append("❌ No se encontraron clientes con ese ").append(campo);
-                } else {
-                    resultado.append(obtenerClientes(listaTemp));
-                }
-
-            } catch (SQLException e) {
-                resultado.append("❌ Error en la base de datos: ").append(e.getMessage());
+            while (rs.next()) {
+                Cliente c = Mapper.getCliente(rs);
+                listaTemp.add(c);
             }
+
+        } catch (SQLException e) {
+            System.out.println("❌ Error al buscar cliente: " + e.getMessage());
         }
 
-        return resultado.toString();
+        return listaTemp;
     }
+
+
 
     public static String insertar(Cliente cliente, Persona persona) {
         String queryP = """

@@ -1,11 +1,12 @@
 package Clases.Principales;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class Producto implements Imprimible {
     private int productoID;
     private String nombreProducto;
-    private double precioUnitario;
+    private BigDecimal precioUnitario;
     private double costo;
     private int stock;
 
@@ -19,7 +20,7 @@ public class Producto implements Imprimible {
     private String nombreCategoria;    // opcional
 
     // Constructor principal
-    public Producto(int productoID, String nombreProducto, double precioUnitario, double costo, int stock,
+    public Producto(int productoID, String nombreProducto, BigDecimal precioUnitario, double costo, int stock,
                     int idUnidadMedida, int idCategoria, LocalDate fechaAlta, LocalDate fechaBaja) {
         this.productoID = productoID;
         this.nombreProducto = nombreProducto;
@@ -33,7 +34,7 @@ public class Producto implements Imprimible {
     }
 
     //aca se usan los atributos opcionales de arriba
-    public Producto(int productoID, String nombreProducto, double precioUnitario, double costo, int stock,
+    public Producto(int productoID, String nombreProducto, BigDecimal precioUnitario, double costo, int stock,
                     String nombreUnidadMedida, String nombreCategoria,
                     LocalDate fechaAlta, LocalDate fechaBaja) {
         this.productoID = productoID;
@@ -52,7 +53,7 @@ public class Producto implements Imprimible {
     // Getters y setters
     public int getProductoID() { return productoID; }
     public String getNombreProducto() { return nombreProducto; }
-    public double getPrecioUnitario() { return precioUnitario; }
+    public BigDecimal getPrecioUnitario() { return precioUnitario; }
     public double getCosto() { return costo; }
     public int getStock() { return stock; }
     public int getIdUnidadMedida() { return idUnidadMedida; }

@@ -32,6 +32,23 @@ public class Cliente extends Persona implements Imprimible {
     public Telefono getTelefono() { return telefono; }
     public void setTelefono(Telefono telefono) { this.telefono = telefono; }
 
+
+    // 👇 Para acceder a los datos heredados (JavaFX no sigue herencia automáticamente)
+    public int getDni() { return getDNI(); } // Persona.getDNI()
+    public String getNombre() { return super.getNombre(); }
+    public String getApellido() { return super.getApellido(); }
+
+    // 👇 Para que JavaFX acceda al tipo como String (y no al objeto)
+    public String getTipCliente() {
+        return tipo != null ? tipo.getDescripcion() : "";
+    }
+
+    // 👇 Para que JavaFX acceda al teléfono como texto
+    public String getTelefonoStr() {
+        return telefono != null ? String.valueOf(telefono.getTelefono()) : "";
+    }
+
+
     @Override
     public void imprimir() {
         System.out.printf("%-5s %-10s %-15s %-15s %-15s %-12s %-15s\n",

@@ -176,3 +176,111 @@ HBox {
     -fx-font-size: 14px;
     -fx-font-family: "Segoe UI";
 }
+
+/* Card general de mensaje */
+.card-error {
+    -fx-background-color: #f8d7da;
+    -fx-border-color: #f5c6cb;
+    -fx-border-width: 2px;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-padding: 20;
+    -fx-spacing: 10;
+    -fx-alignment: center;
+}
+
+/* Título del mensaje de error */
+.card-error-titulo {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #721c24;
+}
+
+/* Mensaje */
+.card-error-mensaje {
+    -fx-font-size: 14px;
+    -fx-text-fill: #721c24;
+}
+
+/* Botón de volver */
+.btn-error-volver {
+    -fx-background-color: #f5c6cb;
+    -fx-text-fill: #721c24;
+}
+
+.card {
+    -fx-background-color: #ffffff;
+    -fx-padding: 25;
+    -fx-spacing: 15;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0.2, 0, 4);
+}
+
+.label-form {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+}
+
+.input-form {
+    -fx-pref-width: 300px;
+    -fx-padding: 8;
+    -fx-background-radius: 6;
+    -fx-border-color: #ccc;
+    -fx-border-radius: 6;
+}
+
+.btn-verde {
+    -fx-background-color: #28a745;
+    -fx-text-fill: white;
+    -fx-padding: 8 16;
+    -fx-background-radius: 6;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.btn-verde:hover {
+    -fx-background-color: #218838;
+}
+
+.tabla-clientes {
+    -fx-background-radius: 8;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 8;
+    -fx-padding: 10;
+}
+
+/* Por si querés estilizar el mensaje de error también */
+.card-error {
+    -fx-background-color: #fff0f0;
+    -fx-padding: 30;
+    -fx-spacing: 20;
+    -fx-alignment: center;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(255,0,0,0.1), 10, 0.2, 0, 4);
+}
+
+.card-error-titulo {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #c0392b;
+}
+
+.card-error-mensaje {
+    -fx-font-size: 14px;
+    -fx-text-fill: #a93226;
+}
+
+.btn-error-volver {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-padding: 8 16;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
+
+.btn-error-volver:hover {
+    -fx-background-color: #c0392b;
+}
+
+

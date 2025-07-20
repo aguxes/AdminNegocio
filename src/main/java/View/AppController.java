@@ -66,7 +66,7 @@ public class AppController {
                 crearBoton("Agregar Cliente", e -> agregarCliente()),
                 crearBoton("Modificar Cliente", e -> modificarCliente()),
                 crearBoton("Eliminar Cliente", e -> EliminarCliente()),
-                crearBoton("Buscar Cliente", e -> BuscarCliente()),
+                crearBoton("Buscar Cliente", e -> buscarCliente()),
                 crearBoton("🔙 Volver", e -> cargarMenuPrincipal())
         );
     }
@@ -102,8 +102,7 @@ public class AppController {
     }
     //CLIENTE
 
-    private void agregarCliente()
-    {
+    private void agregarCliente() {
         contenedor.getChildren().clear();
 
         VBox form = new VBox(10);
@@ -262,37 +261,85 @@ public class AppController {
         contenedor.getChildren().add(layout);
     }
 
-    public void BuscarCliente() {
-        Stage ventana = new Stage();
-        ventana.setTitle("Buscar Cliente");
+    private void buscarCliente() {
+        VBox tarjeta = new VBox(10);
+        tarjeta.setPadding(new Insets(20));
+        tarjeta.setAlignment(Pos.CENTER_LEFT);
 
         Label lblCampo = new Label("Buscar por:");
         ChoiceBox<String> choiceCampo = new ChoiceBox<>();
-        choiceCampo.getItems().addAll("nombre", "apellido", "ID", "DNI", "Tipo", "cantCompras", "teléfono");
-        choiceCampo.setValue("--Selccione--");
+        choiceCampo.getItems().addAll("nombre", "apellido", "ID", "DNI", "tipo", "cantCompras", "telefono");
+        choiceCampo.setValue("nombre");
 
         TextField txtValor = new TextField();
         txtValor.setPromptText("Ej: Juan o 2");
 
         Button btnBuscar = new Button("Buscar");
+
+        TableView<Cliente> tabla = new TableView<>();
+        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        TableColumn<Cliente, Integer> colId = new TableColumn<>("ID");
+        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
+
+        TableColumn<Cliente, Integer> colDni = new TableColumn<>("DNI");
+        colDni.setCellValueFactory(new PropertyValueFactory<>("dni"));
+
+        TableColumn<Cliente, String> colNombre = new TableColumn<>("Nombre");
+        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+
+        TableColumn<Cliente, String> colApellido = new TableColumn<>("Apellido");
+        colApellido.setCellValueFactory(new PropertyValueFactory<>("apellido"));
+
+        TableColumn<Cliente, String> colTipo = new TableColumn<>("Tipo");
+        colTipo.setCellValueFactory(new PropertyValueFactory<>("tipCliente"));
+
+        TableColumn<Cliente, Integer> colCompras = new TableColumn<>("Compras");
+        colCompras.setCellValueFactory(new PropertyValueFactory<>("cantCompras"));
+
+        TableColumn<Cliente, String> colTelefono = new TableColumn<>("Teléfono");
+        colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefonoStr"));
+
+        tabla.getColumns().addAll(colId, colDni, colNombre, colApellido, colTipo, colCompras, colTelefono);
+
         btnBuscar.setOnAction(e -> {
             String campo = choiceCampo.getValue();
             String valor = txtValor.getText();
+            ArrayList<Cliente> lista = VentanaClientes.buscarClientePorDato(campo, valor);
 
-            String resultado = VentanaClientes.buscarClientePorDato(campo, valor);
-            outputArea.setText(resultado);
+            if (lista.isEmpty()) {
+                VBox card = new VBox();
+                card.getStyleClass().add("card-error");
 
-            ventana.close(); // Se cierra si querés automático al buscar
+                Label titulo = new Label("Sin resultados");
+                titulo.getStyleClass().add("card-error-titulo");
+
+                Label mensaje = new Label("No se encontró ningún cliente con ese dato.");
+                mensaje.getStyleClass().add("card-error-mensaje");
+
+                Button volverBtn = new Button("Volver a buscar");
+                volverBtn.getStyleClass().add("btn-error-volver");
+                volverBtn.setOnAction(ev -> contenedor.getChildren().setAll(tarjeta));
+
+                card.getChildren().addAll(titulo, mensaje, volverBtn);
+                contenedor.getChildren().setAll(card);
+            }
+
+
+            tabla.getItems().setAll(lista);
         });
 
-        VBox layout = new VBox(10, lblCampo, choiceCampo, txtValor, btnBuscar);
-        layout.setPadding(new Insets(20));
-        layout.setAlignment(Pos.CENTER);
+        //Estilos
+        tarjeta.getStyleClass().add("card");
+        lblCampo.getStyleClass().add("label-form");
+        choiceCampo.getStyleClass().add("input-form");
+        txtValor.getStyleClass().add("input-form");
+        btnBuscar.getStyleClass().add("btn-verde");
+        tabla.getStyleClass().add("tabla-clientes");
 
-        Scene escena = new Scene(layout, 300, 200);
-        ventana.setScene(escena);
-        ventana.initModality(Modality.APPLICATION_MODAL);
-        ventana.showAndWait();
+
+        tarjeta.getChildren().addAll(lblCampo, choiceCampo, txtValor, btnBuscar, tabla);
+        contenedor.getChildren().setAll(tarjeta);
     }
 
     public void EliminarCliente() {
@@ -339,19 +386,48 @@ public class AppController {
 
 
     // VENTAS
-    private void verVentas() {
+    public void verVentas() {
         contenedor.getChildren().clear();
 
-        ArrayList<Venta> lista = VentanaVentas.cargarVentasEnLista();
-        TextArea areaTexto = new TextArea(VentanaVentas.obtenerVentas(lista));
-        areaTexto.setEditable(false);
-        areaTexto.setWrapText(true);
+        Label titulo = new Label("📊 Lista de Ventas");
+        titulo.getStyleClass().add("titulo-seccion");
 
-        VBox layout = new VBox(10, new Label("💵 Lista de Ventas"), areaTexto);
-        layout.setPadding(new Insets(20));
+        TableView<Venta> tabla = new TableView<>();
+        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        TableColumn<Venta, Integer> colFactura = new TableColumn<>("Factura");
+        colFactura.setCellValueFactory(new PropertyValueFactory<>("idVenta"));
+
+        TableColumn<Venta, String> colCliente = new TableColumn<>("Cliente");
+        colCliente.setCellValueFactory(new PropertyValueFactory<>("nombreCliente"));
+
+        TableColumn<Venta, String> colEmpleado = new TableColumn<>("Empleado");
+        colEmpleado.setCellValueFactory(new PropertyValueFactory<>("nombreEmpleado"));
+
+        TableColumn<Venta, String> colProducto = new TableColumn<>("Producto");
+        colProducto.setCellValueFactory(new PropertyValueFactory<>("notas"));
+
+        TableColumn<Venta, String> colFecha = new TableColumn<>("Fecha");
+        colFecha.setCellValueFactory(new PropertyValueFactory<>("fechaFormateada")); // lo armamos abajo
+
+        TableColumn<Venta, String> colPago = new TableColumn<>("Pago");
+        colPago.setCellValueFactory(new PropertyValueFactory<>("medioPago"));
+
+        TableColumn<Venta, Double> colSubtotal = new TableColumn<>("Subtotal");
+        colSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));
+
+        TableColumn<Venta, Double> colTotal = new TableColumn<>("Total");
+        colTotal.setCellValueFactory(new PropertyValueFactory<>("importeTotal"));
+
+        tabla.getColumns().addAll(colFactura, colCliente, colEmpleado, colProducto, colFecha, colPago, colSubtotal, colTotal);
+        tabla.getItems().addAll(VentanaVentas.cargarVentasEnLista());
+
+        VBox layout = new VBox(10, titulo, tabla);
+        layout.setPadding(new Insets(15));
 
         contenedor.getChildren().add(layout);
     }
+
 
 
     public void registrarVenta() {
@@ -371,6 +447,10 @@ public class AppController {
         TextField txtProductoId = new TextField();
         txtProductoId.setPromptText("ID Producto");
         txtProductoId.getStyleClass().add("text-field");
+
+        Label lblCantidad = new Label("Cantidad:");
+        TextField txtCantidad = new TextField();
+        txtCantidad.setPromptText("Ej: 3");
 
         Button btnAgregarProducto = new Button(" Agregar Producto");
         btnAgregarProducto.getStyleClass().add("boton-secundario");
@@ -405,13 +485,23 @@ public class AppController {
         btnRegistrar.getStyleClass().add("boton-accion");
         btnRegistrar.setOnAction(e -> {
             try {
+                int productoId = Integer.parseInt(txtProductoId.getText().trim());
                 int nFactura = Integer.parseInt(txtFactura.getText().trim());
                 int clienteId = Integer.parseInt(txtClienteId.getText().trim());
                 int empleadoId = Integer.parseInt(txtEmpleadoId.getText().trim());
+                int cantidad = Integer.parseInt(txtCantidad.getText().trim());
                 String medio = medioPago.getValue();
-                BigDecimal total = new BigDecimal(txtTotal.getText().trim());
-                BigDecimal subtotal = total;
-                int productoId = Integer.parseInt(txtProductoId.getText().trim());
+
+                Producto prod = VentanaProducto.obtenerProductoPorID(productoId);
+                if (prod == null) {
+                    mostrarAlerta("❌ Producto no encontrado.");
+                    return;
+                }
+
+                BigDecimal subtotal = prod.getPrecioUnitario().multiply(new BigDecimal(cantidad));
+                BigDecimal total = subtotal; //dsp aca sirve para impuesto no?
+
+
 
                 int idPago = switch (medio) {
                     case "Efectivo" -> 1;
@@ -436,8 +526,14 @@ public class AppController {
                 Mapper.setVenta(stmt, venta);
                 stmt.executeUpdate();
                 mostrarAlerta("✅ Venta registrada correctamente.");
-                contenedor.getChildren().clear();  // Vaciamos el formulario
-                contenedor.getChildren().add(outputArea); // Volvemos a mostrar el área de texto
+                contenedor.getChildren().clear();
+                contenedor.getChildren().add(outputArea);
+
+                boolean exito = VentanaVentas.actualizarStockProducto(productoId, cantidad);
+                if (!exito) {
+                    mostrarAlerta("⚠ No se pudo actualizar el stock.");
+                }
+
 
             } catch (Exception ex) {
                 mostrarAlerta("❌ Error: " + ex.getMessage());
@@ -448,12 +544,14 @@ public class AppController {
                 titulo,
                 txtFactura,
                 new HBox(10, txtProductoId, btnAgregarProducto),
+                new HBox(10, lblCantidad, txtCantidad),
                 new HBox(10, txtClienteId, btnAgregarCliente),
                 new HBox(10, txtEmpleadoId, btnAgregarEmpleado),
                 medioPago,
                 txtTotal,
                 btnRegistrar
         );
+
 
         Button btnCancelar = new Button("❌ Cancelar Venta");
         btnCancelar.getStyleClass().add("boton-cancelar");

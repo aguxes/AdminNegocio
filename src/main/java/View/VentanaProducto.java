@@ -78,7 +78,7 @@ public class VentanaProducto {
                 Producto p = new Producto(
                         rs.getInt("idProducto"),
                         rs.getString("nombre"),
-                        rs.getDouble("precio"),
+                        rs.getBigDecimal("precio"),
                         rs.getDouble("costo"),
                         rs.getInt("stock"),
                         rs.getString("medidaNombre"),
@@ -93,6 +93,21 @@ public class VentanaProducto {
             System.out.println("❌ Error al cargar productos con descripción: " + e.getMessage());
         }
         return lista;
+    }
+
+    public static Producto obtenerProductoPorID(int id) {
+        try {
+            String sql = "SELECT * FROM Producto WHERE idProducto = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return Mapper.getProducto(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 

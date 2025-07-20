@@ -134,7 +134,7 @@ public class Mapper {
         return new Producto(
                 rs.getInt("idProducto"),
                 rs.getString("nombre"),
-                rs.getDouble("precio"),
+                rs.getBigDecimal("precio"),
                 rs.getDouble("costo"),
                 rs.getInt("stock"),
                 rs.getInt("idMedida"),
