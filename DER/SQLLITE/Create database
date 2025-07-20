@@ -1,4 +1,3 @@
-
 -- Tablas de detalle
 CREATE TABLE Generos (
     idSexo INTEGER PRIMARY KEY,
@@ -75,7 +74,7 @@ CREATE TABLE Usuario (
 
 CREATE TABLE Cliente (
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    DNI INTEGER NOT NULL UNIQUE,
+    DNI INTEGER UNIQUE NOT NULL,
     idTipo INTEGER NOT NULL,
     fechAlta TEXT NOT NULL,
     cantCompras INTEGER NOT NULL,
@@ -85,14 +84,14 @@ CREATE TABLE Cliente (
 
 CREATE TABLE Empleado (
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    DNI INTEGER NOT NULL UNIQUE,
+    DNI INTEGER UNIQUE NOT NULL,
     idRol INTEGER NOT NULL,
-    Sueldo REAL,
-    Vacaciones INTEGER NOT NULL DEFAULT 0 CHECK (esActivo IN (0,1)),
-    Faltas INTEGER,
+    Sueldo REAL NOT NULL,
+    Vacaciones INTEGER NOT NULL,
+    Faltas INTEGER NOT NULL,
     FechaIngreso TEXT NOT NULL,
-    FechaEgreso TEXT NOT NULL,
-    Activo INTEGER NOT NULL DEFAULT 0 CHECK (esActivo IN (0,1)),
+    FechaEgreso TEXT,
+    Activo INTEGER NOT NULL,
     FOREIGN KEY (DNI) REFERENCES Persona(DNI),
     FOREIGN KEY (idRol) REFERENCES Roles(Rol)
 );
@@ -101,12 +100,12 @@ CREATE TABLE Producto (
     idProducto INTEGER PRIMARY KEY,
     nombre TEXT NOT NULL,
     precio REAL NOT NULL,
-    costo REAL,
-    stock INTEGER,
+    costo REAL NOT NULL,
+    stock INTEGER NOT NULL,
     idMedida INTEGER NOT NULL,
     idCategoria INTEGER NOT NULL,
     fechAlta TEXT NOT NULL,
-    fechaBaja TEXT NOT NULL,
+    fechaBaja TEXT,
     FOREIGN KEY (idMedida) REFERENCES MedidasProd(unidadMedida),
     FOREIGN KEY (idCategoria) REFERENCES CategoriasProd(Categoria)
 );
@@ -119,12 +118,13 @@ CREATE TABLE FormaDePagos (
 );
 
 CREATE TABLE Venta (
-    nFactura INTEGER NOT NULL,
-    idProd INTEGER NOT NULL,
-    idE INTEGER NOT NULL,
-    idC INTEGER NOT NULL,
+    nFactura INTEGER,
+    idProd INTEGER,
+    idE INTEGER,
+    idC INTEGER,
     fecha TEXT NOT NULL,
     formaDePago INTEGER NOT NULL,
+    cantidad INTEGER NOT NULL,
     subtotal REAL NOT NULL,
     total REAL NOT NULL,
     PRIMARY KEY (nFactura, idProd),
