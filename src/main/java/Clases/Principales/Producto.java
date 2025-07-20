@@ -10,7 +10,7 @@ public class Producto implements Imprimible {
     private double costo;
     private int stock;
 
-    private int idUnidadMedida;
+    private int idMedida;
     private int idCategoria;
     private LocalDate fechaAlta;
     private LocalDate fechaBaja;
@@ -21,13 +21,13 @@ public class Producto implements Imprimible {
 
     // Constructor principal
     public Producto(int productoID, String nombreProducto, BigDecimal precioUnitario, double costo, int stock,
-                    int idUnidadMedida, int idCategoria, LocalDate fechaAlta, LocalDate fechaBaja) {
+                    int idMedida, int idCategoria, LocalDate fechaAlta, LocalDate fechaBaja) {
         this.productoID = productoID;
         this.nombreProducto = nombreProducto;
         this.precioUnitario = precioUnitario;
         this.costo = costo;
         this.stock = stock;
-        this.idUnidadMedida = idUnidadMedida;
+        this.idMedida = idMedida;
         this.idCategoria = idCategoria;
         this.fechaAlta = fechaAlta;
         this.fechaBaja = fechaBaja;
@@ -56,7 +56,7 @@ public class Producto implements Imprimible {
     public BigDecimal getPrecioUnitario() { return precioUnitario; }
     public double getCosto() { return costo; }
     public int getStock() { return stock; }
-    public int getIdUnidadMedida() { return idUnidadMedida; }
+    public int getIdMedida() { return idMedida; }
     public int getIdCategoria() { return idCategoria; }
     public LocalDate getFechaAlta() { return fechaAlta; }
     public LocalDate getFechaBaja() { return fechaBaja; }

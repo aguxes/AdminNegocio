@@ -71,6 +71,7 @@ public class Mapper {
                 rs.getInt("idC"),
                 fecha,
                 rs.getString("medio_pago"),
+                rs.getInt("cantidad"),
                 rs.getBigDecimal("total"),
                 rs.getString("producto_nombre"),
                 rs.getString("cliente_nombre"),
@@ -88,8 +89,9 @@ public class Mapper {
         stmt.setInt(5, venta.getIdFormaDePago());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         stmt.setString(6, LocalDateTime.now().format(formatter));
-        stmt.setBigDecimal(7, venta.getSubtotal());
-        stmt.setBigDecimal(8, venta.getImporteTotal());
+        stmt.setInt(7, venta.getCantidad());
+        stmt.setBigDecimal(8, venta.getSubtotal());
+        stmt.setBigDecimal(9, venta.getImporteTotal());
     }
 
     //EMPLEADO
@@ -142,6 +144,17 @@ public class Mapper {
                 LocalDate.parse(rs.getString("fechAlta")),
                 fechaBaja
         );
+    }
+    public static void setProducto(PreparedStatement stmt, Producto p) throws SQLException {
+        stmt.setInt(1, p.getProductoID());
+        stmt.setString(2, p.getNombreProducto());
+        stmt.setBigDecimal(3, p.getPrecioUnitario());
+        stmt.setDouble(4, p.getCosto());
+        stmt.setInt(5, p.getStock());
+        stmt.setInt(6, p.getIdMedida());
+        stmt.setInt(7, p.getIdCategoria());
+        stmt.setString(8, p.getFechaAlta().toString());
+        stmt.setString(8, p.getFechaBaja().toString());
     }
     // Entidades secundarias
     //Mapeo Telefono

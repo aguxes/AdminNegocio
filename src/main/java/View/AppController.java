@@ -679,8 +679,7 @@ public class AppController {
         tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         // Obtener y cargar productos
-        ArrayList<Producto> productos = new ArrayList<>();
-        VentanaProducto.cargarProductosEnLista(productos);
+        ArrayList <Producto> productos = VentanaProducto.cargarProductosEnLista();
         tabla.setItems(FXCollections.observableArrayList(productos));
 
         // Campo de búsqueda por ID
@@ -784,7 +783,7 @@ public class AppController {
         tabla.setPlaceholder(new Label("No hay productos cargados."));
 
         TableColumn<Producto, Integer> colId = new TableColumn<>("ID");
-        colId.setCellValueFactory(new PropertyValueFactory<>("productoID"));
+        colId.setCellValueFactory(new PropertyValueFactory<>("productoID")); // Se le asigna a la celda el valor provado de la clase Producto
 
         TableColumn<Producto, String> colNombre = new TableColumn<>("Nombre");
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombreProducto"));
@@ -798,11 +797,11 @@ public class AppController {
         TableColumn<Producto, Integer> colStock = new TableColumn<>("Stock");
         colStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
 
-        TableColumn<Producto, String> colCategoria = new TableColumn<>("Categoría");
-        colCategoria.setCellValueFactory(new PropertyValueFactory<>("categoriaNombre"));
-
         TableColumn<Producto, String> colMedida = new TableColumn<>("Medida");
-        colMedida.setCellValueFactory(new PropertyValueFactory<>("medidaNombre"));
+        colMedida.setCellValueFactory(new PropertyValueFactory<>("idMedida"));
+
+        TableColumn<Producto, String> colCategoria = new TableColumn<>("Categoría");
+        colCategoria.setCellValueFactory(new PropertyValueFactory<>("idCategoria"));
 
         TableColumn<Producto, LocalDate> colAlta = new TableColumn<>("Fecha Alta");
         colAlta.setCellValueFactory(new PropertyValueFactory<>("fechaAlta"));
@@ -810,9 +809,9 @@ public class AppController {
         TableColumn<Producto, LocalDate> colBaja = new TableColumn<>("Fecha Baja");
         colBaja.setCellValueFactory(new PropertyValueFactory<>("fechaBaja"));
 
-        tabla.getColumns().addAll(colId, colNombre, colPrecio, colCosto, colStock, colCategoria, colMedida, colAlta, colBaja);
+        tabla.getColumns().addAll(colId, colNombre, colPrecio, colCosto, colStock, colMedida, colCategoria, colAlta, colBaja);
 
-        ArrayList<Producto> lista = VentanaProducto.cargarProductosConDescripcion();
+        ArrayList<Producto> lista = VentanaProducto.cargarProductosEnLista();
         tabla.setItems(FXCollections.observableArrayList(lista));
 
         VBox layout = new VBox(10, new Label("📦 Lista de productos"), tabla);

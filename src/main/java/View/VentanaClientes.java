@@ -136,7 +136,7 @@ public class VentanaClientes {
         return null;
     }
 
-    //Ahora devuelve un arrayList para podes hacer la muestra de datos copada
+    //Ahora devuelve un arrayList para poder hacer la muestra de datos copada
     public static ArrayList<Cliente> buscarClientePorDato(String campo, String valor) {
         ArrayList<Cliente> listaTemp = new ArrayList<>();
         String campoSQL = switch (campo) {
@@ -165,11 +165,9 @@ public class VentanaClientes {
                 Cliente c = Mapper.getCliente(rs);
                 listaTemp.add(c);
             }
-
         } catch (SQLException e) {
             System.out.println("❌ Error al buscar cliente: " + e.getMessage());
         }
-
         return listaTemp;
     }
 

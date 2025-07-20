@@ -13,6 +13,7 @@ public class Venta implements Imprimible {
     private LocalDateTime fecha;
     private String medioPago;
     private int idFormaDePago;
+    private int cantidad;
     private BigDecimal subtotal;
     private BigDecimal importeTotal;
     private String notas;
@@ -20,13 +21,14 @@ public class Venta implements Imprimible {
     private final String nombreCliente;
     private final String nombreEmpleado;
 
-    public Venta (int idVenta, int idEmpleado, int idCliente, LocalDateTime fecha, String medioPago, BigDecimal importeTotal, String notas, String nombreCliente, String nombreEmpleado) {
+    public Venta (int idVenta, int idEmpleado, int idCliente, LocalDateTime fecha, String medioPago, int cantidad, BigDecimal importeTotal, String notas, String nombreCliente, String nombreEmpleado) {
         this.idVenta = idVenta;
         this.idEmpleado = idEmpleado;
         this.idCliente = idCliente;
         this.fecha = fecha;
         this.medioPago = medioPago;
         this.importeTotal = importeTotal;
+        this.cantidad = cantidad;
         this.notas = notas;
         this.nombreCliente = nombreCliente;
         this.nombreEmpleado = nombreEmpleado;
@@ -49,6 +51,7 @@ public class Venta implements Imprimible {
     public LocalDateTime getFecha() { return fecha; }
     public int getIdFormaDePago() {return idFormaDePago;}
     public String getMedioPago() { return medioPago; }
+    public int getCantidad () { return cantidad; }
     public BigDecimal getSubtotal() {return subtotal;}
     public BigDecimal getImporteTotal() { return importeTotal; }
     public String getNotas() { return notas; }
@@ -65,14 +68,15 @@ public class Venta implements Imprimible {
     public void setFecha(LocalDateTime fecha) { this.fecha = fecha; }
     public void setIdFormaDePago(int idFormaDePago) { this.idFormaDePago = idFormaDePago; }
     public void setMedioPago(String medioPago) { this.medioPago = medioPago; }
+    public void setCantidad(int cantidad) { this.cantidad = cantidad; }
     public void setSubtotal(BigDecimal subtotal) { this.subtotal = subtotal; }
     public void setImporteTotal(BigDecimal importeTotal) { this.importeTotal = importeTotal; }
     public void setNotas(String notas) { this.notas = notas; }
 
     @Override
     public void imprimir() {
-        System.out.printf("%-5d %-10s %-10s %-15s %-15s %-15s %-15s\n",
-                idVenta, idCliente, idEmpleado, fecha, medioPago, importeTotal, notas);
+        System.out.printf("%-5d %-10s %-10s %-15s %-15s %-10s %-15s %-15s\n",
+                idVenta, idCliente, idEmpleado, fecha, medioPago, cantidad, importeTotal, notas);
     }
 
 
