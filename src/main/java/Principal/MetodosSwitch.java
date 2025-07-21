@@ -117,13 +117,13 @@ public class MetodosSwitch {
 
                 switch(opcion){
                     case 1: // Ver ventas
-                        daoVenta.mostrarTodasLasVentas();
+                        //daoVenta.mostrarTodasLasVentas();
                         break;
                     case 2: // Registrar nueva venta
-                        daoVenta.registrarVentaPorConsola(scan, listaVentas);
+                        //daoVenta.registrarVentaPorConsola(scan, listaVentas);
                         break;
                     case 3: // Ver ventas por cliente
-                        daoVenta.mostrarVentasPorCliente(scan);
+                        //daoVenta.mostrarVentasPorCliente(scan);
                         break;
                     case 4:
                         return;

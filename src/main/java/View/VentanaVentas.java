@@ -1,129 +1,423 @@
 package View;
 
 import Clases.Principales.Cliente;
+import Clases.Principales.Empleado;
+import Clases.Principales.Producto;
 import Clases.Principales.Venta;
 import DataBase.DataBaseConnection;
+import DataBase.*;
+import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import util.Mapper;
-
 import java.math.BigDecimal;
 import java.sql.*;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 
+import static View.AppController.agregarDobleClickSeleccion;
+import static View.AppController.mostrarAlerta; // te copie papu
+
 public class VentanaVentas {
+
+    @FXML
+    private VBox menuLateral;
+    @FXML private TextArea outputArea;
+    @FXML private VBox contenedor;
+
     private static final Connection conn = DataBaseConnection.getConnection();
-    public static ArrayList<Venta> cargarVentasEnLista() {
-        ArrayList<Venta> lista = new ArrayList<>();
 
-        String sql = """
-        SELECT v.nFactura, v.idC, v.idE, v.fecha, v.total, fp.descripcion AS medioPago, v.cantidad, v.subtotal,
-           pc.nombre || ' ' || pc.apellido AS cliente_nombre,
-           pe.nombre || ' ' || pe.apellido AS empleado_nombre,
-           pr.nombre AS producto_nombre
-        FROM Venta v
-        LEFT JOIN Cliente c ON v.idC = c.ID
-        LEFT JOIN Persona pc ON c.DNI = pc.DNI
-        LEFT JOIN Empleado e ON v.idE = e.ID
-        LEFT JOIN Persona pe ON e.DNI = pe.DNI
-        LEFT JOIN FormaDePagos fp ON v.formaDePago = fp.idPago
-        LEFT JOIN Producto pr ON v.idProd = pr.idProducto;
-        """;
-        try (Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql)) {
-                while (rs.next()) {
-                    Venta v = Mapper.getVenta(rs);
-                    lista.add(v);
+    public VentanaVentas(VBox contenedor, TextArea outputArea) {
+        this.contenedor = contenedor;
+        this.outputArea = outputArea;
+    }
+
+
+    public void verVentas() {
+        contenedor.getChildren().clear();
+
+        Label titulo = new Label("📊 Lista de Ventas");
+        titulo.getStyleClass().add("titulo-seccion");
+
+        TableView<Venta> tabla = new TableView<>();
+        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        TableColumn<Venta, Integer> colFactura = new TableColumn<>("Factura");
+        colFactura.setCellValueFactory(new PropertyValueFactory<>("idVenta"));
+
+        TableColumn<Venta, String> colCliente = new TableColumn<>("Cliente");
+        colCliente.setCellValueFactory(new PropertyValueFactory<>("nombreCliente"));
+
+        TableColumn<Venta, String> colEmpleado = new TableColumn<>("Empleado");
+        colEmpleado.setCellValueFactory(new PropertyValueFactory<>("nombreEmpleado"));
+
+        TableColumn<Venta, String> colProducto = new TableColumn<>("Producto");
+        colProducto.setCellValueFactory(new PropertyValueFactory<>("notas"));
+
+        TableColumn<Venta, Integer> colCantidad = new TableColumn<>("Cantidad");
+        colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
+
+        TableColumn<Venta, String> colFecha = new TableColumn<>("Fecha");
+        colFecha.setCellValueFactory(new PropertyValueFactory<>("fechaFormateada")); // lo armamos abajo
+
+        TableColumn<Venta, String> colPago = new TableColumn<>("Pago");
+        colPago.setCellValueFactory(new PropertyValueFactory<>("medioPago"));
+
+        TableColumn<Venta, Double> colSubtotal = new TableColumn<>("Subtotal");
+        colSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));
+
+        TableColumn<Venta, Double> colTotal = new TableColumn<>("Total");
+        colTotal.setCellValueFactory(new PropertyValueFactory<>("importeTotal"));
+
+        tabla.getColumns().addAll(colFactura, colCliente, colEmpleado, colProducto, colCantidad, colFecha, colPago, colSubtotal, colTotal);
+        tabla.getItems().addAll(VentaDAO.cargarVentasEnLista());
+
+        VBox layout = new VBox(10, titulo, tabla);
+        layout.setPadding(new Insets(15));
+
+        contenedor.getChildren().add(layout);
+    }
+
+    public void registrarVenta() {
+        contenedor.getChildren().clear();
+
+        VBox form = new VBox(10);
+        form.setPadding(new Insets(20));
+        form.getStyleClass().add("form-box");
+
+        Label titulo = new Label("📋 Registrar Venta");
+        titulo.getStyleClass().add("titulo-principal");
+
+        TextField txtProductoId = new TextField();
+        txtProductoId.setPromptText("ID Producto");
+        txtProductoId.getStyleClass().add("text-field");
+
+        Label lblCantidad = new Label("Cantidad:");
+        TextField txtCantidad = new TextField();
+        txtCantidad.setPromptText("Ej: 3");
+
+        Button btnAgregarProducto = new Button(" Agregar Producto");
+        btnAgregarProducto.getStyleClass().add("boton-secundario");
+        VentanaProducto ventanaProducto = new VentanaProducto(contenedor, outputArea);
+        btnAgregarProducto.setOnAction(e -> ventanaProducto.mostrarVentanaSeleccionProducto(txtProductoId));
+
+        TextField txtClienteId = new TextField();
+        txtClienteId.setPromptText("ID Cliente");
+        txtClienteId.getStyleClass().add("text-field");
+
+        TextField txtEmpleadoId = new TextField();
+        txtEmpleadoId.setPromptText("ID Empleado");
+        txtEmpleadoId.getStyleClass().add("text-field");
+
+        ComboBox<String> medioPago = new ComboBox<>();
+        medioPago.getItems().addAll("Efectivo", "Crédito", "Débito", "Transferencia");
+        medioPago.setPromptText("Medio de Pago");
+        medioPago.getStyleClass().add("choice-box");
+
+        Label lblTotalVenta = new Label("Total de la venta: $0.00");
+        lblTotalVenta.getStyleClass().add("etiqueta-total"); // opcional si tenés CSS
+
+
+        Button btnAgregarCliente = new Button(" Agregar Cliente");
+        btnAgregarCliente.getStyleClass().add("boton-secundario");
+        btnAgregarCliente.setOnAction(e -> mostrarVentanaSeleccionCliente(txtClienteId));
+
+        Button btnAgregarEmpleado = new Button(" Agregar Empleado");
+        btnAgregarEmpleado.getStyleClass().add("boton-secundario");
+        btnAgregarEmpleado.setOnAction(e -> mostrarVentanaSeleccionEmpleado(txtEmpleadoId));
+
+        Button btnRegistrar = new Button("✅ Registrar Venta");
+        btnRegistrar.getStyleClass().add("boton-accion");
+
+        Runnable actualizarTotal = () -> {
+            try {
+                int cantidad = Integer.parseInt(txtCantidad.getText().trim());
+                int idProd = Integer.parseInt(txtProductoId.getText().trim());
+                Producto p = ProductoDAO.obtenerProductoPorID(idProd);
+                if (p != null) {
+                    BigDecimal precio = p.getPrecioUnitario();
+                    BigDecimal total = precio.multiply(BigDecimal.valueOf(cantidad));
+                    lblTotalVenta.setText("Total de la venta: $" + total);
                 }
-            } catch (SQLException e) {
-                System.out.println("❌ Error al cargar ventas: " + e.getMessage());
+            } catch (Exception e) {
+                lblTotalVenta.setText("Total de la venta: $0.00");
             }
-            return lista;
-    }
+        };
 
 
+        btnRegistrar.setOnAction(e -> {
+            try {
+                int productoId = Integer.parseInt(txtProductoId.getText().trim());
+                int clienteId = Integer.parseInt(txtClienteId.getText().trim());
+                int empleadoId = Integer.parseInt(txtEmpleadoId.getText().trim());
+                int cantidad =  Integer.parseInt(txtCantidad.getText().trim());
+                String medio = medioPago.getValue();
 
-    public static String obtenerVentas(ArrayList<Venta> lista) {
-        if (lista == null || lista.isEmpty()) return "Lista de ventas vacía.";
+                Producto prod = ProductoDAO.obtenerProductoPorID(productoId);
+                if (prod == null) {
+                    mostrarAlerta("❌ Producto no encontrado.");
+                    return;
+                }
+                BigDecimal precio = prod.getPrecioUnitario();
+                BigDecimal subtotal =  precio.multiply(BigDecimal.valueOf(cantidad));
+                BigDecimal total = subtotal; //El subtotal es para calcular los descuentos y cualquier extra que se le sume o reste a la venta antes de dar el total final de la venta
 
-        StringBuilder sb = new StringBuilder();
+                int idPago = switch (medio) {
+                    case "Efectivo" -> 1;
+                    case "Crédito" -> 2;
+                    case "Débito" -> 3;
+                    case "Transferencia" -> 4;
+                    default -> throw new IllegalArgumentException("Forma de pago inválida.");
+                };
 
-        sb.append(String.format("%-5s %-20s %-25s %-20s %-15s %-10s %-20s\n",
-                "ID", "Cliente", "Empleado", "Fecha", "MedioPago", "Total", "Producto"));
-        sb.append("--------------------------------------------------------------------------------------------------------------\n");
+                Venta venta = new Venta(); // Forma de reducir lineas aca?? Mapper extra o que??
+                venta.setIdProducto(productoId);
+                venta.setIdCliente(clienteId);
+                venta.setIdEmpleado(empleadoId);
+                venta.setIdFormaDePago(idPago);
+                venta.setCantidad(cantidad);
+                venta.setSubtotal(total);
+                venta.setImporteTotal(total);
 
-        for (Venta v : lista) {
-            String fechaFormateada = v.getFecha().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+                String sql = "INSERT INTO Venta (idProd, idC, idE, formaDePago, cantidad, fecha, subtotal, total) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+
+                Mapper.setVenta(stmt, venta);
+                stmt.executeUpdate();
+                mostrarAlerta("✅ Venta registrada correctamente.");
+                contenedor.getChildren().clear();
+                contenedor.getChildren().add(outputArea);
+
+                boolean exito = VentaDAO.actualizarStockProducto(productoId, cantidad);
+                if (!exito) {
+                    mostrarAlerta("⚠ No se pudo actualizar el stock.");
+                }
 
 
-            sb.append(String.format("%-5d %-20s %-25s %-20s %-15s %-10.2f %-20s\n",
-                    v.getIdVenta(),
-                    v.getNombreCliente(),
-                    v.getNombreEmpleado(),
-                    fechaFormateada,
-                    capitalize(v.getMedioPago()),
-                    v.getImporteTotal(),
-                    v.getNotas())); // reutilizado como nombre del producto
-        }
-
-        return sb.toString();
-    }
-
-    // Capitaliza solo la primera letra
-    private static String capitalize(String input) {
-        if (input == null || input.isEmpty()) return "";
-        return input.substring(0, 1).toUpperCase() + input.substring(1).toLowerCase();
-    }
-
-    public static ArrayList<Venta> obtenerVentasPorCliente(int idCliente) {
-        ArrayList<Venta> lista = new ArrayList<>();
-
-        //esta consulta me la paso chat, debe poder mejorarse pero no se bien como
-        String sql = """
-        SELECT v.nFactura, v.idC, v.idE, v.fecha, v.total, v.subtotal,
-               fp.descripcion AS medio_pago,
-               pc.nombre || ' ' || pc.apellido AS cliente_nombre,
-               pe.nombre || ' ' || pe.apellido AS empleado_nombre,
-               pr.nombre AS producto_nombre
-        FROM Venta v
-        JOIN Cliente c ON v.idC = c.ID
-        JOIN Persona pc ON c.DNI = pc.DNI
-        JOIN Empleado e ON v.idE = e.ID
-        JOIN Persona pe ON e.DNI = pe.DNI
-        JOIN FormaDePagos fp ON v.formaDePago = fp.idPago
-        JOIN Producto pr ON v.idProd = pr.idProducto
-        WHERE v.idC = ?;
-    """;
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, idCliente);
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                Venta v = Mapper.getVenta(rs);
-                lista.add(v);
+            } catch (Exception ex) {
+                mostrarAlerta("❌ Error: " + ex.getMessage());
             }
+        });
 
-        } catch (Exception ex) {
-            System.out.println("❌ Error al obtener ventas del cliente: " + ex.getMessage());
-        }
-        return lista;
+        txtCantidad.textProperty().addListener((obs, oldVal, newVal) -> actualizarTotal.run());
+        txtProductoId.textProperty().addListener((obs, oldVal, newVal) -> actualizarTotal.run());
+
+        //Al crear esto asi puedo darle un estilo mas cool
+        HBox filaProducto = new HBox(15, btnAgregarProducto, txtProductoId);
+        filaProducto.setAlignment(Pos.CENTER);
+
+        HBox filaCliente = new HBox(15, btnAgregarCliente, txtClienteId);
+        filaCliente.setAlignment(Pos.CENTER);
+
+        HBox filaEmpleado = new HBox(15, btnAgregarEmpleado, txtEmpleadoId);
+        filaEmpleado.setAlignment(Pos.CENTER);
+
+        HBox filaCantidad = new HBox(15, lblCantidad, txtCantidad);
+        filaCantidad.setAlignment(Pos.CENTER);
+
+
+
+        form.setAlignment(Pos.TOP_CENTER);
+        btnAgregarProducto.setPrefWidth(140);
+        btnAgregarCliente.setPrefWidth(140);
+        btnAgregarEmpleado.setPrefWidth(140);
+
+        txtProductoId.setPrefWidth(200);
+        txtClienteId.setPrefWidth(200);
+        txtEmpleadoId.setPrefWidth(200);
+        txtCantidad.setPrefWidth(200);
+
+        // hasta aca, dsp los agregas abajo y list
+        form.getChildren().addAll(
+                titulo,
+                filaProducto,
+                filaCantidad,
+                filaCliente,
+                filaEmpleado,
+                medioPago,
+                lblTotalVenta,
+                btnRegistrar
+        );
+
+
+
+        Button btnCancelar = new Button("❌ Cancelar Venta");
+        btnCancelar.getStyleClass().add("boton-cancelar");
+        btnCancelar.setOnAction(e -> {
+            contenedor.getChildren().clear();
+            contenedor.getChildren().add(outputArea);
+        });
+
+        HBox filaCancelar = new HBox(btnCancelar);
+        filaCancelar.setAlignment(Pos.BOTTOM_RIGHT);
+
+        form.getChildren().add(filaCancelar);
+
+
+        contenedor.getChildren().add(form);
     }
 
-    //Ver si la dejamos aca o en VentanaProducto
-    public static boolean actualizarStockProducto(int id, int cantidadVendida) {
-        try {
-            String sql = "UPDATE Producto SET stock = stock - ? WHERE idProducto = ? AND stock >= ?";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, cantidadVendida);
-            stmt.setInt(2, id);
-            stmt.setInt(3, cantidadVendida);
-            return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
+    public  void mostrarVentanaSeleccionCliente(TextField campoDestino) {
+        Stage ventana = new Stage();
+        ventana.setTitle("Seleccionar Cliente");
+
+        TableView<Cliente> tabla = new TableView<>();
+        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        TableColumn<Cliente, Integer> colID = new TableColumn<>("ID");
+        colID.setCellValueFactory(new PropertyValueFactory<>("id"));
+
+        TableColumn<Cliente, Integer> colDNI = new TableColumn<>("DNI");
+        colDNI.setCellValueFactory(new PropertyValueFactory<>("DNI"));
+
+        TableColumn<Cliente, String> colNombre = new TableColumn<>("Nombre");
+        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+
+        TableColumn<Cliente, String> colApellido = new TableColumn<>("Apellido");
+        colApellido.setCellValueFactory(new PropertyValueFactory<>("apellido"));
+
+        tabla.getColumns().addAll(colID, colDNI, colNombre, colApellido);
+
+        ArrayList<Cliente> lista = new ArrayList<>();
+        VentanaClientes.cargarClientesEnLista(lista);
+        tabla.getItems().addAll(lista);
+
+        TextField txtBuscar = new TextField();
+        txtBuscar.setPromptText("Ingrese DNI del cliente");
+
+        Button btnBuscar = new Button("Buscar");
+        btnBuscar.setOnAction(e -> {
+            String dni = txtBuscar.getText().trim();
+            ArrayList<Cliente> resultado = VentanaClientes.buscarClientePorDato("DNI", dni);
+            tabla.getItems().setAll(resultado);
+        });
+
+        agregarDobleClickSeleccion(tabla, cliente -> {
+            campoDestino.setText(String.valueOf(cliente.getId()));
+            ventana.close();
+        });
+
+
+        VBox layout = new VBox(10, tabla, txtBuscar, btnBuscar);
+        layout.setPadding(new Insets(10));
+
+        Scene escena = new Scene(layout, 600, 400);
+        ventana.setScene(escena);
+        ventana.initModality(Modality.APPLICATION_MODAL);
+        ventana.showAndWait();
+    }
+    private void mostrarVentanaSeleccionEmpleado(TextField campoDestino) {
+        Stage ventana = new Stage();
+        ventana.setTitle("Seleccionar Empleado");
+        ventana.initModality(Modality.APPLICATION_MODAL);
+
+        TableView<Empleado> tabla = new TableView<>();
+        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        TableColumn<Empleado, Integer> colID = new TableColumn<>("ID");
+        colID.setCellValueFactory(new PropertyValueFactory<>("empleadoID"));
+
+        TableColumn<Empleado, Integer> colDNI = new TableColumn<>("DNI");
+        colDNI.setCellValueFactory(new PropertyValueFactory<>("dni"));
+
+        TableColumn<Empleado, String> colNombre = new TableColumn<>("Nombre");
+        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+
+        TableColumn<Empleado, String> colApellido = new TableColumn<>("Apellido");
+        colApellido.setCellValueFactory(new PropertyValueFactory<>("apellido"));
+
+        tabla.getColumns().addAll(colID, colDNI, colNombre, colApellido);
+
+        ArrayList<Empleado> lista = new ArrayList<>();
+        VentanaEmpleado.cargarEmpleadosEnLista(lista);
+        tabla.getItems().addAll(lista);
+
+        TextField txtBuscar = new TextField();
+        txtBuscar.setPromptText("Ingrese DNI del empleado");
+
+        Button btnBuscar = new Button("Buscar");
+        btnBuscar.setOnAction(e -> {
+            try {
+                int dni = Integer.parseInt(txtBuscar.getText().trim());
+                Integer id = VentanaEmpleado.obtenerIdEmpleadoPorDni(dni);
+                if (id != null) {
+                    for (Empleado emp : lista) {
+                        if (emp.getEmpleadoID() == id) {
+                            tabla.getItems().setAll(emp);
+                            return;
+                        }
+                    }
+                } else {
+                    tabla.getItems().clear();
+                }
+            } catch (NumberFormatException ex) {
+                mostrarAlerta("DNI inválido.");
+            }
+        });
+
+        // ✅ Doble click para seleccionar automáticamente
+        agregarDobleClickSeleccion(tabla, empleado -> {
+            campoDestino.setText(String.valueOf(empleado.getEmpleadoID()));
+            ventana.close();
+        });
+
+        VBox layout = new VBox(10, tabla, txtBuscar, btnBuscar);
+        layout.setPadding(new Insets(10));
+
+        Scene escena = new Scene(layout, 600, 400);
+        ventana.setScene(escena);
+        ventana.showAndWait();
+    }
+
+    public void ventasPorCliente() {
+        Stage ventana = new Stage();
+        ventana.setTitle("Ventas por Cliente");
+        ventana.initModality(Modality.APPLICATION_MODAL);
+
+        VBox layout = new VBox(10);
+        layout.setPadding(new Insets(15));
+
+        // Mostrar lista de clientes
+        ArrayList<Cliente> clientes = new ArrayList<>();
+        VentanaClientes.cargarClientesEnLista(clientes);
+        TextArea areaTexto = new TextArea(VentanaClientes.obtenerClientes(clientes));
+        areaTexto.setEditable(false);
+        areaTexto.setWrapText(true);
+        areaTexto.setPrefHeight(300);
+
+        // Campo para ingresar DNI
+        TextField dniInput = new TextField();
+        dniInput.setPromptText("Ingrese DNI del cliente");
+
+        Button buscarBtn = new Button("🔍 Buscar Ventas");
+        buscarBtn.setOnAction(e -> {
+            try {
+                int dni = Integer.parseInt(dniInput.getText().trim());
+                Integer id = VentanaClientes.obtenerIdClientePorDni(dni);
+
+                if (id != null) {
+                    ArrayList<Venta> ventas = VentaDAO.obtenerVentasPorCliente(id);
+                    outputArea.setText(VentaDAO.obtenerVentas(ventas));
+                    ventana.close();
+                } else {
+                    mostrarAlerta("❌ No se encontró ningún cliente con ese DNI.");
+                }
+            } catch (NumberFormatException ex) {
+                mostrarAlerta("❌ DNI inválido.");
+            }
+        });
+
+        layout.getChildren().addAll(areaTexto, dniInput, buscarBtn);
+        Scene escena = new Scene(layout, 600, 450);
+        ventana.setScene(escena);
+        ventana.showAndWait();
     }
 
 }

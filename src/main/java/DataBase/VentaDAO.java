@@ -1,188 +1,123 @@
 package DataBase;
 
-//import Clases.Empleado;
-import Clases.Principales.Imprimible;
 import Clases.Principales.Venta;
 import util.Mapper;
-
 import java.sql.*;
-import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Scanner;
+
 
 public class VentaDAO {
-    public void mostrarTodasLasVentas() {
+    private static final Connection conn = DataBaseConnection.getConnection();
+
+    public static ArrayList<Venta> cargarVentasEnLista() {
+        ArrayList<Venta> lista = new ArrayList<>();
+
         String sql = """
-               SELECT v.id, c.nombre AS cliente, e.nombre AS empleado,
-               v.fecha,  AS fecha, v.total, v.medio_pago
-               FROM ventas v
-               INNER JOIN clientes c ON v.cliente_id = c.id
-               INNER JOIN empleados e ON v.empleado_id = e.id;
-               """;
-
-        System.out.printf("%-5s %-20s %-20s %-25s %-10s %-15s\n", "ID", "cliente", "empleado",  "fecha", "total", "medio de pago");
-        System.out.println("-----------------------------------------------------------------------------------------------------------------");
-
-        try (Connection conn = DataBaseConnection.getConnection();
-             Statement stmt = conn.createStatement();
+        SELECT v.nFactura, v.idC, v.idE, v.fecha, v.total, fp.descripcion AS medioPago, v.cantidad, v.subtotal,
+           pc.nombre || ' ' || pc.apellido AS cliente_nombre,
+           pe.nombre || ' ' || pe.apellido AS empleado_nombre,
+           pr.nombre AS producto_nombre
+        FROM Venta v
+        LEFT JOIN Cliente c ON v.idC = c.ID
+        LEFT JOIN Persona pc ON c.DNI = pc.DNI
+        LEFT JOIN Empleado e ON v.idE = e.ID
+        LEFT JOIN Persona pe ON e.DNI = pe.DNI
+        LEFT JOIN FormaDePagos fp ON v.formaDePago = fp.idPago
+        LEFT JOIN Producto pr ON v.idProd = pr.idProducto;
+        """;
+        try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-
-            while (rs.next()){
-                Mapper.getVenta(rs);
-                System.out.printf("%-5s %-20s %-20s %-10s %-15s\n", "ID", "Cliente", "Fecha", "Total", "Medio Pago");
+            while (rs.next()) {
+                Venta v = Mapper.getVenta(rs);
+                lista.add(v);
             }
-
-
-        }catch(Exception e){
-            System.out.println("Error al mostrar ventas" + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("❌ Error al cargar ventas: " + e.getMessage());
         }
+        return lista;
     }
 
-    //Esta copada, igual mucho no sirve porque es para consola pero me guwsta.
-        public void registrarVentaPorConsola(Scanner scan, ArrayList<Imprimible> listaVentas) {
-            String queryStockPrice = "SELECT precioUnitario, stock FROM productos WHERE id = ?";
-            String queryInsertV = "INSERT INTO ventas (cliente_id, empleado_id, medio_pago, total) VALUES (?, ?, ?, ?)";
-            String queryInsertD = "INSERT INTO detalles_ventas (venta_id, producto_id, cantidad, precio_unitario) VALUES (?, ?, ?, ?)";
-            String updateStockSQL = "UPDATE productos SET stock = stock - ? WHERE id = ?";
-            try (Connection conn = DataBaseConnection.getConnection()) {
-                conn.setAutoCommit(false); // Para hacer todo en una transacción
+    public static String obtenerVentas(ArrayList<Venta> lista) {
+        if (lista == null || lista.isEmpty()) return "Lista de ventas vacía.";
 
-                // Paso 1: Obtener datos
-                System.out.print("ID del cliente: ");
-                int clienteId = Integer.parseInt(scan.nextLine());
+        StringBuilder sb = new StringBuilder();
 
-                System.out.print("ID del empleado: ");
-                int empleadoId = Integer.parseInt(scan.nextLine());
+        sb.append(String.format("%-5s %-20s %-25s %-20s %-15s %-10s %-20s\n",
+                "ID", "Cliente", "Empleado", "Fecha", "MedioPago", "Total", "Producto"));
+        sb.append("--------------------------------------------------------------------------------------------------------------\n");
 
-                System.out.print("Medio de pago: ");
-                String medioPago = scan.nextLine();
+        for (Venta v : lista) {
+            String fechaFormateada = v.getFecha().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
 
-                System.out.print("ID del producto vendido: ");
-                int productoId = Integer.parseInt(scan.nextLine());
 
-                System.out.print("Cantidad vendida: ");
-                int cantidad = Integer.parseInt(scan.nextLine());
-
-                // Paso 2: Obtener precio unitario del producto
-                double precioUnitario = 0;
-                int stockActual = 0;
-                try (PreparedStatement stmt = conn.prepareStatement(queryStockPrice)) {
-                    stmt.setInt(1, productoId);
-                    ResultSet rs = stmt.executeQuery();
-                    if (rs.next()) {
-                        precioUnitario = rs.getDouble("precioUnitario");
-                        stockActual = rs.getInt("stock");
-                    } else {
-                        System.out.println("❌ Producto no encontrado.");
-                        return;
-                    }
-                }
-
-                if (stockActual < cantidad) {
-                    System.out.println("❌ Stock insuficiente.");
-                    return;
-                }
-
-                double total = precioUnitario * cantidad;
-
-                // Paso 3: Insertar en tabla ventas
-                /*
-                LocalDateTime fecha = LocalDateTime.now();
-                Venta venta = new Venta( // ESTO TA MAL PERO NO SE COMO HACELL
-                        0,
-                        empleadoId,
-                        clienteId,
-                        fecha,
-                        medioPago,
-                        new java.math.BigDecimal(total),
-                        "",
-                        "",
-                        ""
-                );*/
-                PreparedStatement stmtVenta = conn.prepareStatement(queryInsertV, Statement.RETURN_GENERATED_KEYS);
-                //Mapper.setVenta(stmtVenta, venta);
-                stmtVenta.executeUpdate();
-
-                ResultSet generatedKeys = stmtVenta.getGeneratedKeys();
-                int ventaId = 0;
-                if (generatedKeys.next()) {
-                    ventaId = generatedKeys.getInt(1);
-                }
-
-                // Paso 4: Insertar en detalles_ventas
-                PreparedStatement stmtDetalle = conn.prepareStatement(queryInsertD);
-                stmtDetalle.setInt(1, ventaId);
-                stmtDetalle.setInt(2, productoId);
-                stmtDetalle.setInt(3, cantidad);
-                stmtDetalle.setDouble(4, precioUnitario);
-                stmtDetalle.executeUpdate();
-
-                // Paso 5: Actualizar stock
-                PreparedStatement stmtStock = conn.prepareStatement(updateStockSQL);
-                stmtStock.setInt(1, cantidad);
-                stmtStock.setInt(2, productoId);
-                stmtStock.executeUpdate();
-
-                conn.commit();
-                System.out.println("✅ Venta registrada correctamente.");
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.out.println("❌ Error al registrar la venta: " + e.getMessage());
-            }
+            sb.append(String.format("%-5d %-20s %-25s %-20s %-15s %-10.2f %-20s\n",
+                    v.getIdVenta(),
+                    v.getNombreCliente(),
+                    v.getNombreEmpleado(),
+                    fechaFormateada,
+                    capitalize(v.getMedioPago()),
+                    v.getImporteTotal(),
+                    v.getNotas())); // reutilizado como nombre del producto
         }
 
-    public void mostrarVentasPorCliente(Scanner scan) {
-        System.out.print("Ingrese el ID del cliente: ");
-        int id = scan.nextInt();
-        scan.nextLine();
+        return sb.toString();
+    }
 
+    // Capitaliza solo la primera letra
+    private static String capitalize(String input) {
+        if (input == null || input.isEmpty()) return "";
+        return input.substring(0, 1).toUpperCase() + input.substring(1).toLowerCase();
+    }
+
+    public static ArrayList<Venta> obtenerVentasPorCliente(int idCliente) {
+        ArrayList<Venta> lista = new ArrayList<>();
+
+        //esta consulta me la paso chat, debe poder mejorarse pero no se bien como
         String sql = """
-        SELECT v.id, c.nombre AS cliente, v.fecha, v.total, v.medio_pago
-        FROM ventas v
-        INNER JOIN clientes c ON v.cliente_id = c.id 
-        WHERE v.cliente_id = ?;
-        """;
-        try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        SELECT v.nFactura, v.idC, v.idE, v.fecha, v.total, v.subtotal,
+               fp.descripcion AS medio_pago,
+               pc.nombre || ' ' || pc.apellido AS cliente_nombre,
+               pe.nombre || ' ' || pe.apellido AS empleado_nombre,
+               pr.nombre AS producto_nombre
+        FROM Venta v
+        JOIN Cliente c ON v.idC = c.ID
+        JOIN Persona pc ON c.DNI = pc.DNI
+        JOIN Empleado e ON v.idE = e.ID
+        JOIN Persona pe ON e.DNI = pe.DNI
+        JOIN FormaDePagos fp ON v.formaDePago = fp.idPago
+        JOIN Producto pr ON v.idProd = pr.idProducto
+        WHERE v.idC = ?;
+    """;
 
-            stmt.setInt(1, id);
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, idCliente);
             ResultSet rs = stmt.executeQuery();
 
-            System.out.printf("%-5s %-20s %-20s %-10s %-15s\n", "ID", "Cliente", "Fecha", "Total", "Medio Pago");
-            System.out.println("--------------------------------------------------------------------------");
-
-            boolean hayResultados = false;
-
             while (rs.next()) {
-                hayResultados = true;
-                Mapper.getVenta(rs);
-
-                System.out.printf("%-5s %-20s %-20s %-10s %-15s\n", "ID", "Cliente", "Fecha", "Total", "Medio Pago");
+                Venta v = Mapper.getVenta(rs);
+                lista.add(v);
             }
 
-            if (!hayResultados) {
-                System.out.println("⚠️ No se encontraron ventas para ese cliente.");
-            }
-
-        } catch (SQLException e) {
-            System.out.println("❌ Error al mostrar ventas: " + e.getMessage());
+        } catch (Exception ex) {
+            System.out.println("❌ Error al obtener ventas del cliente: " + ex.getMessage());
         }
+        return lista;
     }
 
-    public static boolean insertarVenta(Venta venta) {
-        String sql = "INSERT INTO ventas (cliente_id, fecha, total, empleado_id, medio_pago, notas) VALUES (?, ?, ?, ?, ?, ?)";
-
-        try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            Mapper.setVenta(stmt, venta);
-            stmt.executeUpdate();
-            return true;
-
+    public static boolean actualizarStockProducto(int id, int cantidadVendida) {
+        try {
+            String sql = "UPDATE Producto SET stock = stock - ? WHERE idProducto = ? AND stock >= ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, cantidadVendida);
+            stmt.setInt(2, id);
+            stmt.setInt(3, cantidadVendida);
+            return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.out.println("❌ Error al insertar venta: " + e.getMessage());
-            return false;
+            e.printStackTrace();
         }
+        return false;
     }
+
 }
