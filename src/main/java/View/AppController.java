@@ -1,11 +1,12 @@
 package View;
 
-import Clases.Extras.TiposClientes;
+// Importo lo minimo e indispensable
+import View.*;
+import Clases.Extras.*;
 import Clases.Principales.*;
-
-import Clases.Extras.Telefono;
-
 import DataBase.*;
+import util.Mapper;
+// muchas cosas no se
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,9 +20,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import util.Mapper;
-
 import java.math.BigDecimal;
+//SQL y fecha
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -29,7 +29,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-
 
 public class AppController {
     private static final Connection conn = DataBaseConnection.getConnection();
@@ -44,8 +43,12 @@ public class AppController {
     private TextField txtClienteId;
     private TextField txtEmpleadoId;
 
+
+    private VentanaProducto ventanaProducto;
+
     @FXML
     public void initialize() {
+        ventanaProducto = new VentanaProducto(contenedor, outputArea);
         cargarMenuPrincipal();
     }
 
@@ -84,14 +87,15 @@ public class AppController {
     private void mostrarSubmenuInventario() {
         menuLateral.getChildren().clear();
         menuLateral.getChildren().addAll(
-                crearBoton("Ver Productos", e -> verProductos()),
-                crearBoton("Agregar Producto", e -> agregarProducto()),
-                crearBoton("Modificar Producto", e -> modificarProducto()),
-                crearBoton("Eliminar Producto", e -> eliminarProducto()),
-                crearBoton("Buscar Producto", e -> buscarProducto()),
+                crearBoton("Ver Productos", e -> ventanaProducto.verProductos()),
+                crearBoton("Agregar Producto", e -> ventanaProducto.agregarProducto()),
+                crearBoton("Modificar Producto", e -> ventanaProducto.modificarProducto()),
+                crearBoton("Eliminar Producto", e -> ventanaProducto.eliminarProducto()),
+                crearBoton("Buscar Producto", e -> ventanaProducto.buscarProducto()),
                 crearBoton("🔙 Volver", e -> cargarMenuPrincipal())
         );
     }
+
 
     private void mostrarSubmenuReportes() {
         menuLateral.getChildren().clear();
@@ -454,7 +458,7 @@ public class AppController {
 
         Button btnAgregarProducto = new Button(" Agregar Producto");
         btnAgregarProducto.getStyleClass().add("boton-secundario");
-        btnAgregarProducto.setOnAction(e -> mostrarVentanaSeleccionProducto(txtProductoId));
+        btnAgregarProducto.setOnAction(e -> ventanaProducto.mostrarVentanaSeleccionProducto(txtProductoId));
 
         TextField txtClienteId = new TextField();
         txtClienteId.setPromptText("ID Cliente");
@@ -492,7 +496,7 @@ public class AppController {
                 int cantidad = Integer.parseInt(txtCantidad.getText().trim());
                 String medio = medioPago.getValue();
 
-                Producto prod = VentanaProducto.obtenerProductoPorID(productoId);
+                Producto prod = ProductoDAO.obtenerProductoPorID(productoId);
                 if (prod == null) {
                     mostrarAlerta("❌ Producto no encontrado.");
                     return;
@@ -653,74 +657,8 @@ public class AppController {
         ventana.setScene(scene);
         ventana.showAndWait();
     }
-    private void mostrarVentanaSeleccionProducto(TextField idProductoField) {
-        Stage ventana = new Stage();
-        ventana.setTitle("Seleccionar Producto");
-        ventana.initModality(Modality.APPLICATION_MODAL);
 
-        TableView<Producto> tabla = new TableView<>();
-
-        TableColumn<Producto, Integer> colId = new TableColumn<>("ID");
-        colId.setCellValueFactory(new PropertyValueFactory<>("productoID"));
-
-        TableColumn<Producto, String> colNombre = new TableColumn<>("Nombre");
-        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombreProducto"));
-
-        TableColumn<Producto, Double> colPrecio = new TableColumn<>("Precio");
-        colPrecio.setCellValueFactory(new PropertyValueFactory<>("precioUnitario"));
-
-        TableColumn<Producto, Double> colCosto = new TableColumn<>("Costo");
-        colCosto.setCellValueFactory(new PropertyValueFactory<>("costo"));
-
-        TableColumn<Producto, Integer> colStock = new TableColumn<>("Stock");
-        colStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
-
-        tabla.getColumns().addAll(colId, colNombre, colPrecio, colCosto, colStock);
-        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-        // Obtener y cargar productos
-        ArrayList <Producto> productos = VentanaProducto.cargarProductosEnLista();
-        tabla.setItems(FXCollections.observableArrayList(productos));
-
-        // Campo de búsqueda por ID
-        TextField idInput = new TextField();
-        idInput.setPromptText("Ingrese ID del producto");
-
-        Button btnSeleccionar = new Button("Seleccionar");
-        btnSeleccionar.setOnAction(e -> {
-            try {
-                int idBuscado = Integer.parseInt(idInput.getText().trim());
-                Producto prod = productos.stream()
-                        .filter(p -> p.getProductoID() == idBuscado)
-                        .findFirst().orElse(null);
-
-                if (prod != null) {
-                    idProductoField.setText(String.valueOf(prod.getProductoID()));
-                    ventana.close();
-                } else {
-                    mostrarAlerta("❌ No se encontró ningún producto con ese ID.");
-                }
-            } catch (NumberFormatException ex) {
-                mostrarAlerta("ID inválido.");
-            }
-        });
-
-        // Doble clic en fila para seleccionar
-        tabla.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2 && tabla.getSelectionModel().getSelectedItem() != null) {
-                Producto seleccionado = tabla.getSelectionModel().getSelectedItem();
-                idProductoField.setText(String.valueOf(seleccionado.getProductoID()));
-                ventana.close();
-            }
-        });
-
-        VBox layout = new VBox(10, tabla, idInput, btnSeleccionar);
-        layout.setPadding(new Insets(10));
-        Scene scene = new Scene(layout, 650, 450);
-        ventana.setScene(scene);
-        ventana.showAndWait();
-    }
-    private void mostrarAlerta(String mensaje) {
+    public static void mostrarAlerta(String mensaje) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Información");
         alert.setHeaderText(null);
@@ -775,68 +713,7 @@ public class AppController {
 
 
     // INVENTARIO
-    public void verProductos() {
-        contenedor.getChildren().clear();
 
-        TableView<Producto> tabla = new TableView<>();
-        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        tabla.setPlaceholder(new Label("No hay productos cargados."));
-
-        TableColumn<Producto, Integer> colId = new TableColumn<>("ID");
-        colId.setCellValueFactory(new PropertyValueFactory<>("productoID")); // Se le asigna a la celda el valor provado de la clase Producto
-
-        TableColumn<Producto, String> colNombre = new TableColumn<>("Nombre");
-        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombreProducto"));
-
-        TableColumn<Producto, Double> colPrecio = new TableColumn<>("Precio");
-        colPrecio.setCellValueFactory(new PropertyValueFactory<>("precioUnitario"));
-
-        TableColumn<Producto, Double> colCosto = new TableColumn<>("Costo");
-        colCosto.setCellValueFactory(new PropertyValueFactory<>("costo"));
-
-        TableColumn<Producto, Integer> colStock = new TableColumn<>("Stock");
-        colStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
-
-        TableColumn<Producto, String> colMedida = new TableColumn<>("Medida");
-        colMedida.setCellValueFactory(new PropertyValueFactory<>("idMedida"));
-
-        TableColumn<Producto, String> colCategoria = new TableColumn<>("Categoría");
-        colCategoria.setCellValueFactory(new PropertyValueFactory<>("idCategoria"));
-
-        TableColumn<Producto, LocalDate> colAlta = new TableColumn<>("Fecha Alta");
-        colAlta.setCellValueFactory(new PropertyValueFactory<>("fechaAlta"));
-
-        TableColumn<Producto, LocalDate> colBaja = new TableColumn<>("Fecha Baja");
-        colBaja.setCellValueFactory(new PropertyValueFactory<>("fechaBaja"));
-
-        tabla.getColumns().addAll(colId, colNombre, colPrecio, colCosto, colStock, colMedida, colCategoria, colAlta, colBaja);
-
-        ArrayList<Producto> lista = VentanaProducto.cargarProductosEnLista();
-        tabla.setItems(FXCollections.observableArrayList(lista));
-
-        VBox layout = new VBox(10, new Label("📦 Lista de productos"), tabla);
-        layout.setPadding(new Insets(20));
-
-        contenedor.getChildren().add(layout);
-    }
-
-
-
-    private void agregarProducto() {
-        outputArea.setText("➕ Formulario para agregar producto.");
-    }
-
-    private void modificarProducto() {
-        outputArea.setText("✏️ Editar un producto existente.");
-    }
-
-    private void eliminarProducto() {
-        outputArea.setText("🗑️ Eliminar producto por ID.");
-    }
-
-    private void buscarProducto() {
-        outputArea.setText("🔍 Buscar producto por nombre o ID.");
-    }
 
     private void verReportes() {
         outputArea.setText("📊 Mostrar reportes de ventas/clientes/productos.");
