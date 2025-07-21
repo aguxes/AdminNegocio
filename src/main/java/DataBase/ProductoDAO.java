@@ -57,7 +57,15 @@ public class ProductoDAO {
 
     public static Producto obtenerProductoPorID(int id) {
         try {
-            String sql = "SELECT * FROM Producto WHERE idProducto = ?";
+            String sql = """
+            SELECT p.idProducto, p.nombre, p.precio, p.costo, p.stock,
+                p.fechAlta, p.fechaBaja, m.descripcion AS medidanombre,
+                c.descripcion AS categorianombre
+            FROM Producto p
+            JOIN MedidasProd m ON m.unidadMedida = p.idMedida
+            JOIN CategoriasProd c ON c.Categoria = p.idCategoria
+            WHERE p.idProducto = ?
+            """;
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
