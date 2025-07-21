@@ -118,7 +118,7 @@ CREATE TABLE FormaDePagos (
 );
 
 CREATE TABLE Venta (
-    nFactura INTEGER,
+    nFactura INTEGER PRIMARY KEY AUTOINCREMENT,
     idProd INTEGER,
     idE INTEGER,
     idC INTEGER,
@@ -127,7 +127,6 @@ CREATE TABLE Venta (
     cantidad INTEGER NOT NULL,
     subtotal REAL NOT NULL,
     total REAL NOT NULL,
-    PRIMARY KEY (nFactura, idProd),
     FOREIGN KEY (idProd) REFERENCES Producto(idProducto),
     FOREIGN KEY (idE) REFERENCES Empleado(ID),
     FOREIGN KEY (idC) REFERENCES Cliente(ID),
