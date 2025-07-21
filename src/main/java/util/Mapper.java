@@ -4,6 +4,7 @@ import Clases.Principales.*;
 import Clases.Extras.Telefono;
 import Clases.Extras.TiposClientes;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -123,22 +124,34 @@ public class Mapper {
 
 
     //PRODUCTO
+
+    //mas feo pero tolerante para la consulta sql sin joins
     public static Producto getProducto(ResultSet rs) throws SQLException {
+        int id = rs.getInt("idProducto");
+        String nombre = rs.getString("nombre");
+        BigDecimal precio = rs.getBigDecimal("precio");
+        double costo = rs.getDouble("costo");
+        int stock = rs.getInt("stock");
+        String fechaAltaRaw = rs.getString("fechAlta");
+        LocalDate fechaAlta = (fechaAltaRaw == null || fechaAltaRaw.isBlank()) ? null : LocalDate.parse(fechaAltaRaw);
+
         String fechaBajaRaw = rs.getString("fechaBaja");
         LocalDate fechaBaja = (fechaBajaRaw == null || fechaBajaRaw.isBlank()) ? null : LocalDate.parse(fechaBajaRaw);
 
-        return new Producto(
-                rs.getInt("idProducto"),
-                rs.getString("nombre"),
-                rs.getBigDecimal("precio"),
-                rs.getDouble("costo"),
-                rs.getInt("stock"),
-                rs.getString("medidanombre"),
-                rs.getString("categorianombre"),
-                LocalDate.parse(rs.getString("fechAlta")),
-                fechaBaja
-        );
+        try {
+            // Si viene desde una query con joins
+            String medidaNombre = rs.getString("medidanombre");
+            String categoriaNombre = rs.getString("categorianombre");
+
+            return new Producto(id, nombre, precio, costo, stock, medidaNombre, categoriaNombre, fechaAlta, fechaBaja);
+        } catch (SQLException e) {
+            // Si viene desde la tabla base sin joins
+            int idMedida = rs.getInt("idMedida");
+            int idCategoria = rs.getInt("idCategoria");
+            return new Producto(id, nombre, precio, costo, stock, idMedida, idCategoria, fechaAlta, fechaBaja);
+        }
     }
+
     public static void setProducto(PreparedStatement stmt, Producto p) throws SQLException {
         stmt.setInt(1, p.getProductoID());
         stmt.setString(2, p.getNombreProducto());
