@@ -33,6 +33,19 @@ public class Venta implements Imprimible {
         this.nombreCliente = nombreCliente;
         this.nombreEmpleado = nombreEmpleado;
     }
+
+    public Venta (int idEmpleado, int idCliente, LocalDateTime fecha, String medioPago, int cantidad, BigDecimal importeTotal, String notas, String nombreCliente, String nombreEmpleado) {
+        this.idEmpleado = idEmpleado;
+        this.idCliente = idCliente;
+        this.fecha = fecha;
+        this.medioPago = medioPago;
+        this.importeTotal = importeTotal;
+        this.cantidad = cantidad;
+        this.notas = notas;
+        this.nombreCliente = nombreCliente;
+        this.nombreEmpleado = nombreEmpleado;
+    }
+
     public Venta() { //Constructor vacío
         this.nombreCliente = "";
         this.nombreEmpleado = "";

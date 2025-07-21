@@ -62,7 +62,6 @@ public class Mapper {
         LocalDateTime fecha = LocalDateTime.now();
 
         return new Venta(
-                rs.getInt("nFactura"),
                 rs.getInt("idE"),
                 rs.getInt("idC"),
                 fecha,
@@ -78,17 +77,16 @@ public class Mapper {
 
     // Este método sirve si vas a insertar una nueva venta
     public static void setVenta(PreparedStatement stmt, Venta venta) throws SQLException {
-        stmt.setInt(1, venta.getIdVenta());           // nFactura
-        stmt.setInt(2, venta.getIdProducto());        // idProd
-        stmt.setInt(3, venta.getIdCliente());         // idC
-        stmt.setInt(4, venta.getIdEmpleado());        // idE
-        stmt.setInt(5, venta.getIdFormaDePago());     // formaDePago
-        stmt.setInt(6, venta.getCantidad());          // cantidad
-        stmt.setString(7, LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))); // fecha
-        stmt.setBigDecimal(8, venta.getSubtotal());   // subtotal
-        stmt.setBigDecimal(9, venta.getImporteTotal()); // total
-        //Prueba 3, comente al costado xq ingresabada donde queria el hdp
+        stmt.setInt(1, venta.getIdProducto());
+        stmt.setInt(2, venta.getIdCliente());
+        stmt.setInt(3, venta.getIdEmpleado());
+        stmt.setInt(4, venta.getIdFormaDePago());
+        stmt.setInt(5, venta.getCantidad());
+        stmt.setString(6, LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        stmt.setBigDecimal(7, venta.getSubtotal());
+        stmt.setBigDecimal(8, venta.getImporteTotal());
     }
+
 
     //EMPLEADO
 

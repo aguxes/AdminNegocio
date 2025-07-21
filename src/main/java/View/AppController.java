@@ -70,7 +70,6 @@ public class AppController {
                 crearBoton("Agregar Cliente", e -> agregarCliente()),
                 crearBoton("Modificar Cliente", e -> modificarCliente()),
                 crearBoton("Eliminar Cliente", e -> EliminarCliente()),
-                crearBoton("Buscar Cliente", e -> buscarCliente()),
                 crearBoton("🔙 Volver", e -> cargarMenuPrincipal())
         );
     }
@@ -96,7 +95,6 @@ public class AppController {
                 crearBoton("🔙 Volver", e -> cargarMenuPrincipal())
         );
     }
-
 
     private void mostrarSubmenuReportes() {
         menuLateral.getChildren().clear();
@@ -226,63 +224,30 @@ public class AppController {
     }
 
     private void verClientes() {
-        contenedor.getChildren().clear();
+        VBox tarjeta = new VBox(10);
+        tarjeta.setPadding(new Insets(20));
+        tarjeta.setAlignment(Pos.CENTER_LEFT);
+        tarjeta.getStyleClass().add("card");
+
+        Label lblCampo = new Label("Buscar por:");
+        lblCampo.getStyleClass().add("label-form");
+
+        ChoiceBox<String> choiceCampo = new ChoiceBox<>();
+        choiceCampo.getItems().addAll("nombre", "apellido", "ID", "DNI", "tipo", "cantCompras", "telefono");
+        choiceCampo.setValue("nombre");
+        choiceCampo.getStyleClass().add("input-form");
+
+        TextField txtValor = new TextField();
+        txtValor.setPromptText("Ej: Juan o 2");
+        txtValor.getStyleClass().add("input-form");
+
+        Button btnBuscar = new Button("Buscar");
+        btnBuscar.getStyleClass().add("btn-verde");
 
         TableView<Cliente> tabla = new TableView<>();
         tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         tabla.setPlaceholder(new Label("No hay clientes cargados."));
-
-        TableColumn<Cliente, Integer> colDni = new TableColumn<>("DNI");
-        colDni.setCellValueFactory(new PropertyValueFactory<>("DNI"));
-
-        TableColumn<Cliente, String> colNombre = new TableColumn<>("Nombre");
-        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-
-        TableColumn<Cliente, String> colApellido = new TableColumn<>("Apellido");
-        colApellido.setCellValueFactory(new PropertyValueFactory<>("apellido"));
-
-        TableColumn<Cliente, Integer> colId = new TableColumn<>("ID");
-        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
-
-        TableColumn<Cliente, String> colTipo = new TableColumn<>("Tipo Cliente");
-        colTipo.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTipo().getDescripcion()));
-
-        TableColumn<Cliente, Integer> colCompras = new TableColumn<>("Compras");
-        colCompras.setCellValueFactory(new PropertyValueFactory<>("cantCompras"));
-
-        TableColumn<Cliente, String> colTelefono = new TableColumn<>("Teléfono");
-        colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
-
-        tabla.getColumns().addAll( colId, colDni, colNombre, colApellido, colTipo, colCompras, colTelefono);
-
-        // Cargar datos
-        ArrayList<Cliente> clientes = new ArrayList<>();
-        VentanaClientes.cargarClientesEnLista(clientes);
-        tabla.setItems(FXCollections.observableArrayList(clientes));
-
-        VBox layout = new VBox(10, new Label("👤 Lista de clientes"), tabla);
-        layout.setPadding(new Insets(20));
-
-        contenedor.getChildren().add(layout);
-    }
-
-    private void buscarCliente() {
-        VBox tarjeta = new VBox(10);
-        tarjeta.setPadding(new Insets(20));
-        tarjeta.setAlignment(Pos.CENTER_LEFT);
-
-        Label lblCampo = new Label("Buscar por:");
-        ChoiceBox<String> choiceCampo = new ChoiceBox<>();
-        choiceCampo.getItems().addAll("nombre", "apellido", "ID", "DNI", "tipo", "cantCompras", "telefono");
-        choiceCampo.setValue("nombre");
-
-        TextField txtValor = new TextField();
-        txtValor.setPromptText("Ej: Juan o 2");
-
-        Button btnBuscar = new Button("Buscar");
-
-        TableView<Cliente> tabla = new TableView<>();
-        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tabla.getStyleClass().add("tabla-clientes");
 
         TableColumn<Cliente, Integer> colId = new TableColumn<>("ID");
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -307,12 +272,17 @@ public class AppController {
 
         tabla.getColumns().addAll(colId, colDni, colNombre, colApellido, colTipo, colCompras, colTelefono);
 
+        // Cargar todos los clientes por defecto
+        ArrayList<Cliente> listaInicial = new ArrayList<>();
+        VentanaClientes.cargarClientesEnLista(listaInicial);
+        tabla.getItems().addAll(listaInicial);
+
         btnBuscar.setOnAction(e -> {
             String campo = choiceCampo.getValue();
             String valor = txtValor.getText();
-            ArrayList<Cliente> lista = VentanaClientes.buscarClientePorDato(campo, valor);
+            ArrayList<Cliente> resultado = VentanaClientes.buscarClientePorDato(campo, valor);
 
-            if (lista.isEmpty()) {
+            if (resultado.isEmpty()) {
                 VBox card = new VBox();
                 card.getStyleClass().add("card-error");
 
@@ -322,26 +292,16 @@ public class AppController {
                 Label mensaje = new Label("No se encontró ningún cliente con ese dato.");
                 mensaje.getStyleClass().add("card-error-mensaje");
 
-                Button volverBtn = new Button("Volver a buscar");
+                Button volverBtn = new Button("Volver");
                 volverBtn.getStyleClass().add("btn-error-volver");
                 volverBtn.setOnAction(ev -> contenedor.getChildren().setAll(tarjeta));
 
                 card.getChildren().addAll(titulo, mensaje, volverBtn);
                 contenedor.getChildren().setAll(card);
+            } else {
+                tabla.getItems().setAll(resultado);
             }
-
-
-            tabla.getItems().setAll(lista);
         });
-
-        //Estilos
-        tarjeta.getStyleClass().add("card");
-        lblCampo.getStyleClass().add("label-form");
-        choiceCampo.getStyleClass().add("input-form");
-        txtValor.getStyleClass().add("input-form");
-        btnBuscar.getStyleClass().add("btn-verde");
-        tabla.getStyleClass().add("tabla-clientes");
-
 
         tarjeta.getChildren().addAll(lblCampo, choiceCampo, txtValor, btnBuscar, tabla);
         contenedor.getChildren().setAll(tarjeta);
@@ -403,7 +363,6 @@ public class AppController {
         });
     }
 
-
     // VENTAS
     public void verVentas() {
         contenedor.getChildren().clear();
@@ -450,8 +409,6 @@ public class AppController {
         contenedor.getChildren().add(layout);
     }
 
-
-
     public void registrarVenta() {
         contenedor.getChildren().clear();
 
@@ -461,10 +418,6 @@ public class AppController {
 
         Label titulo = new Label("📋 Registrar Venta");
         titulo.getStyleClass().add("titulo-principal");
-
-        TextField txtFactura = new TextField();
-        txtFactura.setPromptText("N° Factura");
-        txtFactura.getStyleClass().add("text-field");
 
         TextField txtProductoId = new TextField();
         txtProductoId.setPromptText("ID Producto");
@@ -525,7 +478,6 @@ public class AppController {
         btnRegistrar.setOnAction(e -> {
             try {
                 int productoId = Integer.parseInt(txtProductoId.getText().trim());
-                int nFactura = Integer.parseInt(txtFactura.getText().trim());
                 int clienteId = Integer.parseInt(txtClienteId.getText().trim());
                 int empleadoId = Integer.parseInt(txtEmpleadoId.getText().trim());
                 int cantidad =  Integer.parseInt(txtCantidad.getText().trim());
@@ -549,7 +501,6 @@ public class AppController {
                 };
 
                 Venta venta = new Venta(); // Forma de reducir lineas aca?? Mapper extra o que??
-                venta.setIdVenta(nFactura);
                 venta.setIdProducto(productoId);
                 venta.setIdCliente(clienteId);
                 venta.setIdEmpleado(empleadoId);
@@ -558,7 +509,7 @@ public class AppController {
                 venta.setSubtotal(total);
                 venta.setImporteTotal(total);
 
-                String sql = "INSERT INTO Venta (nFactura, idProd, idC, idE, formaDePago, cantidad, fecha, subtotal, total) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                String sql = "INSERT INTO Venta (idProd, idC, idE, formaDePago, cantidad, fecha, subtotal, total) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                 PreparedStatement stmt = conn.prepareStatement(sql);
 
                 Mapper.setVenta(stmt, venta);
@@ -609,7 +560,6 @@ public class AppController {
         // hasta aca, dsp los agregas abajo y list
         form.getChildren().addAll(
                 titulo,
-                txtFactura,
                 filaProducto,
                 filaCantidad,
                 filaCliente,
