@@ -493,7 +493,7 @@ public class AppController {
                 int nFactura = Integer.parseInt(txtFactura.getText().trim());
                 int clienteId = Integer.parseInt(txtClienteId.getText().trim());
                 int empleadoId = Integer.parseInt(txtEmpleadoId.getText().trim());
-                int cantidad = Integer.parseInt(txtCantidad.getText().trim());
+                int cantidad =  Integer.parseInt(txtCantidad.getText().trim());
                 String medio = medioPago.getValue();
 
                 Producto prod = ProductoDAO.obtenerProductoPorID(productoId);
@@ -501,9 +501,9 @@ public class AppController {
                     mostrarAlerta("❌ Producto no encontrado.");
                     return;
                 }
-
-                BigDecimal subtotal = prod.getPrecioUnitario().multiply(new BigDecimal(cantidad));
-                BigDecimal total = subtotal; //dsp aca sirve para impuesto no?
+                BigDecimal precio = prod.getPrecioUnitario();
+                BigDecimal subtotal =  precio.multiply(BigDecimal.valueOf(cantidad));
+                BigDecimal total = subtotal; //El subtotal es para calcular los descuentos y cualquier extra que se le sume o reste a la venta antes de dar el total final de la venta
 
 
 
@@ -515,7 +515,7 @@ public class AppController {
                     default -> throw new IllegalArgumentException("Forma de pago inválida.");
                 };
 
-                Venta venta = new Venta();
+                Venta venta = new Venta(); // Forma de reducir lineas aca?? Mapper extra o que??
                 venta.setIdVenta(nFactura);
                 venta.setIdProducto(productoId);
                 venta.setIdCliente(clienteId);
@@ -524,7 +524,7 @@ public class AppController {
                 venta.setSubtotal(total);
                 venta.setImporteTotal(total);
 
-                String sql = "INSERT INTO Venta (nFactura, idProd, idC, idE, formaDePago, fecha, subtotal, total) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                String sql = "INSERT INTO Venta (nFactura, idProd, idC, idE, formaDePago, cantidad, fecha, subtotal, total) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 PreparedStatement stmt = conn.prepareStatement(sql);
 
                 Mapper.setVenta(stmt, venta);

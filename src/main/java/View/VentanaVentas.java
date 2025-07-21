@@ -5,6 +5,7 @@ import Clases.Principales.Venta;
 import DataBase.DataBaseConnection;
 import util.Mapper;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class VentanaVentas {
         ArrayList<Venta> lista = new ArrayList<>();
 
         String sql = """
-        SELECT v.nFactura, v.idC, v.idE, v.fecha, v.total, fp.descripcion AS medio_pago, v.subtotal,
+        SELECT v.nFactura, v.idC, v.idE, v.fecha, v.total, fp.descripcion AS medio_pago, v.cantidad, v.subtotal,
            pc.nombre || ' ' || pc.apellido AS cliente_nombre,
            pe.nombre || ' ' || pe.apellido AS empleado_nombre,
            pr.nombre AS producto_nombre

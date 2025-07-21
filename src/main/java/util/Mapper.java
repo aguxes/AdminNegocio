@@ -57,14 +57,10 @@ public class Mapper {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static Venta getVenta(ResultSet rs) throws SQLException {
-        String fechaTexto = rs.getString("fecha");
+                                // TEMA FECHA (UN BARDOOO)
 
-        // Agrega hora si sólo tiene la fecha
-        if (fechaTexto.length() <= 10) {
-            fechaTexto += " 00:00:00";
-        }
+        LocalDateTime fecha = LocalDateTime.now();
 
-        LocalDateTime fecha = LocalDateTime.parse(fechaTexto, FORMATTER);
         return new Venta(
                 rs.getInt("nFactura"),
                 rs.getInt("idE"),
@@ -93,7 +89,6 @@ public class Mapper {
         stmt.setBigDecimal(8, venta.getSubtotal());
         stmt.setBigDecimal(9, venta.getImporteTotal());
     }
-
     //EMPLEADO
 
     public static Empleado getEmpleado(ResultSet rs) throws SQLException {
