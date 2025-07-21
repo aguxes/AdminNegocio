@@ -129,10 +129,10 @@ public class VentanaProducto {
         colStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
 
         TableColumn<Producto, String> colMedida = new TableColumn<>("Medida");
-        colMedida.setCellValueFactory(new PropertyValueFactory<>("idMedida"));
+        colMedida.setCellValueFactory(new PropertyValueFactory<>("medidaNombre"));
 
         TableColumn<Producto, String> colCategoria = new TableColumn<>("Categoría");
-        colCategoria.setCellValueFactory(new PropertyValueFactory<>("idCategoria"));
+        colCategoria.setCellValueFactory(new PropertyValueFactory<>("categoriaNombre"));
 
         TableColumn<Producto, LocalDate> colAlta = new TableColumn<>("Fecha Alta");
         colAlta.setCellValueFactory(new PropertyValueFactory<>("fechaAlta"));

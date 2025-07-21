@@ -14,11 +14,13 @@ public class ProductoDAO {
     public static ArrayList<Producto> cargarProductosEnLista() {
         ArrayList<Producto> lista = new ArrayList<>();
         String sql = """
-        SELECT p.idProducto, p.nombre, p.precio, p.costo, p.stock,
-        p.fechAlta, p.fechaBaja, c.descripcion AS idCategoria, m.descripcion AS idMedida
-        FROM Producto p
-        INNER JOIN CategoriasProd c ON c.Categoria = p.idCategoria
-        INNER JOIN MedidasProd m ON m.unidadMedida = p.idMedida
+     SELECT p.idProducto, p.nombre, p.precio, p.costo, p.stock,
+        p.fechAlta, p.fechaBaja,
+        c.descripcion AS categoriaNombre,
+        m.descripcion AS medidaNombre
+         FROM Producto p
+         INNER JOIN CategoriasProd c ON c.Categoria = p.idCategoria
+         INNER JOIN MedidasProd m ON m.unidadMedida = p.idMedida
         """;
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {

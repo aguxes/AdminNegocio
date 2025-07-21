@@ -133,8 +133,8 @@ public class Mapper {
                 rs.getBigDecimal("precio"),
                 rs.getDouble("costo"),
                 rs.getInt("stock"),
-                rs.getInt("idMedida"),
-                rs.getInt("idCategoria"),
+                rs.getString("medidanombre"),
+                rs.getString("categorianombre"),
                 LocalDate.parse(rs.getString("fechAlta")),
                 fechaBaja
         );
