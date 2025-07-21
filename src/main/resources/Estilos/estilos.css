@@ -31,6 +31,8 @@ HBox {
 
  }
 
+
+
 /* Inputs y botones con look moderno */
 .text-field, .choice-box {
     -fx-pref-height: 30px;
@@ -75,6 +77,7 @@ HBox {
     -fx-background-color: #ffffff;
     -fx-padding: 4 10;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.02), 3, 0.3, 0, 1);
+
 }
 
 /* ⬇️ ChoiceBox estilo combo moderno */
@@ -140,6 +143,7 @@ HBox {
     -fx-font-size: 14px;
     -fx-border-radius: 5;
     -fx-background-radius: 5;
+    -fx-width: 200px;
 }
 
 .choice-box {
@@ -283,4 +287,33 @@ HBox {
     -fx-background-color: #c0392b;
 }
 
+.etiqueta-total {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2e7d32; /* verde suave */
+    -fx-padding: 10 0 10 0;
+}
+
+.input-cantidad {
+    -fx-pref-height: 30px;
+    -fx-font-size: 13px;
+    -fx-background-radius: 6;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 6;
+    -fx-background-color: #ffffff;
+    -fx-padding: 4 10;
+}
+.label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.boton-secundario {
+    -fx-pref-width: 140px;
+}
+
+.text-field {
+    -fx-pref-width: 200px;
+}
 

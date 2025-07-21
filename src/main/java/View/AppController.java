@@ -29,6 +29,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 public class AppController {
     private static final Connection conn = DataBaseConnection.getConnection();
@@ -388,6 +389,20 @@ public class AppController {
         ventana.showAndWait();
     }
 
+    //clase reutilizable para darle doble click y que se selccione
+    public static <T> void agregarDobleClickSeleccion(TableView<T> tabla, Consumer<T> onSeleccionar) {
+        tabla.setRowFactory(tv -> {
+            TableRow<T> fila = new TableRow<>();
+            fila.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && !fila.isEmpty()) {
+                    T seleccionado = fila.getItem();
+                    onSeleccionar.accept(seleccionado);
+                }
+            });
+            return fila;
+        });
+    }
+
 
     // VENTAS
     public void verVentas() {
@@ -411,6 +426,9 @@ public class AppController {
         TableColumn<Venta, String> colProducto = new TableColumn<>("Producto");
         colProducto.setCellValueFactory(new PropertyValueFactory<>("notas"));
 
+        TableColumn<Venta, Integer> colCantidad = new TableColumn<>("Cantidad");
+        colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
+
         TableColumn<Venta, String> colFecha = new TableColumn<>("Fecha");
         colFecha.setCellValueFactory(new PropertyValueFactory<>("fechaFormateada")); // lo armamos abajo
 
@@ -423,7 +441,7 @@ public class AppController {
         TableColumn<Venta, Double> colTotal = new TableColumn<>("Total");
         colTotal.setCellValueFactory(new PropertyValueFactory<>("importeTotal"));
 
-        tabla.getColumns().addAll(colFactura, colCliente, colEmpleado, colProducto, colFecha, colPago, colSubtotal, colTotal);
+        tabla.getColumns().addAll(colFactura, colCliente, colEmpleado, colProducto, colCantidad, colFecha, colPago, colSubtotal, colTotal);
         tabla.getItems().addAll(VentanaVentas.cargarVentasEnLista());
 
         VBox layout = new VBox(10, titulo, tabla);
@@ -473,9 +491,9 @@ public class AppController {
         medioPago.setPromptText("Medio de Pago");
         medioPago.getStyleClass().add("choice-box");
 
-        TextField txtTotal = new TextField();
-        txtTotal.setPromptText("Total");
-        txtTotal.getStyleClass().add("text-field");
+        Label lblTotalVenta = new Label("Total de la venta: $0.00");
+        lblTotalVenta.getStyleClass().add("etiqueta-total"); // opcional si tenés CSS
+
 
         Button btnAgregarCliente = new Button(" Agregar Cliente");
         btnAgregarCliente.getStyleClass().add("boton-secundario");
@@ -487,6 +505,23 @@ public class AppController {
 
         Button btnRegistrar = new Button("✅ Registrar Venta");
         btnRegistrar.getStyleClass().add("boton-accion");
+
+        Runnable actualizarTotal = () -> {
+            try {
+                int cantidad = Integer.parseInt(txtCantidad.getText().trim());
+                int idProd = Integer.parseInt(txtProductoId.getText().trim());
+                Producto p = ProductoDAO.obtenerProductoPorID(idProd);
+                if (p != null) {
+                    BigDecimal precio = p.getPrecioUnitario();
+                    BigDecimal total = precio.multiply(BigDecimal.valueOf(cantidad));
+                    lblTotalVenta.setText("Total de la venta: $" + total);
+                }
+            } catch (Exception e) {
+                lblTotalVenta.setText("Total de la venta: $0.00");
+            }
+        };
+
+
         btnRegistrar.setOnAction(e -> {
             try {
                 int productoId = Integer.parseInt(txtProductoId.getText().trim());
@@ -505,8 +540,6 @@ public class AppController {
                 BigDecimal subtotal =  precio.multiply(BigDecimal.valueOf(cantidad));
                 BigDecimal total = subtotal; //El subtotal es para calcular los descuentos y cualquier extra que se le sume o reste a la venta antes de dar el total final de la venta
 
-
-
                 int idPago = switch (medio) {
                     case "Efectivo" -> 1;
                     case "Crédito" -> 2;
@@ -521,6 +554,7 @@ public class AppController {
                 venta.setIdCliente(clienteId);
                 venta.setIdEmpleado(empleadoId);
                 venta.setIdFormaDePago(idPago);
+                venta.setCantidad(cantidad);
                 venta.setSubtotal(total);
                 venta.setImporteTotal(total);
 
@@ -544,17 +578,47 @@ public class AppController {
             }
         });
 
+        txtCantidad.textProperty().addListener((obs, oldVal, newVal) -> actualizarTotal.run());
+        txtProductoId.textProperty().addListener((obs, oldVal, newVal) -> actualizarTotal.run());
+
+        //Al crear esto asi puedo darle un estilo mas cool
+        HBox filaProducto = new HBox(15, btnAgregarProducto, txtProductoId);
+        filaProducto.setAlignment(Pos.CENTER);
+
+        HBox filaCliente = new HBox(15, btnAgregarCliente, txtClienteId);
+        filaCliente.setAlignment(Pos.CENTER);
+
+        HBox filaEmpleado = new HBox(15, btnAgregarEmpleado, txtEmpleadoId);
+        filaEmpleado.setAlignment(Pos.CENTER);
+
+        HBox filaCantidad = new HBox(15, lblCantidad, txtCantidad);
+        filaCantidad.setAlignment(Pos.CENTER);
+
+        
+
+        form.setAlignment(Pos.TOP_CENTER);
+        btnAgregarProducto.setPrefWidth(140);
+        btnAgregarCliente.setPrefWidth(140);
+        btnAgregarEmpleado.setPrefWidth(140);
+
+        txtProductoId.setPrefWidth(200);
+        txtClienteId.setPrefWidth(200);
+        txtEmpleadoId.setPrefWidth(200);
+        txtCantidad.setPrefWidth(200);
+
+        // hasta aca, dsp los agregas abajo y list
         form.getChildren().addAll(
                 titulo,
                 txtFactura,
-                new HBox(10, txtProductoId, btnAgregarProducto),
-                new HBox(10, lblCantidad, txtCantidad),
-                new HBox(10, txtClienteId, btnAgregarCliente),
-                new HBox(10, txtEmpleadoId, btnAgregarEmpleado),
+                filaProducto,
+                filaCantidad,
+                filaCliente,
+                filaEmpleado,
                 medioPago,
-                txtTotal,
+                lblTotalVenta,
                 btnRegistrar
         );
+
 
 
         Button btnCancelar = new Button("❌ Cancelar Venta");
@@ -573,88 +637,115 @@ public class AppController {
         contenedor.getChildren().add(form);
     }
 
-    private void mostrarVentanaSeleccionCliente(TextField idClienteField) {
+    public static void mostrarVentanaSeleccionCliente(TextField campoDestino) {
         Stage ventana = new Stage();
         ventana.setTitle("Seleccionar Cliente");
-        ventana.initModality(Modality.APPLICATION_MODAL);
 
-        VBox root = new VBox(10);
-        root.setPadding(new Insets(10));
+        TableView<Cliente> tabla = new TableView<>();
+        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        ArrayList<Cliente> clientes = new ArrayList<>();
-        VentanaClientes.cargarClientesEnLista(clientes);
+        TableColumn<Cliente, Integer> colID = new TableColumn<>("ID");
+        colID.setCellValueFactory(new PropertyValueFactory<>("id"));
 
-        TextArea areaTexto = new TextArea(VentanaClientes.obtenerClientes(clientes));
-        areaTexto.setEditable(false);
-        areaTexto.setWrapText(true);
-        areaTexto.setPrefHeight(300);
+        TableColumn<Cliente, Integer> colDNI = new TableColumn<>("DNI");
+        colDNI.setCellValueFactory(new PropertyValueFactory<>("DNI"));
 
-        TextField dniInput = new TextField();
-        dniInput.setPromptText("Ingrese DNI del cliente");
+        TableColumn<Cliente, String> colNombre = new TableColumn<>("Nombre");
+        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
 
-        Button buscarBtn = new Button("🔍 Buscar");
-        buscarBtn.setOnAction(e -> {
-            try {
-                int dni = Integer.parseInt(dniInput.getText().trim());
-                Integer id = VentanaClientes.obtenerIdClientePorDni(dni);
+        TableColumn<Cliente, String> colApellido = new TableColumn<>("Apellido");
+        colApellido.setCellValueFactory(new PropertyValueFactory<>("apellido"));
 
-                if (id != null) {
-                    idClienteField.setText(id.toString());
-                    ventana.close();
-                } else {
-                    mostrarAlerta("No se encontró ningún cliente con ese DNI.");
-                }
-            } catch (NumberFormatException ex) {
-                mostrarAlerta("DNI inválido.");
-            }
+        tabla.getColumns().addAll(colID, colDNI, colNombre, colApellido);
+
+        ArrayList<Cliente> lista = new ArrayList<>();
+        VentanaClientes.cargarClientesEnLista(lista);
+        tabla.getItems().addAll(lista);
+
+        TextField txtBuscar = new TextField();
+        txtBuscar.setPromptText("Ingrese DNI del cliente");
+
+        Button btnBuscar = new Button("Buscar");
+        btnBuscar.setOnAction(e -> {
+            String dni = txtBuscar.getText().trim();
+            ArrayList<Cliente> resultado = VentanaClientes.buscarClientePorDato("DNI", dni);
+            tabla.getItems().setAll(resultado);
         });
 
-        root.getChildren().addAll(areaTexto, dniInput, buscarBtn);
+        agregarDobleClickSeleccion(tabla, cliente -> {
+            campoDestino.setText(String.valueOf(cliente.getId()));
+            ventana.close();
+        });
 
-        Scene scene = new Scene(root, 600, 400);
-        ventana.setScene(scene);
+
+        VBox layout = new VBox(10, tabla, txtBuscar, btnBuscar);
+        layout.setPadding(new Insets(10));
+
+        Scene escena = new Scene(layout, 600, 400);
+        ventana.setScene(escena);
+        ventana.initModality(Modality.APPLICATION_MODAL);
         ventana.showAndWait();
     }
-    private void mostrarVentanaSeleccionEmpleado(TextField idEmpleadoField) {
+    private void mostrarVentanaSeleccionEmpleado(TextField campoDestino) {
         Stage ventana = new Stage();
         ventana.setTitle("Seleccionar Empleado");
         ventana.initModality(Modality.APPLICATION_MODAL);
 
-        VBox root = new VBox(10);
-        root.setPadding(new Insets(10));
+        TableView<Empleado> tabla = new TableView<>();
+        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        ArrayList<Empleado> empleados = new ArrayList<>();
-        VentanaEmpleado.cargarEmpleadosEnLista(empleados);
+        TableColumn<Empleado, Integer> colID = new TableColumn<>("ID");
+        colID.setCellValueFactory(new PropertyValueFactory<>("empleadoID"));
 
-        TextArea areaTexto = new TextArea(VentanaEmpleado.obtenerTextoEmpleados(empleados));
-        areaTexto.setEditable(false);
-        areaTexto.setWrapText(true);
-        areaTexto.setPrefHeight(300);
+        TableColumn<Empleado, Integer> colDNI = new TableColumn<>("DNI");
+        colDNI.setCellValueFactory(new PropertyValueFactory<>("dni"));
 
-        TextField dniInput = new TextField();
-        dniInput.setPromptText("Ingrese DNI del empleado");
+        TableColumn<Empleado, String> colNombre = new TableColumn<>("Nombre");
+        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
 
-        Button buscarBtn = new Button("🔍 Buscar");
-        buscarBtn.setOnAction(e -> {
+        TableColumn<Empleado, String> colApellido = new TableColumn<>("Apellido");
+        colApellido.setCellValueFactory(new PropertyValueFactory<>("apellido"));
+
+        tabla.getColumns().addAll(colID, colDNI, colNombre, colApellido);
+
+        ArrayList<Empleado> lista = new ArrayList<>();
+        VentanaEmpleado.cargarEmpleadosEnLista(lista);
+        tabla.getItems().addAll(lista);
+
+        TextField txtBuscar = new TextField();
+        txtBuscar.setPromptText("Ingrese DNI del empleado");
+
+        Button btnBuscar = new Button("Buscar");
+        btnBuscar.setOnAction(e -> {
             try {
-                int dni = Integer.parseInt(dniInput.getText().trim());
+                int dni = Integer.parseInt(txtBuscar.getText().trim());
                 Integer id = VentanaEmpleado.obtenerIdEmpleadoPorDni(dni);
-
                 if (id != null) {
-                    idEmpleadoField.setText(id.toString());
-                    ventana.close();
+                    for (Empleado emp : lista) {
+                        if (emp.getEmpleadoID() == id) {
+                            tabla.getItems().setAll(emp);
+                            return;
+                        }
+                    }
                 } else {
-                    mostrarAlerta("No se encontró ningún empleado con ese DNI.");
+                    tabla.getItems().clear();
                 }
             } catch (NumberFormatException ex) {
                 mostrarAlerta("DNI inválido.");
             }
         });
 
-        root.getChildren().addAll(areaTexto, dniInput, buscarBtn);
+        // ✅ Doble click para seleccionar automáticamente
+        agregarDobleClickSeleccion(tabla, empleado -> {
+            campoDestino.setText(String.valueOf(empleado.getEmpleadoID()));
+            ventana.close();
+        });
 
-        Scene scene = new Scene(root, 600, 400);
-        ventana.setScene(scene);
+        VBox layout = new VBox(10, tabla, txtBuscar, btnBuscar);
+        layout.setPadding(new Insets(10));
+
+        Scene escena = new Scene(layout, 600, 400);
+        ventana.setScene(escena);
         ventana.showAndWait();
     }
 
