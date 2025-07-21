@@ -594,7 +594,7 @@ public class AppController {
         HBox filaCantidad = new HBox(15, lblCantidad, txtCantidad);
         filaCantidad.setAlignment(Pos.CENTER);
 
-        
+
 
         form.setAlignment(Pos.TOP_CENTER);
         btnAgregarProducto.setPrefWidth(140);
