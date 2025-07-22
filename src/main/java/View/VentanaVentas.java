@@ -107,16 +107,26 @@ public class VentanaVentas {
                 colCantidad, colFecha, colPago, colSubtotal, colTotal
         );
 
+        // Cargar todas las ventas por defecto
+        ArrayList<Venta> lista = VentaDAO.cargarVentasEnLista();
+        tabla.getItems().addAll(lista);
+
+        Label lblCantidad = new Label("Total de ventas: " + lista.size());
+        lblCantidad.getStyleClass().add("label-cantidad");
+
         // Acción del botón de búsqueda
         btnFiltrar.setOnAction(e -> {
-            String textoID = campoCliente.getText().trim();
-            if (textoID.isEmpty()) {
-                tabla.getItems().setAll(VentaDAO.cargarVentasEnLista());
+            String idTexto = campoCliente.getText().trim();
+            if (idTexto.isEmpty()) {
+                ArrayList<Venta> todas = VentaDAO.cargarVentasEnLista();
+                tabla.getItems().setAll(todas);
+                lblCantidad.setText("Total de ventas: " + todas.size());
             } else {
                 try {
-                    int idCliente = Integer.parseInt(textoID);
+                    int idCliente = Integer.parseInt(idTexto);
                     ArrayList<Venta> filtradas = VentaDAO.obtenerVentasPorCliente(idCliente);
                     tabla.getItems().setAll(filtradas);
+                    lblCantidad.setText("Ventas del cliente: " + filtradas.size());
                 } catch (NumberFormatException ex) {
                     mostrarAlerta("ID inválido.");
                 }
@@ -124,18 +134,13 @@ public class VentanaVentas {
         });
 
 
-
-        // Cargar todas las ventas por defecto
-        ArrayList<Venta> lista = VentaDAO.cargarVentasEnLista();
-        tabla.getItems().addAll(lista);
-
         VBox.setVgrow(tarjeta, Priority.ALWAYS); // Esto permite que se expanda verticalmente si hay espacio
         VBox.setVgrow(tabla, Priority.ALWAYS);
         tabla.setMaxHeight(Double.MAX_VALUE); // para que no se achique
 
 
         // Armado final
-        tarjeta.getChildren().addAll(titulo, barraSuperior, tabla);
+        tarjeta.getChildren().addAll(titulo, barraSuperior, tabla, lblCantidad);
         contenedor.getChildren().setAll(tarjeta);
     }
 
