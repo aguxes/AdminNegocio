@@ -1,14 +1,11 @@
 package DataBase;
 
 import Clases.Principales.Producto;
-import DataBase.*;
 import util.*;
 import java.sql.*;
 import java.util.ArrayList;
 
-
 public class ProductoDAO {
-
     private static final Connection conn = DataBaseConnection.getConnection();
 
     public static ArrayList<Producto> cargarProductosEnLista() {
@@ -77,7 +74,6 @@ public class ProductoDAO {
         }
         return null;
     }
-
 
     public static Integer obtenerIdProductoPorNombre(String nombre) {
         String sql = "SELECT idProducto FROM Producto WHERE nombre = ?";

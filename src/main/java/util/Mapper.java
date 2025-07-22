@@ -3,7 +3,6 @@ package util;
 import Clases.Principales.*;
 import Clases.Extras.Telefono;
 import Clases.Extras.TiposClientes;
-
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -57,10 +56,7 @@ public class Mapper {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static Venta getVenta(ResultSet rs) throws SQLException {
-                                // TEMA FECHA (UN BARDOOO)
-
         LocalDateTime fecha = LocalDateTime.now();
-
         return new Venta(
                 rs.getInt("idE"),
                 rs.getInt("idC"),
@@ -74,7 +70,6 @@ public class Mapper {
         );
 
     }
-
     // Este método sirve si vas a insertar una nueva venta
     public static void setVenta(PreparedStatement stmt, Venta venta) throws SQLException {
         stmt.setInt(1, venta.getIdProducto());
@@ -86,8 +81,6 @@ public class Mapper {
         stmt.setBigDecimal(7, venta.getSubtotal());
         stmt.setBigDecimal(8, venta.getImporteTotal());
     }
-
-
     //EMPLEADO
 
     public static Empleado getEmpleado(ResultSet rs) throws SQLException {
@@ -120,7 +113,6 @@ public class Mapper {
         stmt.setString(8, e.getFechaDeEgreso());
         stmt.setInt(9, e.isActivo() ? 1 : 0);
     }
-
 
     //PRODUCTO
     public static Producto getProducto(ResultSet rs) throws SQLException {

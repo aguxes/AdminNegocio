@@ -3,9 +3,6 @@ package View;
 import Clases.Extras.Telefono;
 import Clases.Extras.TiposClientes;
 import Clases.Principales.Cliente;
-import Clases.Principales.Empleado;
-import Clases.Principales.Producto;
-import Clases.Principales.Venta;
 import DataBase.DataBaseConnection;
 import DataBase.*;
 import javafx.fxml.FXML;
@@ -19,16 +16,12 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import util.Mapper;
-import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 
 import static View.AppController.mostrarAlerta;
 
 public class VentanaClientes {
-
-    @FXML
-    private VBox menuLateral;
     @FXML private TextArea outputArea;
     @FXML private VBox contenedor;
 
@@ -148,8 +141,6 @@ public class VentanaClientes {
         filaCancelar.setAlignment(Pos.BOTTOM_RIGHT);
 
         form.getChildren().add(filaCancelar);
-
-
         contenedor.getChildren().add(form);
     }
 
@@ -282,7 +273,4 @@ public class VentanaClientes {
         ventana.initModality(Modality.APPLICATION_MODAL);
         ventana.showAndWait();
     }
-
-
-
 }

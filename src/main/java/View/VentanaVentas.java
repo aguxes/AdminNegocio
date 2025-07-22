@@ -21,14 +21,10 @@ import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 
-
 import static View.AppController.agregarDobleClickSeleccion;
 import static View.AppController.mostrarAlerta; // te copie papu
 
 public class VentanaVentas {
-
-    @FXML
-    private VBox menuLateral;
     @FXML private TextArea outputArea;
     @FXML private VBox contenedor;
 
@@ -38,7 +34,6 @@ public class VentanaVentas {
         this.contenedor = contenedor;
         this.outputArea = outputArea;
     }
-
 
     public void verVentas() {
         contenedor.getChildren().clear();
@@ -151,7 +146,6 @@ public class VentanaVentas {
             }
         };
 
-
         btnRegistrar.setOnAction(e -> {
             try {
                 int productoId = Integer.parseInt(txtProductoId.getText().trim());
@@ -200,7 +194,6 @@ public class VentanaVentas {
                     mostrarAlerta("⚠ No se pudo actualizar el stock.");
                 }
 
-
             } catch (Exception ex) {
                 mostrarAlerta("❌ Error: " + ex.getMessage());
             }
@@ -222,8 +215,6 @@ public class VentanaVentas {
         HBox filaCantidad = new HBox(15, lblCantidad, txtCantidad);
         filaCantidad.setAlignment(Pos.CENTER);
 
-
-
         form.setAlignment(Pos.TOP_CENTER);
         btnAgregarProducto.setPrefWidth(140);
         btnAgregarCliente.setPrefWidth(140);
@@ -233,7 +224,6 @@ public class VentanaVentas {
         txtClienteId.setPrefWidth(200);
         txtEmpleadoId.setPrefWidth(200);
         txtCantidad.setPrefWidth(200);
-
         // hasta aca, dsp los agregas abajo y list
         form.getChildren().addAll(
                 titulo,
@@ -246,8 +236,6 @@ public class VentanaVentas {
                 btnRegistrar
         );
 
-
-
         Button btnCancelar = new Button("❌ Cancelar Venta");
         btnCancelar.getStyleClass().add("boton-cancelar");
         btnCancelar.setOnAction(e -> {
@@ -257,10 +245,7 @@ public class VentanaVentas {
 
         HBox filaCancelar = new HBox(btnCancelar);
         filaCancelar.setAlignment(Pos.BOTTOM_RIGHT);
-
         form.getChildren().add(filaCancelar);
-
-
         contenedor.getChildren().add(form);
     }
 
@@ -419,5 +404,4 @@ public class VentanaVentas {
         ventana.setScene(escena);
         ventana.showAndWait();
     }
-
 }

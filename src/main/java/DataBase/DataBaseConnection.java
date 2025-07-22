@@ -12,9 +12,7 @@ public class DataBaseConnection {
     static {
         try {
             File dbFolder = new File("data");
-            if (!dbFolder.exists()) {
-                dbFolder.mkdirs();
-            }
+            if (!dbFolder.exists()) dbFolder.mkdirs();
             conn = DriverManager.getConnection("jdbc:sqlite:data/dbNegocio.db");
 
         } catch (SQLException e) {
@@ -23,9 +21,7 @@ public class DataBaseConnection {
     }
         public static Connection getConnection() {
             try {
-                if (conn == null || conn.isClosed()) {
-                    conn = DriverManager.getConnection(URL);
-                }
+                if (conn == null || conn.isClosed()) conn = DriverManager.getConnection(URL);
             } catch (SQLException e) {
                 throw new RuntimeException("Error al reconectar con la base de datos", e);
             }

@@ -3,7 +3,6 @@ package View;
 import Clases.Principales.Empleado;
 import DataBase.DataBaseConnection;
 import util.Mapper;
-
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -19,24 +18,22 @@ public class VentanaEmpleado {
 
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-
             while (rs.next()) {
                 Empleado e = Mapper.getEmpleado(rs);
                 lista.add(e);
             }
-
         } catch (SQLException e) {
             System.out.println("❌ Error al cargar empleados: " + e.getMessage());
         }
     }
 
+    //esta fletarla capaz, no se usa
     public static String obtenerTextoEmpleados(ArrayList<Empleado> lista) {
         if (lista.isEmpty()) return "Lista vacía.";
 
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("%-5s %-10s %-15s %-15s %-10s\n", "ID", "DNI", "Nombre", "Apellido", "Rol"));
         sb.append("--------------------------------------------------------------\n");
-
         for (Empleado e : lista) {
             sb.append(String.format("%-5d %-10d %-15s %-15s %-10d\n",
                     e.getEmpleadoID(),
@@ -46,7 +43,6 @@ public class VentanaEmpleado {
                     e.getRolID()
             ));
         }
-
         return sb.toString();
     }
 

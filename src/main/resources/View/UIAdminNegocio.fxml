@@ -16,7 +16,6 @@
             <Insets top="15" left="10" right="10" bottom="10"/>
         </padding>
     </VBox>
-
     <!-- 📌 Contenido principal -->
     <VBox fx:id="contenedor" spacing="20.0" styleClass="contenido-principal" HBox.hgrow="ALWAYS">
 

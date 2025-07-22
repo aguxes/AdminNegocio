@@ -6,7 +6,6 @@ import java.sql.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-
 public class VentaDAO {
     private static final Connection conn = DataBaseConnection.getConnection();
 

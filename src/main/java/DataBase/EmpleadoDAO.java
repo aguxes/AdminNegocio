@@ -6,8 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class EmpleadoDAO {
-
     // para verificaciones en venta
+    //Mepa que esta la fletamos a la mierda
     public static boolean existeEmpleado(int idEmpleado) {
         String sql = "SELECT 1 FROM empleados WHERE id = ?";
         try (Connection conn = DataBaseConnection.getConnection();

@@ -4,10 +4,10 @@ import DataBase.ClienteDAO;
 import DataBase.ProductoDAO;
 import DataBase.ReportesDAO;
 import DataBase.VentaDAO;
-
 import java.util.ArrayList;
 import java.util.Scanner;
 
+//Todo lo del main y esto dsp hay que fletarlo tmb
 public class MetodosSwitch {
 
     public static int menuPrincipal(Scanner scan, ArrayList<Imprimible> listaClientes, ArrayList<Imprimible> listaVentas , ArrayList<Imprimible> listaProcuto, ArrayList<Imprimible> listaReportes, ClienteDAO daoCliente, VentaDAO daoVenta, ProductoDAO daoProdcuto, ReportesDAO daoReportes) {
@@ -207,12 +207,8 @@ public class MetodosSwitch {
         }
     }
 
-
     public static void abrirApp() {
         System.out.println("Abriendo interfaz gráfica ");
         View.App.main(new String[0]); // llama al método `main` de la clase JavaFX, no entienod mucho
-    }
-
-    public static void mostrarReportes(Scanner scan) {
     }
 }

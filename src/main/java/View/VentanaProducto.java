@@ -14,16 +14,10 @@ import java.util.ArrayList;
 import javafx.fxml.FXML;
 
 import javafx.scene.control.cell.PropertyValueFactory; // setear los col
-
-import View.*;
-import Clases.Extras.*;
 import Clases.Principales.*;
 import DataBase.*;
-import util.Mapper;
-
 import javafx.stage.Modality; // que es esto??
 import javafx.stage.Stage; // que es esto??
-
 import static View.AppController.mostrarAlerta; // importo funcion de otro archivo para ser utilizada mas de una vez
 
 public class VentanaProducto {
@@ -78,7 +72,6 @@ public class VentanaProducto {
                 Producto prod = productos.stream()
                         .filter(p -> p.getProductoID() == idBuscado)
                         .findFirst().orElse(null);
-
                 if (prod != null) {
                     idProductoField.setText(String.valueOf(prod.getProductoID()));
                     ventana.close();
@@ -150,8 +143,6 @@ public class VentanaProducto {
 
         contenedor.getChildren().add(layout);
     }
-
-
 
     public void agregarProducto() {
         outputArea.setText("➕ Formulario para agregar producto.");

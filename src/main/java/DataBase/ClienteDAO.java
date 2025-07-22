@@ -2,13 +2,9 @@ package DataBase;
 
 import Clases.Principales.Persona;
 import Clases.Principales.Cliente;
-import Clases.Principales.Imprimible;
 import util.Mapper;
-
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Scanner;
-
 /// Extras
 
 public class ClienteDAO {

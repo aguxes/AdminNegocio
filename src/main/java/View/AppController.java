@@ -1,34 +1,10 @@
 package View;
 
-// Importo lo minimo e indispensable
-import View.*;
-import Clases.Extras.*;
-import Clases.Principales.*;
 import DataBase.*;
-import util.Mapper;
-// muchas cosas no se
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import java.math.BigDecimal;
-//SQL y fecha
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.function.Consumer;
 
 public class AppController {
@@ -37,14 +13,7 @@ public class AppController {
     @FXML private VBox menuLateral;
     @FXML private TextArea outputArea;
     @FXML
-    private VBox contenidoPrincipal;
-    @FXML
     private VBox contenedor;
-
-    private TextField txtClienteId;
-    private TextField txtEmpleadoId;
-
-
     private VentanaProducto ventanaProducto;
     private VentanaVentas ventanaVentas;
     private VentanaClientes ventanaClientes;
@@ -57,7 +26,6 @@ public class AppController {
 
         cargarMenuPrincipal();
     }
-
     private void cargarMenuPrincipal() {
         menuLateral.getChildren().clear();
         menuLateral.getChildren().addAll(
@@ -78,7 +46,6 @@ public class AppController {
                 crearBoton("🔙 Volver", e -> cargarMenuPrincipal())
         );
     }
-
     private void mostrarSubmenuVentas() {
         menuLateral.getChildren().clear();
         menuLateral.getChildren().addAll(
@@ -88,7 +55,6 @@ public class AppController {
                 crearBoton("⬅ Volver", e -> cargarMenuPrincipal())
         );
     }
-
     private void mostrarSubmenuInventario() {
         menuLateral.getChildren().clear();
         menuLateral.getChildren().addAll(
@@ -100,7 +66,6 @@ public class AppController {
                 crearBoton("🔙 Volver", e -> cargarMenuPrincipal())
         );
     }
-
     private void mostrarSubmenuReportes() {
         menuLateral.getChildren().clear();
         menuLateral.getChildren().addAll(
@@ -116,11 +81,6 @@ public class AppController {
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
-    //----------------------------------------------------------------------------
-
-    //CLIENTE
-
-
     //clase reutilizable para darle doble click y que se selccione
     public static <T> void agregarDobleClickSeleccion(TableView<T> tabla, Consumer<T> onSeleccionar) {
         tabla.setRowFactory(tv -> {
@@ -134,16 +94,6 @@ public class AppController {
             return fila;
         });
     }
-
-    // VENTAS
-
-    // INVENTARIO
-
-
-    private void verReportes() {
-        outputArea.setText("📊 Mostrar reportes de ventas/clientes/productos.");
-    }
-
     // FABRICADOR DE BOTONES
     private Button crearBoton(String texto, javafx.event.EventHandler<javafx.event.ActionEvent> evento) {
         Button btn = new Button(texto);
@@ -152,4 +102,10 @@ public class AppController {
         btn.setPrefWidth(160);
         return btn;
     }
+    //----------------------------------------------------------------------------
+
+    private void verReportes() {
+        outputArea.setText("📊 Mostrar reportes de ventas/clientes/productos.");
+    }
+
 }
