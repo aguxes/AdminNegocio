@@ -21,7 +21,8 @@ public class Venta implements Imprimible {
     private final String nombreCliente;
     private final String nombreEmpleado;
 
-    public Venta (int idVenta, int idEmpleado, int idCliente, LocalDateTime fecha, String medioPago, int cantidad, BigDecimal importeTotal, String notas, String nombreCliente, String nombreEmpleado) {
+    public Venta (int idVenta, int idEmpleado, int idCliente, LocalDateTime fecha, String medioPago,
+                  int cantidad, BigDecimal importeTotal, String notas, String nombreCliente, String nombreEmpleado) {
         this.idVenta = idVenta;
         this.idEmpleado = idEmpleado;
         this.idCliente = idCliente;
@@ -34,7 +35,8 @@ public class Venta implements Imprimible {
         this.nombreEmpleado = nombreEmpleado;
     }
 
-    public Venta (int idEmpleado, int idCliente, LocalDateTime fecha, String medioPago, int cantidad, BigDecimal importeTotal, String notas, String nombreCliente, String nombreEmpleado) {
+    public Venta (int idEmpleado, int idCliente, LocalDateTime fecha, String medioPago, int cantidad,
+                  BigDecimal importeTotal, String notas, String nombreCliente, String nombreEmpleado) {
         this.idEmpleado = idEmpleado;
         this.idCliente = idCliente;
         this.fecha = fecha;

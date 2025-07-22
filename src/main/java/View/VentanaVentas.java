@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -38,12 +39,17 @@ public class VentanaVentas {
     public void verVentas() {
         contenedor.getChildren().clear();
 
+        // Título
         Label titulo = new Label("📊 Lista de Ventas");
-        titulo.getStyleClass().add("titulo-seccion");
+        titulo.getStyleClass().add("titulo-principal");
 
+        // Tabla de ventas
         TableView<Venta> tabla = new TableView<>();
         tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tabla.setPlaceholder(new Label("No hay ventas registradas."));
+        tabla.getStyleClass().add("tabla-clientes");
 
+        // Columnas
         TableColumn<Venta, Integer> colFactura = new TableColumn<>("Factura");
         colFactura.setCellValueFactory(new PropertyValueFactory<>("idVenta"));
 
@@ -60,7 +66,7 @@ public class VentanaVentas {
         colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
 
         TableColumn<Venta, String> colFecha = new TableColumn<>("Fecha");
-        colFecha.setCellValueFactory(new PropertyValueFactory<>("fechaFormateada")); // lo armamos abajo
+        colFecha.setCellValueFactory(new PropertyValueFactory<>("fechaFormateada"));
 
         TableColumn<Venta, String> colPago = new TableColumn<>("Pago");
         colPago.setCellValueFactory(new PropertyValueFactory<>("medioPago"));
@@ -72,13 +78,21 @@ public class VentanaVentas {
         colTotal.setCellValueFactory(new PropertyValueFactory<>("importeTotal"));
 
         tabla.getColumns().addAll(colFactura, colCliente, colEmpleado, colProducto, colCantidad, colFecha, colPago, colSubtotal, colTotal);
+
+        // Cargar datos
         tabla.getItems().addAll(VentaDAO.cargarVentasEnLista());
 
-        VBox layout = new VBox(10, titulo, tabla);
-        layout.setPadding(new Insets(15));
+        // Caja tipo tarjeta
+        VBox tarjeta = new VBox(10, titulo, tabla);
+        tarjeta.getStyleClass().add("card");
+        tarjeta.setPadding(new Insets(20));
+        tarjeta.setMaxWidth(Double.MAX_VALUE);
+        VBox.setVgrow(tarjeta, Priority.ALWAYS);
 
-        contenedor.getChildren().add(layout);
+        // Mostrar en pantalla
+        contenedor.getChildren().add(tarjeta);
     }
+
 
     public void registrarVenta() {
         contenedor.getChildren().clear();

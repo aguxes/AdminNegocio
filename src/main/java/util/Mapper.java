@@ -7,6 +7,7 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class Mapper {
     // Entidades Primarias
@@ -56,8 +57,17 @@ public class Mapper {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static Venta getVenta(ResultSet rs) throws SQLException {
-        LocalDateTime fecha = LocalDateTime.now();
+        String fechaStr = rs.getString("fecha");
+        LocalDateTime fecha;
+
+        try {
+            fecha = LocalDateTime.parse(fechaStr, FORMATTER);
+        } catch (DateTimeParseException e) {
+            System.err.println("⚠️ Fecha inválida en base de datos: " + fechaStr);
+            fecha = LocalDateTime.of(2000, 1, 1, 0, 0); // Usamos fecha dummy
+        }
         return new Venta(
+                rs.getInt("nFactura"),                   // 👈 Ahora lo pasás también
                 rs.getInt("idE"),
                 rs.getInt("idC"),
                 fecha,
@@ -68,8 +78,8 @@ public class Mapper {
                 rs.getString("cliente_nombre"),
                 rs.getString("empleado_nombre")
         );
-
     }
+
     // Este método sirve si vas a insertar una nueva venta
     public static void setVenta(PreparedStatement stmt, Venta venta) throws SQLException {
         stmt.setInt(1, venta.getIdProducto());
