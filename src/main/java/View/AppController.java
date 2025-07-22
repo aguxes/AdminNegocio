@@ -62,7 +62,6 @@ public class AppController {
                 crearBoton("Agregar Producto", e -> ventanaProducto.agregarProducto()),
                 crearBoton("Modificar Producto", e -> ventanaProducto.modificarProducto()),
                 crearBoton("Eliminar Producto", e -> ventanaProducto.eliminarProducto()),
-                crearBoton("Buscar Producto", e -> ventanaProducto.buscarProducto()),
                 crearBoton("🔙 Volver", e -> cargarMenuPrincipal())
         );
     }

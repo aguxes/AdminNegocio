@@ -1,13 +1,18 @@
 package View;
 //Manejo del diseño
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections; // Importo cosas para el diseño y lenguaje de Java
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
 //Utilidades de Java
+import java.math.BigDecimal;
 import java.sql.Connection; // conecxion sql
 import java.time.LocalDate; //Para la fecha
 import java.util.ArrayList;
@@ -21,11 +26,8 @@ import javafx.stage.Stage; // que es esto??
 import static View.AppController.mostrarAlerta; // importo funcion de otro archivo para ser utilizada mas de una vez
 
 public class VentanaProducto {
-    @FXML private VBox menuLateral; // creo los cosos para reutilizarse varias veces
     @FXML private TextArea outputArea; // x2
     @FXML private VBox contenedor; //x3
-
-    private static final Connection conn = DataBaseConnection.getConnection();
 
     public VentanaProducto(VBox contenedor, TextArea outputArea) {
         this.contenedor = contenedor;
@@ -102,12 +104,38 @@ public class VentanaProducto {
     public void verProductos() {
         contenedor.getChildren().clear();
 
+        VBox tarjeta = new VBox(15);
+        tarjeta.setPadding(new Insets(20));
+        tarjeta.setAlignment(Pos.TOP_CENTER);
+        tarjeta.setMaxWidth(Double.MAX_VALUE);
+        tarjeta.getStyleClass().add("card");
+        VBox.setVgrow(tarjeta, Priority.ALWAYS);
+
+        Label titulo = new Label("📦 Lista de Productos");
+        titulo.getStyleClass().add("titulo-seccion");
+
+        // Barra de búsqueda
+        HBox barraBusqueda = new HBox(10);
+        barraBusqueda.setAlignment(Pos.CENTER_LEFT);
+
+        TextField campoBusqueda = new TextField();
+        campoBusqueda.setPromptText("Buscar por ID o Nombre");
+        campoBusqueda.setPrefWidth(200);
+
+        Button btnBuscar = new Button("Buscar");
+        btnBuscar.getStyleClass().add("btn-verde");
+
+        barraBusqueda.getChildren().addAll(new Label("🔍 Buscar:"), campoBusqueda, btnBuscar);
+
+        //Tabla
         TableView<Producto> tabla = new TableView<>();
         tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         tabla.setPlaceholder(new Label("No hay productos cargados."));
+        tabla.getStyleClass().add("tabla-clientes");
+        VBox.setVgrow(tabla, Priority.ALWAYS);
 
         TableColumn<Producto, Integer> colId = new TableColumn<>("ID");
-        colId.setCellValueFactory(new PropertyValueFactory<>("productoID")); // Se le asigna a la celda el valor provado de la clase Producto
+        colId.setCellValueFactory(new PropertyValueFactory<>("productoID"));
 
         TableColumn<Producto, String> colNombre = new TableColumn<>("Nombre");
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombreProducto"));
@@ -133,20 +161,197 @@ public class VentanaProducto {
         TableColumn<Producto, LocalDate> colBaja = new TableColumn<>("Fecha Baja");
         colBaja.setCellValueFactory(new PropertyValueFactory<>("fechaBaja"));
 
-        tabla.getColumns().addAll(colId, colNombre, colPrecio, colCosto, colStock, colMedida, colCategoria, colAlta, colBaja);
+        tabla.getColumns().addAll(colId, colNombre, colPrecio, colCosto, colStock,
+                colMedida, colCategoria, colAlta, colBaja);
 
-        ArrayList<Producto> lista = ProductoDAO.cargarProductosEnLista();
-        tabla.setItems(FXCollections.observableArrayList(lista));
+        // Label Cantidad
+        Label lblCantidad = new Label();
+        lblCantidad.getStyleClass().add("label-cantidad");
 
-        VBox layout = new VBox(10, new Label("📦 Lista de productos"), tabla);
-        layout.setPadding(new Insets(20));
+        // Cargar datos
+        ArrayList<Producto> listaOriginal = ProductoDAO.cargarProductosEnLista();
+        tabla.setItems(FXCollections.observableArrayList(listaOriginal));
+        lblCantidad.setText("Total de productos: " + listaOriginal.size());
 
-        contenedor.getChildren().add(layout);
+        //  Acción del boton Buscar
+        btnBuscar.setOnAction(e -> {
+            String texto = campoBusqueda.getText().trim().toLowerCase();
+            if (texto.isEmpty()) {
+                tabla.setItems(FXCollections.observableArrayList(listaOriginal));
+                lblCantidad.setText("Total de productos: " + listaOriginal.size());
+            } else {
+                ArrayList<Producto> filtrados = new ArrayList<>();
+                for (Producto p : listaOriginal) {
+                    if (String.valueOf(p.getProductoID()).equals(texto) ||
+                            p.getNombreProducto().toLowerCase().contains(texto)) {
+                        filtrados.add(p);
+                    }
+                }
+                tabla.setItems(FXCollections.observableArrayList(filtrados));
+                lblCantidad.setText("Coincidencias: " + filtrados.size());
+            }
+        });
+
+        //Armado final
+        tarjeta.getChildren().addAll(titulo, barraBusqueda, tabla, lblCantidad);
+        contenedor.getChildren().setAll(tarjeta);
     }
 
     public void agregarProducto() {
-        outputArea.setText("➕ Formulario para agregar producto.");
+        contenedor.getChildren().clear();
+
+        VBox tarjeta = new VBox(12);
+        tarjeta.setPadding(new Insets(20));
+        tarjeta.setAlignment(Pos.TOP_CENTER);
+        tarjeta.setMaxWidth(Double.MAX_VALUE);
+        tarjeta.getStyleClass().add("form-box");
+
+        Label titulo = new Label("➕ Agregar Producto");
+        titulo.getStyleClass().add("titulo-principal");
+
+        TextField nombre = new TextField();
+        nombre.setPromptText("Nombre del producto");
+        nombre.getStyleClass().add("input-form");
+
+        TextField precio = new TextField();
+        precio.setPromptText("Precio unitario");
+        precio.getStyleClass().add("input-form");
+
+        TextField costo = new TextField();
+        costo.setPromptText("Costo");
+        costo.getStyleClass().add("input-form");
+
+        TextField stock = new TextField();
+        stock.setPromptText("Stock");
+        stock.getStyleClass().add("input-form");
+
+        TextField idMedida = new TextField();
+        idMedida.setPromptText("ID medida");
+        idMedida.setEditable(false);
+        idMedida.getStyleClass().add("input-form");
+
+        Button btnMedida = new Button("📏 Seleccionar medida");
+        btnMedida.getStyleClass().add("boton-secundario");
+        btnMedida.setOnAction(e -> mostrarVentanaSeleccionMedida(idMedida));
+
+        TextField idCategoria = new TextField();
+        idCategoria.setPromptText("ID categoría");
+        idCategoria.setEditable(false);
+        idCategoria.getStyleClass().add("input-form");
+
+        Button btnCategoria = new Button("🏷️ Seleccionar categoría");
+        btnCategoria.getStyleClass().add("boton-secundario");
+        btnCategoria.setOnAction(e -> mostrarVentanaSeleccionCategoria(idCategoria));
+
+        DatePicker fechaAlta = new DatePicker();
+        fechaAlta.setPromptText("Fecha de alta");
+
+        DatePicker fechaBaja = new DatePicker();
+        fechaBaja.setPromptText("Fecha de baja (opcional)");
+
+        Button btnGuardar = new Button("💾 Guardar Producto");
+        btnGuardar.getStyleClass().add("boton-accion");
+
+        btnGuardar.setOnAction(e -> {
+            try {
+                Producto nuevo = new Producto(
+                        0,
+                        nombre.getText(),
+                        new BigDecimal(precio.getText()),
+                        Double.parseDouble(costo.getText()),
+                        Integer.parseInt(stock.getText()),
+                        Integer.parseInt(idMedida.getText()),
+                        Integer.parseInt(idCategoria.getText()),
+                        fechaAlta.getValue(),
+                        (fechaBaja.getValue() == null) ? null : fechaBaja.getValue()
+                );
+                if (ProductoDAO.insertarProducto(nuevo)) {
+                    mostrarAlerta("✅ Producto agregado con éxito.");
+                    verProductos(); // refresca la lista
+                } else {
+                    mostrarAlerta("❌ Error al agregar el producto.");
+                }
+            } catch (Exception ex) {
+                mostrarAlerta("❌ Verificá los campos. Error: " + ex.getMessage());
+            }
+        });
+
+        // Agrupación visual
+        tarjeta.getChildren().addAll(
+                titulo,
+                nombre, precio, costo, stock,
+                new HBox(10, idMedida, btnMedida),
+                new HBox(10, idCategoria, btnCategoria),
+                fechaAlta, fechaBaja,
+                btnGuardar
+        );
+        contenedor.getChildren().setAll(tarjeta);
     }
+
+
+    public void mostrarVentanaSeleccionCategoria(TextField campoDestino) {
+        Stage ventana = new Stage();
+        ventana.setTitle("Seleccionar Categoría");
+        ventana.initModality(Modality.APPLICATION_MODAL);
+
+        TableView<String> tabla = new TableView<>();
+        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        TableColumn<String, String> colDescripcion = new TableColumn<>("Descripción");
+        colDescripcion.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue()));
+        tabla.getColumns().add(colDescripcion);
+
+        tabla.getItems().addAll(ProductoDAO.obtenerCategorias());
+
+        tabla.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                String seleccion = tabla.getSelectionModel().getSelectedItem();
+                if (seleccion != null) {
+                    int id = ProductoDAO.obtenerIdCategoria(seleccion);
+                    campoDestino.setText(String.valueOf(id));
+                    ventana.close();
+                }
+            }
+        });
+
+        VBox layout = new VBox(10, tabla);
+        layout.setPadding(new Insets(10));
+        ventana.setScene(new Scene(layout, 400, 300));
+        ventana.showAndWait();
+    }
+
+    public void mostrarVentanaSeleccionMedida(TextField campoDestino) {
+        Stage ventana = new Stage();
+        ventana.setTitle("Seleccionar Unidad de Medida");
+        ventana.initModality(Modality.APPLICATION_MODAL);
+
+        TableView<String> tabla = new TableView<>();
+        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        TableColumn<String, String> colDescripcion = new TableColumn<>("Descripción");
+        colDescripcion.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue()));
+        tabla.getColumns().add(colDescripcion);
+
+        tabla.getItems().addAll(ProductoDAO.obtenerMedidas());
+
+        tabla.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                String seleccion = tabla.getSelectionModel().getSelectedItem();
+                if (seleccion != null) {
+                    int id = ProductoDAO.obtenerIdMedida(seleccion);
+                    campoDestino.setText(String.valueOf(id));
+                    ventana.close();
+                }
+            }
+        });
+
+        VBox layout = new VBox(10, tabla);
+        layout.setPadding(new Insets(10));
+        ventana.setScene(new Scene(layout, 400, 300));
+        ventana.showAndWait();
+    }
+
+
 
     public void modificarProducto() {
         outputArea.setText("✏️ Editar un producto existente.");
@@ -156,7 +361,4 @@ public class VentanaProducto {
         outputArea.setText("🗑️ Eliminar producto por ID.");
     }
 
-    public void buscarProducto() {
-        outputArea.setText("🔍 Buscar producto por nombre o ID.");
-    }
 }

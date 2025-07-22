@@ -180,6 +180,15 @@ VBox, HBox {
 }
 
 /* -----------------------------------
+   🧑 Productos - TABLA
+----------------------------------- */
+.label-cantidad {
+    -fx-font-size: 14px;
+    -fx-text-fill: #333;
+    -fx-padding: 10 0 0 0;
+}
+
+/* -----------------------------------
    ❌ MENSAJES DE ERROR (Tarjetas)
 ----------------------------------- */
 .card-error {

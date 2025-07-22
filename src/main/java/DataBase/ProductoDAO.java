@@ -75,17 +75,65 @@ public class ProductoDAO {
         return null;
     }
 
-    public static Integer obtenerIdProductoPorNombre(String nombre) {
-        String sql = "SELECT idProducto FROM Producto WHERE nombre = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, nombre);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) return rs.getInt("idProducto");
-
+    public static ArrayList<String> obtenerCategorias() {
+        ArrayList<String> lista = new ArrayList<>();
+        String sql = "SELECT descripcion FROM CategoriasProd";
+        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) lista.add(rs.getString("descripcion"));
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return lista;
     }
+
+    public static ArrayList<String> obtenerMedidas() {
+        ArrayList<String> lista = new ArrayList<>();
+        String sql = "SELECT descripcion FROM MedidasProd";
+        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) lista.add(rs.getString("descripcion"));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
+
+    public static int obtenerIdCategoria(String descripcion) {
+        String sql = "SELECT Categoria FROM CategoriasProd WHERE descripcion = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, descripcion);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) return rs.getInt("Categoria");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    public static int obtenerIdMedida(String descripcion) {
+        String sql = "SELECT unidadMedida FROM MedidasProd WHERE descripcion = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, descripcion);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) return rs.getInt("unidadMedida");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    public static boolean insertarProducto(Producto producto) {
+        String sql = """
+        INSERT INTO Producto (nombre, precio, costo, stock, idMedida, idCategoria, fechAlta)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """;
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            Mapper.setProducto(stmt, producto);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("❌ Error al insertar producto: " + e.getMessage());
+        }
+        return false;
+    }
+
+
 }
