@@ -23,7 +23,7 @@ public class Main {
 
         Scanner scan = new Scanner(System.in);
         int opcion = 0;
-        ClienteDAO.cargarClientesEnLista(listaClientes); //con cada vuelta del bucle si borro un dato se actualiza
+        //ClienteDAO.cargarClientesEnLista(listaClientes); //con cada vuelta del bucle si borro un dato se actualiza
 
         do{
             try{

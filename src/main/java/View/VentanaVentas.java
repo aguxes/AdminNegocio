@@ -286,7 +286,7 @@ public class VentanaVentas {
         tabla.getColumns().addAll(colID, colDNI, colNombre, colApellido);
 
         ArrayList<Cliente> lista = new ArrayList<>();
-        VentanaClientes.cargarClientesEnLista(lista);
+        ClienteDAO.cargarClientesEnLista(lista);
         tabla.getItems().addAll(lista);
 
         TextField txtBuscar = new TextField();
@@ -295,7 +295,7 @@ public class VentanaVentas {
         Button btnBuscar = new Button("Buscar");
         btnBuscar.setOnAction(e -> {
             String dni = txtBuscar.getText().trim();
-            ArrayList<Cliente> resultado = VentanaClientes.buscarClientePorDato("DNI", dni);
+            ArrayList<Cliente> resultado = ClienteDAO.buscarClientePorDato("DNI", dni);
             tabla.getItems().setAll(resultado);
         });
 
@@ -386,8 +386,8 @@ public class VentanaVentas {
 
         // Mostrar lista de clientes
         ArrayList<Cliente> clientes = new ArrayList<>();
-        VentanaClientes.cargarClientesEnLista(clientes);
-        TextArea areaTexto = new TextArea(VentanaClientes.obtenerClientes(clientes));
+        ClienteDAO.cargarClientesEnLista(clientes);
+        TextArea areaTexto = new TextArea(ClienteDAO.obtenerClientes(clientes));
         areaTexto.setEditable(false);
         areaTexto.setWrapText(true);
         areaTexto.setPrefHeight(300);
@@ -400,7 +400,7 @@ public class VentanaVentas {
         buscarBtn.setOnAction(e -> {
             try {
                 int dni = Integer.parseInt(dniInput.getText().trim());
-                Integer id = VentanaClientes.obtenerIdClientePorDni(dni);
+                Integer id = ClienteDAO.obtenerIdClientePorDni(dni);
 
                 if (id != null) {
                     ArrayList<Venta> ventas = VentaDAO.obtenerVentasPorCliente(id);

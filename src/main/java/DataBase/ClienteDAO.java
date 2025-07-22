@@ -11,141 +11,183 @@ import java.util.Scanner;
 
 /// Extras
 
-public class ClienteDAO
-{
-    public static void cargarClientesEnLista(ArrayList<Imprimible> lista) {
-        String query = """
-SELECT p.DNI, p.nombre, p.apellido, tc.tipo, tc.descripcion, c.id, c.cantCompras, t.telefono
-FROM Cliente c
-INNER JOIN Persona p ON c.DNI = p.DNI
-LEFT JOIN Telefonos t ON t.idPersona = p.DNI
-INNER JOIN TiposClientes tc ON c.idTipo = tc.tipo
-""";
+public class ClienteDAO {
+    private static final Connection conn = DataBaseConnection.getConnection();
+    public static void cargarClientesEnLista(ArrayList<Cliente> lista) {
+        String sql = """
+        SELECT c.ID, p.DNI, p.nombre, p.apellido, tc.tipo, tc.descripcion, c.cantCompras, t.telefono
+        FROM Cliente c
+         INNER JOIN Persona p ON c.DNI = p.DNI
+         LEFT JOIN Telefonos t ON t.idPersona = p.DNI
+         INNER JOIN TiposClientes tc ON c.idTipo = tc.tipo
+        """;
 
-        try (Connection conn = DataBaseConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(query))
-        {
+
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
             while (rs.next()) {
                 Cliente c = Mapper.getCliente(rs);
                 lista.add(c);
             }
+
         } catch (SQLException e) {
-            System.out.println("❌ Error al cargar clientes en lista: ");
-            e.printStackTrace();
+            System.out.println("❌ Error al cargar clientes: " + e.getMessage());
         }
     }
 
-    public void eliminarPorId(Scanner scan) {
+    public static String obtenerClientes(ArrayList<Cliente> lista) {
+        if (lista == null || lista.isEmpty()) return "Lista vacía.";
+
+        StringBuilder sb = new StringBuilder();
+
+        // Encabezado
+        sb.append(String.format(" %-5s %-10s %-15s %-15s %-10s %-10s %-15s\n",
+                "ID", "DNI", "Nombre", "Apellido", "Compras", "Tipo", "Teléfono"));
+        sb.append("----------------------------------------------------------------------------------------------------------\n");
+
+        // Datos
+        for (Cliente c : lista) {
+            sb.append(String.format(" %-5d %-10d %-15s %-15s %-10d %-10s %-15s\n",
+                    c.getId(),
+                    c.getDNI(),
+                    c.getNombre(),
+                    c.getApellido(),
+                    c.getCantCompras(),
+                    c.getTipo().getDescripcion(),
+                    c.getTelefono()
+            ));
+        }
+        return sb.toString();
+    }
+
+    public static String eliminarPorId(int id) {
+        StringBuilder result = new StringBuilder();
         String query = """
-            SELECT PE.nombre FROM Cliente c
-            INNER JOIN Persona PE ON PE.DNI = c.DNI
-            WHERE c.id = ?;
-            """;
-        String deletequery = """
-            SELECT PE.nombre FROM Cliente c
-            INNER JOIN Persona PE ON PE.DNI = c.DNI
-            WHERE c.id = ?;
-            """;
+        SELECT p.nombre FROM Cliente c
+        INNER JOIN Persona p ON p.DNI = c.DNI
+         WHERE c.id = ?
+        """;
+        String deleteSQL = "DELETE FROM Cliente WHERE id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
 
-        System.out.print("Ingrese el ID del cliente a eliminar: ");
-        int id = scan.nextInt();
-
-        try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query))
-        {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
                 String nombre = rs.getString("nombre");
 
-                System.out.println("Vas a eliminar al cliente ID: " + id + " Nombre: " + nombre +
-                        "\n¿Está seguro? (1 = Sí, 2 = No)");
-                int opcion = scan.nextInt();
-                scan.nextLine();
-
-                if (opcion == 1) {
-                    conn.setAutoCommit(false);
-                    try (PreparedStatement deleteStmt = conn.prepareStatement(deletequery)) {
-                        deleteStmt.setInt(1, id);
-                        deleteStmt.executeUpdate();
-                        conn.commit();
-                        System.out.println("✅ Cliente eliminado.");
-                    }
-                } else { System.out.println("❎ Cancelado. No se eliminó a nadie."); }
-
-            } else { System.out.println("⚠️ No se encontró ningún cliente con ese ID."); }
-
-        } catch (SQLException e) { System.out.println("❌ Error en la base de datos: " + e.getMessage()); }
-    }
-
-    public void actualizarEmail(int id, String nuevoEmail) {
-        String sql = "UPDATE clientes SET email = ? WHERE id = ?";
-
-        try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, nuevoEmail);
-            stmt.setInt(2, id);
-            stmt.executeUpdate();
+                conn.setAutoCommit(false);
+                try (PreparedStatement deleteStmt = conn.prepareStatement(deleteSQL)) {
+                    deleteStmt.setInt(1, id);
+                    deleteStmt.executeUpdate();
+                    conn.commit();
+                    result.append("✅ Cliente eliminado: ").append(nombre);
+                }
+            } else {
+                result.append("⚠️ No se encontró ningún cliente con ese ID.");
+            }
 
         } catch (SQLException e) {
-            System.out.println("❌ Error al actualizar email del cliente: " + e.getMessage());
+            result.append("❌ Error en la base de datos: ").append(e.getMessage());
         }
+
+        return result.toString();
     }
 
-    public void imprimirClientes(ArrayList<Imprimible> lista) {
-        if(!lista.isEmpty()){
-            lista.getFirst().imprimirEncabezado(); //llamo al primer dato del array solo para poner el encabezado, no es importante
-            for(Imprimible i: lista) i.imprimir();
-        }else{
-            System.out.println("Lista Vacia");
-        }
+    public static Cliente obtenerClientePorId(int id) {
+        String query = """
+        SELECT p.nombre FROM Cliente c
+        INNER JOIN Persona p ON p.DNI = c.DNI
+         WHERE c.id = ?
+        """;
+        StringBuilder result = new StringBuilder();
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if ( rs.next() ) { return Mapper.getCliente(rs); }
+            else { result.append ("⚠️ No se encontró ningún cliente con ese ID."); }
+        } catch ( SQLException e ) { System.out.println("❌ Error al buscar cliente: " + e.getMessage()); }
+
+        return null;
     }
-    /*
-        public Cliente agregarClientePorConsola(Scanner scan) {
 
-            System.out.print("Ingrese el dni del cliente: ");
-            int dni = scan.nextInt();
+    public static String buscarNombrePorId(int id) {
+        String query = """
+        SELECT p.nombre, p.apellido
+        FROM Cliente c
+        JOIN Persona p ON c.DNI = p.DNI
+        WHERE c.ID = ?
+    """;
 
-            System.out.print("Ingrese el nombre del cliente: ");
-            String nombre = scan.nextLine();
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            System.out.print("Ingrese el apellido del cliente: ");
-            String apellido = scan.nextLine();
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
 
-            System.out.print("Ingrese el genero del cliente: ");
-            int genero = scan.nextInt();
+            if (rs.next()) {
+                return rs.getString("nombre") + " " + rs.getString("apellido");
+            }
 
-            System.out.print("Ingrese la nacionalidad del cliente: ");
-            int nacionalidad = scan.nextInt();
-
-            System.out.print("Ingrese el id del cliente: ");
-            int id = scan.nextInt();
-
-            System.out.print("Ingrese el tipo de Cliente del cliente: ");
-            int tipCliente = scan.nextInt();
-
-
-            System.out.print("Ingrese la cantidad de Compras del cliente: ");
-            int cantCompras = scan.nextInt();
-
-            Cliente c = new Cliente(dni, nombre, apellido, id, tipCliente, cantCompras);
-
-            return c;
+        } catch (SQLException e) {
+            System.out.println("❌ Error al buscar nombre por ID: " + e.getMessage());
         }
-    */
-    public static void insertar(Cliente cliente, Persona persona) {
+
+        return null;
+    }
+
+    //Ahora devuelve un arrayList para poder hacer la muestra de datos copada
+    public static ArrayList<Cliente> buscarClientePorDato(String campo, String valor) {
+        ArrayList<Cliente> listaTemp = new ArrayList<>();
+        String campoSQL = switch (campo) {
+            case "nombre", "apellido", "DNI" -> "p." + campo;
+            case "ID", "cantCompras"         -> "c." + campo;
+            case "tipo"                      -> "tc.descripcion";
+            case "telefono"                  -> "t.telefono";
+            default                          -> null;
+        };
+
+        if (campoSQL == null) return listaTemp;
+
+        String query =
+                "SELECT c.ID, p.DNI, p.nombre, p.apellido, tc.tipo, tc.descripcion, c.cantCompras, t.telefono " +
+                        "FROM Cliente c " +
+                        "INNER JOIN Persona p ON p.DNI = c.DNI " +
+                        "LEFT JOIN Telefonos t ON t.idPersona = p.DNI " +
+                        "INNER JOIN TiposClientes tc ON c.idTipo = tc.tipo " +
+                        "WHERE " + campoSQL + " LIKE ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, "%" + valor + "%");
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Cliente c = Mapper.getCliente(rs);
+                listaTemp.add(c);
+            }
+        } catch (SQLException e) {
+            System.out.println("❌ Error al buscar cliente: " + e.getMessage());
+        }
+        return listaTemp;
+    }
+
+
+
+    public static String insertar(Cliente cliente, Persona persona) {
         String queryP = """
         INSERT INTO Persona (dni, nombre, apellido ) VALUES (?, ?, ?)
         """;
         String queryC = """
-        INSERT INTO Cliente (id, dni, idTipo, cantCompras ) VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO Cliente (dni, idTipo, cantCompras ) VALUES (?, ?, ?)
         """;
-        try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement stmtP = conn.prepareStatement(queryP);
+        StringBuilder resultado = new StringBuilder();
+
+        try (PreparedStatement stmtP = conn.prepareStatement(queryP);
              PreparedStatement stmtC = conn.prepareStatement(queryC))
+
         {
             Mapper.setPersona(stmtP, persona);
             Mapper.setCliente(stmtC, cliente);
@@ -153,170 +195,26 @@ INNER JOIN TiposClientes tc ON c.idTipo = tc.tipo
             stmtP.executeUpdate();
             stmtC.executeUpdate();
 
-            System.out.println("Cliente insertado correctamente.");
-        } catch (SQLException e) { System.out.println("❌ Error al insertar cliente: " + e.getMessage()); }
-    }
-    public void modificarClientePorId(Scanner scan, ArrayList<Imprimible> lista) {
+            resultado.append("✅ Cliente insertado correctamente.");
 
-        String querySelect = "SELECT * FROM Cliente WHERE id = ?";
-        String queryUPD =
-                """
-        UPDATE Cliente SET nombre = ?, apellido = ?, DNI = ?, genero = ?, nacionalidad = ?, idTipo = ?, cantCompras = ? WHERE id = ?;
-        """;
+        } catch (SQLException e) { resultado.append("❌ Error al insertar cliente: ").append(e.getMessage()); }
 
-        System.out.print("Ingrese el ID del cliente a modificar: ");
-        int id = scan.nextInt();
-        scan.nextLine(); // Limpia el salto de línea después del nextInt()
-
-        try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement stmtSelect = conn.prepareStatement(querySelect))
-        {
-            stmtSelect.setInt(1, id);
-            ResultSet rs = stmtSelect.executeQuery();
-
-            if (rs.next()) {
-                Cliente c = Mapper.getCliente(rs);
-                System.out.println("↩️ Deje el campo vacío si no quiere modificarlo");
-
-                System.out.print("Nuevo nombre (" + c.getNombre() + "): ");
-                String input = scan.nextLine();
-                if (!input.isEmpty()) c.setNombre(input);
-
-                System.out.print("Nuevo apellido (" + c.getApellido() + "): ");
-                input = scan.nextLine();
-                if (!input.isEmpty()) c.setApellido(input);
-
-                System.out.print("Nuevo DNI (" + c.getDNI() + "): ");
-                if (scan.hasNextInt()) {
-                    c.setDNI(scan.nextInt());
-                } else {
-                    String aux = scan.nextLine();
-                    if (!aux.isEmpty()) {
-                        try {
-                            c.setDNI(Integer.parseInt(aux));
-                        } catch (NumberFormatException e) {
-                            System.out.println("⚠️ DNI inválido. Se mantiene el anterior.");
-                        }
-                    }
-                }
-                scan.nextLine();
-
-                /*System.out.print("Nuevo género (" + c.getGenero() + "): ");
-                if (scan.hasNextInt()) {
-                    c.setGenero(scan.nextInt());
-                } else {
-                    String aux = scan.nextLine();
-                    if (!aux.isEmpty()) {
-                        try {
-                            c.setGenero(Integer.parseInt(aux));
-                        } catch (NumberFormatException e) {
-                            System.out.println("⚠️ Género inválido. Se mantiene el anterior.");
-                        }
-                    }
-                }
-                scan.nextLine();
-
-                System.out.print("Nueva nacionalidad (" + c.getNacionalidad() + "): ");
-                if (scan.hasNextInt()) {
-                    c.setNacionalidad(scan.nextInt());
-                } else {
-                    String aux = scan.nextLine();
-                    if (!aux.isEmpty()) {
-                        try {
-                            c.setNacionalidad(Integer.parseInt(aux));
-                        } catch (NumberFormatException e) {
-                            System.out.println("⚠️ Nacionalidad inválida. Se mantiene la anterior.");
-                        }
-                    }
-                }
-                scan.nextLine(); */
-                //System.out.print("Nuevo tipo de cliente (" + c.getTipCliente() + "): ");
-                /*
-                if (scan.hasNextInt()) {
-
-                    c.setTipCliente(scan.nextInt());
-                } else {
-                    String aux = scan.nextLine();
-                    //if (!aux.isEmpty()) {
-                        //try {
-                           // c.setTipCliente(Integer.parseInt(aux));
-                        //} catch (NumberFormatException e) {
-                        //    System.out.println("⚠️ Tipo inválido. Se mantiene el anterior.");
-                       // }
-                    //}
-                }
-                scan.nextLine();
-                */
-                System.out.print("Nueva cantidad de compras (" + c.getCantCompras() + "): ");
-                if (scan.hasNextInt()) { c.setCantCompras(scan.nextInt()); }
-                else {
-                    String aux = scan.nextLine();
-                    if (!aux.isEmpty()) {
-                        try {
-                            c.setCantCompras(Integer.parseInt(aux));
-                        } catch (NumberFormatException e) {
-                            System.out.println("⚠️ Cantidad inválida. Se mantiene la anterior.");
-                        }
-                    }
-                    try (PreparedStatement stmtUpdate = conn.prepareStatement(queryUPD)) {
-                        Mapper.setCliente(stmtUpdate, c);
-
-                        int filas = stmtUpdate.executeUpdate();
-                        System.out.println(filas > 0 ? "✅ Cliente modificado." : "⚠️ No se modificó ningún cliente.");
-                        lista.clear();
-                        cargarClientesEnLista(lista);
-                    }
-
-                }
-
-            }else{ System.out.println("❌ Cliente no encontrado con ID: " + id); }
-        }catch(SQLException e) { System.out.println("❌ Error en la base de datos: " + e.getMessage()); }
-    }
-    public void buscarClientePorDato(Scanner scan) {
-
-        ArrayList<Imprimible> listaTemp = new ArrayList<>();
-        System.out.print("Buscar por email o nombre: (Ingrese la palabra 'apellido' o 'nombre'): ");
-        String campo = scan.nextLine().toLowerCase();
-        String query = """
-                SELECT * FROM Cliente WHERE " + campo + " LIKE ?;
-                """;
-
-        if (campo.equals("apellido") || campo.equals("nombre"))
-        {
-            System.out.print("Ingrese el " + campo + " a buscar: ");
-            String valor = scan.nextLine();
-
-            try (Connection conn = DataBaseConnection.getConnection();
-                 PreparedStatement stmt = conn.prepareStatement(query))
-            {
-
-                stmt.setString(1, "%" + valor + "%");
-                ResultSet rs = stmt.executeQuery();
-
-                while (rs.next()) {
-                    Cliente c = Mapper.getCliente(rs);
-                    listaTemp.add(c);
-                }
-                if (listaTemp.isEmpty()) { System.out.println("❌ No se encontraron clientes con ese " + campo + "."); }
-                else
-                { imprimirClientes(listaTemp); }
-            }
-            catch (SQLException e) { System.out.println("❌ Error en la base de datos: " + e.getMessage()); }
-        } else
-        { System.out.println("⚠️ Opción no válida. Debe ingresar 'apellido' o 'nombre'."); }
+        return resultado.toString();
     }
 
-    // Para validaciones en ventas
-    public static boolean existeCliente(int idCliente) {
-        String sql = "SELECT 1 FROM Cliente WHERE id = ?";
-        try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql))
-        {
-            stmt.setInt(1, idCliente);
+    public static Integer obtenerIdClientePorDni(int dni) {
+        String sql = "SELECT ID FROM Cliente WHERE DNI = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, dni);
             ResultSet rs = stmt.executeQuery();
-            return rs.next();
-        } catch (SQLException e)
-        { System.out.println("❌ Error validando cliente: " + e.getMessage()); return false; }
+            if (rs.next()) return rs.getInt("ID");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
+
+
+
 }
 

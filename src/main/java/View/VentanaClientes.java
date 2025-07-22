@@ -1,214 +1,286 @@
 package View;
 
-import Clases.Principales.Persona;
+import Clases.Extras.Telefono;
+import Clases.Extras.TiposClientes;
 import Clases.Principales.Cliente;
+import Clases.Principales.Empleado;
+import Clases.Principales.Producto;
+import Clases.Principales.Venta;
 import DataBase.DataBaseConnection;
+import DataBase.*;
+import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import util.Mapper;
-
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 
+import static View.AppController.mostrarAlerta;
+
 public class VentanaClientes {
+
+    @FXML
+    private VBox menuLateral;
+    @FXML private TextArea outputArea;
+    @FXML private VBox contenedor;
+
     private static final Connection conn = DataBaseConnection.getConnection();
-    public static void cargarClientesEnLista(ArrayList<Cliente> lista) {
-        String sql = """
-        SELECT c.ID, p.DNI, p.nombre, p.apellido, tc.tipo, tc.descripcion, c.cantCompras, t.telefono
-        FROM Cliente c
-         INNER JOIN Persona p ON c.DNI = p.DNI
-         LEFT JOIN Telefonos t ON t.idPersona = p.DNI
-         INNER JOIN TiposClientes tc ON c.idTipo = tc.tipo
-        """;
 
+    public VentanaClientes(VBox contenedor, TextArea outputArea) {
+        this.contenedor = contenedor;
+        this.outputArea = outputArea;
+    }
 
-        try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+    public void agregarCliente() {
+        contenedor.getChildren().clear();
 
-            while (rs.next()) {
-                Cliente c = Mapper.getCliente(rs);
-                lista.add(c);
+        VBox form = new VBox(10);
+        form.setPadding(new Insets(20));
+        form.getStyleClass().add("form-box");
+
+        Label titulo = new Label("📋 Registrar Cliente");
+        titulo.getStyleClass().add("titulo-principal");
+
+        TextField txtDNI = new TextField();
+        txtDNI.setPromptText("DNI");
+        txtDNI.getStyleClass().add("text-field");
+
+        TextField txtNombre = new TextField();
+        txtNombre.setPromptText("Nombre");
+        txtNombre.getStyleClass().add("text-field");
+
+        TextField txtApellido = new TextField();
+        txtApellido.setPromptText("Apellido");
+        txtApellido.getStyleClass().add("text-field");
+
+        TextField txtTipo = new TextField();
+        txtTipo.setPromptText("Tipo de Cliente");
+        txtTipo.getStyleClass().add("text-field");
+
+        TextField txtCantCompras = new TextField();
+        txtCantCompras.setPromptText("Cantidad de Compras");
+        txtCantCompras.getStyleClass().add("text-field");
+
+        TextField txtTelefono = new TextField();
+        txtTelefono.setPromptText("Teléfono");
+        txtTelefono.getStyleClass().add("text-field");
+
+        Button btnRegistrarc = new Button("✅ Registrar Cliente");
+        btnRegistrarc.getStyleClass().add("boton-accion");
+        btnRegistrarc.setOnAction(e -> {
+            try {
+                int DNI = Integer.parseInt(txtDNI.getText().trim());
+                String Nombre = txtNombre.getText().trim();
+                String Apellido = txtApellido.getText().trim();
+                int tipoId = Integer.parseInt(txtTipo.getText().trim());
+                int cantCompras = Integer.parseInt(txtCantCompras.getText().trim());
+                Long telefono = Long.parseLong(txtTelefono.getText().trim());
+
+                TiposClientes tipo = new TiposClientes(tipoId, "");
+                Telefono tel = new Telefono(DNI, telefono);
+
+                Cliente c = new Cliente();
+                c.setDNI(DNI);
+                c.setNombre(Nombre);
+                c.setApellido(Apellido);
+                c.setTipCliente(tipo);
+                c.setCantCompras(cantCompras);
+                c.setTelefono(tel);
+
+                String queryP = """
+                INSERT INTO Persona (dni, nombre, apellido ) VALUES (?, ?, ?)
+                """;
+                String queryC = """
+                INSERT INTO Cliente (dni, idTipo, cantCompras ) VALUES (?, ?, ?)
+                """;
+                String queryT = """
+                INSERT INTO Telefonos (idPersona, telefono) VALUES (?, ?)
+                """;
+
+                PreparedStatement stmtP = conn.prepareStatement(queryP);
+                PreparedStatement stmtC = conn.prepareStatement(queryC);
+                PreparedStatement stmtT = conn.prepareStatement(queryT);
+
+                Mapper.setPersona(stmtP, c);
+                Mapper.setCliente(stmtC, c);
+                Mapper.setTelefono(stmtT, c);
+
+                stmtP.executeUpdate();
+                stmtC.executeUpdate();
+                stmtT.executeUpdate();
+
+                mostrarAlerta("✅ Cliente registrado correctamente.");
+                contenedor.getChildren().clear();
+                contenedor.getChildren().add(outputArea);
+
+            } catch (Exception ex) {
+                mostrarAlerta("❌ Error: " + ex.getMessage());
             }
+        });
 
-        } catch (SQLException e) {
-            System.out.println("❌ Error al cargar clientes: " + e.getMessage());
-        }
+        form.getChildren().addAll(
+                titulo,
+                txtDNI,
+                txtNombre,
+                txtApellido,
+                txtTipo,
+                txtCantCompras,
+                txtTelefono,
+                btnRegistrarc
+        );
+
+        Button btnCancelar = new Button("❌ Cancelar nuevo Cliente");
+        btnCancelar.getStyleClass().add("boton-cancelar");
+        btnCancelar.setOnAction(e -> {
+            contenedor.getChildren().clear();
+            contenedor.getChildren().add(outputArea);
+        });
+
+        HBox filaCancelar = new HBox(btnCancelar);
+        filaCancelar.setAlignment(Pos.BOTTOM_RIGHT);
+
+        form.getChildren().add(filaCancelar);
+
+
+        contenedor.getChildren().add(form);
     }
 
-    public static String obtenerClientes(ArrayList<Cliente> lista) {
-        if (lista == null || lista.isEmpty()) return "Lista vacía.";
-
-        StringBuilder sb = new StringBuilder();
-
-        // Encabezado
-        sb.append(String.format(" %-5s %-10s %-15s %-15s %-10s %-10s %-15s\n",
-                "ID", "DNI", "Nombre", "Apellido", "Compras", "Tipo", "Teléfono"));
-        sb.append("----------------------------------------------------------------------------------------------------------\n");
-
-        // Datos
-        for (Cliente c : lista) {
-            sb.append(String.format(" %-5d %-10d %-15s %-15s %-10d %-10s %-15s\n",
-                    c.getId(),
-                    c.getDNI(),
-                    c.getNombre(),
-                    c.getApellido(),
-                    c.getCantCompras(),
-                    c.getTipo().getDescripcion(),
-                    c.getTelefono()
-            ));
-        }
-        return sb.toString();
+    public void modificarCliente() {
+        outputArea.setText("✏️ Función modificar cliente (en construcción)");
     }
 
-    public static String eliminarPorId(int id) {
-        StringBuilder result = new StringBuilder();
-        String query = """
-        SELECT p.nombre FROM Cliente c
-        INNER JOIN Persona p ON p.DNI = c.DNI
-         WHERE c.id = ?
-        """;
-        String deleteSQL = "DELETE FROM Cliente WHERE id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+    public void verClientes() {
+        VBox tarjeta = new VBox(10);
+        tarjeta.setPadding(new Insets(20));
+        tarjeta.setAlignment(Pos.CENTER_LEFT);
+        tarjeta.getStyleClass().add("card");
 
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
+        Label lblCampo = new Label("Buscar por:");
+        lblCampo.getStyleClass().add("label-form");
 
-            if (rs.next()) {
-                String nombre = rs.getString("nombre");
+        ChoiceBox<String> choiceCampo = new ChoiceBox<>();
+        choiceCampo.getItems().addAll("nombre", "apellido", "ID", "DNI", "tipo", "cantCompras", "telefono");
+        choiceCampo.setValue("nombre");
+        choiceCampo.getStyleClass().add("input-form");
 
-                conn.setAutoCommit(false);
-                try (PreparedStatement deleteStmt = conn.prepareStatement(deleteSQL)) {
-                    deleteStmt.setInt(1, id);
-                    deleteStmt.executeUpdate();
-                    conn.commit();
-                    result.append("✅ Cliente eliminado: ").append(nombre);
-                }
+        TextField txtValor = new TextField();
+        txtValor.setPromptText("Ej: Juan o 2");
+        txtValor.getStyleClass().add("input-form");
+
+        Button btnBuscar = new Button("Buscar");
+        btnBuscar.getStyleClass().add("btn-verde");
+
+        TableView<Cliente> tabla = new TableView<>();
+        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tabla.setPlaceholder(new Label("No hay clientes cargados."));
+        tabla.getStyleClass().add("tabla-clientes");
+
+        TableColumn<Cliente, Integer> colId = new TableColumn<>("ID");
+        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
+
+        TableColumn<Cliente, Integer> colDni = new TableColumn<>("DNI");
+        colDni.setCellValueFactory(new PropertyValueFactory<>("dni"));
+
+        TableColumn<Cliente, String> colNombre = new TableColumn<>("Nombre");
+        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+
+        TableColumn<Cliente, String> colApellido = new TableColumn<>("Apellido");
+        colApellido.setCellValueFactory(new PropertyValueFactory<>("apellido"));
+
+        TableColumn<Cliente, String> colTipo = new TableColumn<>("Tipo");
+        colTipo.setCellValueFactory(new PropertyValueFactory<>("tipCliente"));
+
+        TableColumn<Cliente, Integer> colCompras = new TableColumn<>("Compras");
+        colCompras.setCellValueFactory(new PropertyValueFactory<>("cantCompras"));
+
+        TableColumn<Cliente, String> colTelefono = new TableColumn<>("Teléfono");
+        colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefonoStr"));
+
+        tabla.getColumns().addAll(colId, colDni, colNombre, colApellido, colTipo, colCompras, colTelefono);
+
+        // Cargar todos los clientes por defecto
+        ArrayList<Cliente> listaInicial = new ArrayList<>();
+        ClienteDAO.cargarClientesEnLista(listaInicial);
+        tabla.getItems().addAll(listaInicial);
+
+        btnBuscar.setOnAction(e -> {
+            String campo = choiceCampo.getValue();
+            String valor = txtValor.getText();
+            ArrayList<Cliente> resultado = ClienteDAO.buscarClientePorDato(campo, valor);
+
+            if (resultado.isEmpty()) {
+                VBox card = new VBox();
+                card.getStyleClass().add("card-error");
+
+                Label titulo = new Label("Sin resultados");
+                titulo.getStyleClass().add("card-error-titulo");
+
+                Label mensaje = new Label("No se encontró ningún cliente con ese dato.");
+                mensaje.getStyleClass().add("card-error-mensaje");
+
+                Button volverBtn = new Button("Volver");
+                volverBtn.getStyleClass().add("btn-error-volver");
+                volverBtn.setOnAction(ev -> contenedor.getChildren().setAll(tarjeta));
+
+                card.getChildren().addAll(titulo, mensaje, volverBtn);
+                contenedor.getChildren().setAll(card);
             } else {
-                result.append("⚠️ No se encontró ningún cliente con ese ID.");
+                tabla.getItems().setAll(resultado);
             }
+        });
 
-        } catch (SQLException e) {
-            result.append("❌ Error en la base de datos: ").append(e.getMessage());
-        }
-
-        return result.toString();
+        tarjeta.getChildren().addAll(lblCampo, choiceCampo, txtValor, btnBuscar, tabla);
+        contenedor.getChildren().setAll(tarjeta);
     }
 
-    public static Cliente obtenerClientePorId(int id) {
-        String query = """
-        SELECT p.nombre FROM Cliente c
-        INNER JOIN Persona p ON p.DNI = c.DNI
-         WHERE c.id = ?
-        """;
-        StringBuilder result = new StringBuilder();
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+    public void EliminarCliente() {
+        Stage ventana = new Stage();
+        ventana.setTitle("Eliminar Cliente");
 
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
+        TextField txtId = new TextField();
+        txtId.setPromptText("ID del cliente");
 
-            if ( rs.next() ) { return Mapper.getCliente(rs); }
-            else { result.append ("⚠️ No se encontró ningún cliente con ese ID."); }
-        } catch ( SQLException e ) { System.out.println("❌ Error al buscar cliente: " + e.getMessage()); }
+        Label lblConfirmacion = new Label();
 
-        return null;
-    }
-
-    public static String buscarNombrePorId(int id) {
-        String query = """
-        SELECT p.nombre, p.apellido
-        FROM Cliente c
-        JOIN Persona p ON c.DNI = p.DNI
-        WHERE c.ID = ?
-    """;
-
-        try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                return rs.getString("nombre") + " " + rs.getString("apellido");
+        Button btnBuscar = new Button("Buscar");
+        btnBuscar.setOnAction(e -> {
+            int id = Integer.parseInt(txtId.getText());
+            String nombre = ClienteDAO.buscarNombrePorId(id);
+            if (nombre != null) {
+                lblConfirmacion.setText("¿Eliminar a " + nombre + "?");
+            } else {
+                lblConfirmacion.setText("Cliente no encontrado.");
             }
+        });
 
-        } catch (SQLException e) {
-            System.out.println("❌ Error al buscar nombre por ID: " + e.getMessage());
-        }
+        Button btnEliminar = new Button("Sí, eliminar");
+        btnEliminar.setOnAction(e -> {
+            ClienteDAO.eliminarPorId(Integer.parseInt(txtId.getText()));
+            ventana.close();
+        });
 
-        return null;
-    }
+        Button btnCancelar = new Button("Cancelar");
+        btnCancelar.setOnAction(e -> ventana.close());
 
-    //Ahora devuelve un arrayList para poder hacer la muestra de datos copada
-    public static ArrayList<Cliente> buscarClientePorDato(String campo, String valor) {
-        ArrayList<Cliente> listaTemp = new ArrayList<>();
-        String campoSQL = switch (campo) {
-            case "nombre", "apellido", "DNI" -> "p." + campo;
-            case "ID", "cantCompras"         -> "c." + campo;
-            case "tipo"                      -> "tc.descripcion";
-            case "telefono"                  -> "t.telefono";
-            default                          -> null;
-        };
+        HBox botones = new HBox(10, btnEliminar, btnCancelar);
+        botones.setAlignment(Pos.CENTER);
 
-        if (campoSQL == null) return listaTemp;
+        VBox layout = new VBox(10, new Label("ID Cliente:"), txtId, btnBuscar, lblConfirmacion, botones);
+        layout.setPadding(new Insets(20));
+        layout.setAlignment(Pos.CENTER);
 
-        String query =
-                "SELECT c.ID, p.DNI, p.nombre, p.apellido, tc.tipo, tc.descripcion, c.cantCompras, t.telefono " +
-                        "FROM Cliente c " +
-                        "INNER JOIN Persona p ON p.DNI = c.DNI " +
-                        "LEFT JOIN Telefonos t ON t.idPersona = p.DNI " +
-                        "INNER JOIN TiposClientes tc ON c.idTipo = tc.tipo " +
-                        "WHERE " + campoSQL + " LIKE ?";
-
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, "%" + valor + "%");
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                Cliente c = Mapper.getCliente(rs);
-                listaTemp.add(c);
-            }
-        } catch (SQLException e) {
-            System.out.println("❌ Error al buscar cliente: " + e.getMessage());
-        }
-        return listaTemp;
-    }
-
-
-
-    public static String insertar(Cliente cliente, Persona persona) {
-        String queryP = """
-        INSERT INTO Persona (dni, nombre, apellido ) VALUES (?, ?, ?)
-        """;
-        String queryC = """
-        INSERT INTO Cliente (dni, idTipo, cantCompras ) VALUES (?, ?, ?)
-        """;
-        StringBuilder resultado = new StringBuilder();
-
-        try (PreparedStatement stmtP = conn.prepareStatement(queryP);
-             PreparedStatement stmtC = conn.prepareStatement(queryC))
-
-        {
-            Mapper.setPersona(stmtP, persona);
-            Mapper.setCliente(stmtC, cliente);
-
-            stmtP.executeUpdate();
-            stmtC.executeUpdate();
-
-            resultado.append("✅ Cliente insertado correctamente.");
-
-        } catch (SQLException e) { resultado.append("❌ Error al insertar cliente: ").append(e.getMessage()); }
-
-        return resultado.toString();
-    }
-
-    public static Integer obtenerIdClientePorDni(int dni) {
-        String sql = "SELECT ID FROM Cliente WHERE DNI = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, dni);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) return rs.getInt("ID");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+        Scene escena = new Scene(layout, 300, 250);
+        ventana.setScene(escena);
+        ventana.initModality(Modality.APPLICATION_MODAL);
+        ventana.showAndWait();
     }
 
 

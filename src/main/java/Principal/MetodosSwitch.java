@@ -74,7 +74,7 @@ public class MetodosSwitch {
 
                 switch(opcion){
                     case 1: // Ver clientes
-                        daoCliente.imprimirClientes(listaClientes);
+                        //daoCliente.imprimirClientes(listaClientes);
                         break;
 
                     case 2: // Agregar nuevo cliente
@@ -83,15 +83,15 @@ public class MetodosSwitch {
                         break;
 
                     case 3: // Modificar datos de un cliente
-                        daoCliente.modificarClientePorId(scan, listaClientes);
+                        //daoCliente.modificarClientePorId(scan, listaClientes);
                         break;
 
                     case 4: // Eliminar cliente por ID
-                        daoCliente.eliminarPorId(scan);
+                        //daoCliente.eliminarPorId(scan);
                         break;
 
                     case 5: // Buscar cliente por nombre/email
-                        daoCliente.buscarClientePorDato(scan);
+                        //daoCliente.buscarClientePorDato(scan);
                         break;
                     case 6:
                         return;
@@ -194,7 +194,7 @@ public class MetodosSwitch {
 
                 switch(opcion){
                     case 1: // Reportes (totales, por fecha, por cliente)
-                        MetodosSwitch.mostrarReportes(scan);
+                        //MetodosSwitch.mostrarReportes(scan);
                         break;
                     case 2:
                         return;
