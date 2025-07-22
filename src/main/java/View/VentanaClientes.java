@@ -273,7 +273,7 @@ public class VentanaClientes {
         Button btnBuscar = new Button("Buscar");
         btnBuscar.setOnAction(e -> {
             int id = Integer.parseInt(txtId.getText());
-            String nombre = ClienteDAO.buscarNombrePorId(id);
+            String nombre = ClienteDAO.buscarNombreCliente(id);
             if (nombre != null) {
                 lblConfirmacion.setText("¿Eliminar a " + nombre + "?");
             } else {

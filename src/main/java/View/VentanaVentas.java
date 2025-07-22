@@ -423,7 +423,7 @@ public class VentanaVentas {
         ventana.showAndWait();
     }
 
-    public void ventasPorCliente() {
+    /*public void ventasPorCliente() {
         contenedor.getChildren().clear();
 
         Label titulo = new Label("🧾 Ventas por Cliente");
@@ -501,6 +501,5 @@ public class VentanaVentas {
         tarjeta.getStyleClass().add("card");
 
         contenedor.getChildren().setAll(tarjeta);
-    }
-
+    }*/
 }

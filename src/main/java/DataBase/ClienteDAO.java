@@ -9,9 +9,11 @@ import java.util.ArrayList;
 
 public class ClienteDAO {
     private static final Connection conn = DataBaseConnection.getConnection();
+
     public static void cargarClientesEnLista(ArrayList<Cliente> lista) {
         String sql = """
-        SELECT c.ID, p.DNI, p.nombre, p.apellido, tc.tipo, tc.descripcion, c.cantCompras, t.telefono
+        
+                SELECT c.ID, p.DNI, p.nombre, p.apellido, tc.tipo, tc.descripcion, c.cantCompras, t.telefono
         FROM Cliente c
          INNER JOIN Persona p ON c.DNI = p.DNI
          LEFT JOIN Telefonos t ON t.idPersona = p.DNI
@@ -59,9 +61,12 @@ public class ClienteDAO {
 
     public static String eliminarPorId(int id) {
         StringBuilder result = new StringBuilder();
-        String query = """
-        SELECT p.nombre FROM Cliente c
-        INNER JOIN Persona p ON p.DNI = c.DNI
+        String query =
+                """
+        SELECT p.nombre FROM
+                Cliente c
+        INNER JOIN Persona p
+                ON p.DNI = c.DNI
          WHERE c.id = ?
         """;
         String deleteSQL = "DELETE FROM Cliente WHERE id = ?";
@@ -90,49 +95,49 @@ public class ClienteDAO {
 
         return result.toString();
     }
-
-    public static Cliente obtenerClientePorId(int id) {
-        String query = """
-        SELECT p.nombre FROM Cliente c
-        INNER JOIN Persona p ON p.DNI = c.DNI
-         WHERE c.id = ?
-        """;
-        StringBuilder result = new StringBuilder();
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-
-            if ( rs.next() ) { return Mapper.getCliente(rs); }
-            else { result.append ("⚠️ No se encontró ningún cliente con ese ID."); }
-        } catch ( SQLException e ) { System.out.println("❌ Error al buscar cliente: " + e.getMessage()); }
-
-        return null;
-    }
-
-    public static String buscarNombrePorId(int id) {
-        String query = """
+    public static String buscarNombreCliente(int id) { return buscarNombrePorId(id, -1); }
+    public static String buscarNombrePorId(int id, int dni) {
+        String queryID = """
         SELECT p.nombre, p.apellido
         FROM Cliente c
         JOIN Persona p ON c.DNI = p.DNI
         WHERE c.ID = ?
     """;
 
-        try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+        String queryDNI = "SELECT ID FROM Cliente WHERE DNI = ?";
 
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement stmtID = conn.prepareStatement(queryID)) {
+
+            stmtID.setInt(1, id);
+            ResultSet rs = stmtID.executeQuery();
 
             if (rs.next()) {
                 return rs.getString("nombre") + " " + rs.getString("apellido");
+            } else if (dni != -1) {
+                try (PreparedStatement stmtDNI = conn.prepareStatement(queryDNI)) {
+                    stmtDNI.setInt(1, dni);
+                    ResultSet rsDNI = stmtDNI.executeQuery();
+
+                    if (rsDNI.next()) {
+                        int nuevoId = rsDNI.getInt("ID");
+                        try (PreparedStatement retryStmt = conn.prepareStatement(queryID)) {
+                            retryStmt.setInt(1, nuevoId);
+                            ResultSet retryRs = retryStmt.executeQuery();
+                            if (retryRs.next()) {
+                                return retryRs.getString("nombre") + " " + retryRs.getString("apellido");
+                            }
+                        }
+                    }
+                }
             }
 
         } catch (SQLException e) {
-            System.out.println("❌ Error al buscar nombre por ID: " + e.getMessage());
+            System.out.println("❌ Error al buscar nombre: " + e.getMessage());
+            return "Error";
         }
 
-        return null;
+        return "No encontrado";
     }
 
     //Ahora devuelve un arrayList para poder hacer la muestra de datos copada
@@ -169,48 +174,5 @@ public class ClienteDAO {
         }
         return listaTemp;
     }
-
-
-
-    public static String insertar(Cliente cliente, Persona persona) {
-        String queryP = """
-        INSERT INTO Persona (dni, nombre, apellido ) VALUES (?, ?, ?)
-        """;
-        String queryC = """
-        INSERT INTO Cliente (dni, idTipo, cantCompras ) VALUES (?, ?, ?)
-        """;
-        StringBuilder resultado = new StringBuilder();
-
-        try (PreparedStatement stmtP = conn.prepareStatement(queryP);
-             PreparedStatement stmtC = conn.prepareStatement(queryC))
-
-        {
-            Mapper.setPersona(stmtP, persona);
-            Mapper.setCliente(stmtC, cliente);
-
-            stmtP.executeUpdate();
-            stmtC.executeUpdate();
-
-            resultado.append("✅ Cliente insertado correctamente.");
-
-        } catch (SQLException e) { resultado.append("❌ Error al insertar cliente: ").append(e.getMessage()); }
-
-        return resultado.toString();
-    }
-
-    public static Integer obtenerIdClientePorDni(int dni) {
-        String sql = "SELECT ID FROM Cliente WHERE DNI = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, dni);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) return rs.getInt("ID");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-
-
 }
 
