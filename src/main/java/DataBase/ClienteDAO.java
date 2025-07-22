@@ -174,5 +174,27 @@ public class ClienteDAO {
         }
         return listaTemp;
     }
+    public static Cliente obtenerClientePorId(int id) {
+        String sql = """
+        SELECT c.ID, p.DNI, p.nombre, p.apellido, c.idTipo, c.cantCompras, t.telefono, tc.descripcion
+        FROM Cliente c
+        JOIN Persona p ON c.DNI = p.DNI
+        LEFT JOIN Telefonos t ON p.DNI = t.idPersona
+        JOIN TiposClientes tc ON c.idTipo = tc.tipo
+        WHERE c.ID = ?
+        """;
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return Mapper.getCliente(rs);
+            }
+        } catch (SQLException e) {
+            System.out.println("❌ Error al obtener cliente por ID: " + e.getMessage());
+        }
+        return null;
+    }
 }
 

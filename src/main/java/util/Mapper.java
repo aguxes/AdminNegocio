@@ -28,8 +28,14 @@ public class Mapper {
         stmt.setString(2, p.getNombre());
         stmt.setString(3, p.getApellido());
     }
+    public static void modPersona(PreparedStatement stmt, Persona p) throws SQLException {
+        stmt.setString(1, p.getNombre());
+        stmt.setString(2, p.getApellido());
+        stmt.setInt(3, p.getDNI());
+    }
 
-    // Mapeo de Cliente
+
+            // Mapeo de Cliente
     // ========================================
     public static Cliente getCliente(ResultSet rs) throws SQLException {
 
@@ -50,6 +56,11 @@ public class Mapper {
         stmt.setInt(2, c.getTipo().getTipo());
         stmt.setInt(3, c.getCantCompras());
     }
+    public static void modCliente(PreparedStatement stmt, Cliente c) throws SQLException {
+        stmt.setInt(1, c.getTipo().getTipo());
+        stmt.setInt(2, c.getCantCompras());
+        stmt.setInt(3, c.getDNI());
+    }
 
     // Mapeo de Venta
     // ========================================
@@ -64,10 +75,10 @@ public class Mapper {
             fecha = LocalDateTime.parse(fechaStr, FORMATTER);
         } catch (DateTimeParseException e) {
             System.err.println("⚠️ Fecha inválida en base de datos: " + fechaStr);
-            fecha = LocalDateTime.of(2000, 1, 1, 0, 0); // Usamos fecha dummy
+            fecha = LocalDateTime.of(2000, 1, 1, 0, 0);
         }
         return new Venta(
-                rs.getInt("nFactura"),                   // 👈 Ahora lo pasás también
+                rs.getInt("nFactura"),
                 rs.getInt("idE"),
                 rs.getInt("idC"),
                 fecha,
@@ -142,15 +153,14 @@ public class Mapper {
         );
     }
     public static void setProducto(PreparedStatement stmt, Producto p) throws SQLException {
-        stmt.setInt(1, p.getProductoID());
-        stmt.setString(2, p.getNombreProducto());
-        stmt.setBigDecimal(3, p.getPrecioUnitario());
-        stmt.setDouble(4, p.getCosto());
-        stmt.setInt(5, p.getStock());
-        stmt.setInt(6, p.getIdMedida());
-        stmt.setInt(7, p.getIdCategoria());
-        stmt.setString(8, p.getFechaAlta().toString());
-        stmt.setString(8, p.getFechaBaja().toString());
+        stmt.setString(1, p.getNombreProducto());
+        stmt.setBigDecimal(2, p.getPrecioUnitario());
+        stmt.setDouble(3, p.getCosto());
+        stmt.setInt(4, p.getStock());
+        stmt.setInt(5, p.getIdMedida());
+        stmt.setInt(6, p.getIdCategoria());
+        stmt.setString(7, p.getFechaAlta().toString());
+        // stmt.setString(8, p.getFechaBaja().toString()); // ⚠️ Esto se comenta por ahora
     }
     // Entidades secundarias
     //Mapeo Telefono
@@ -164,5 +174,9 @@ public class Mapper {
     public static void setTelefono(PreparedStatement stmt, Cliente c) throws SQLException {
         stmt.setInt(1, c.getDNI());
         stmt.setLong(2, c.getTelefono().getTelefono());
+    }
+    public static void modTelefono(PreparedStatement stmt, Cliente c) throws SQLException {
+        stmt.setLong(1, c.getTelefono().getTelefono());
+        stmt.setInt(2, c.getDNI());
     }
 }

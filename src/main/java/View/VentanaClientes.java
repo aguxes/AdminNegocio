@@ -105,6 +105,15 @@ public class VentanaClientes {
             ArrayList<Cliente> resultado = ClienteDAO.buscarClientePorDato(campo, valor);
 
             if (resultado.isEmpty()) {
+
+                tabla.getItems().clear();
+                mostrarAlerta("❌ No se encontró ningún cliente con ese dato.");
+            } else {
+                tabla.getItems().setAll(resultado);
+            }
+
+/*
+            if (resultado.isEmpty()) {
                 VBox card = new VBox();
                 card.getStyleClass().add("card-error");
 
@@ -122,7 +131,7 @@ public class VentanaClientes {
                 contenedor.getChildren().setAll(card);
             } else {
                 tabla.getItems().setAll(resultado);
-            }
+            }*/
         });
 
         btnBuscar.setPrefWidth(240); // mismo ancho que txtValor
@@ -199,15 +208,9 @@ public class VentanaClientes {
                 c.setCantCompras(cantCompras);
                 c.setTelefono(tel);
 
-                String queryP = """
-                INSERT INTO Persona (dni, nombre, apellido ) VALUES (?, ?, ?)
-                """;
-                String queryC = """
-                INSERT INTO Cliente (dni, idTipo, cantCompras ) VALUES (?, ?, ?)
-                """;
-                String queryT = """
-                INSERT INTO Telefonos (idPersona, telefono) VALUES (?, ?)
-                """;
+                String queryP = "INSERT INTO Persona (dni, nombre, apellido ) VALUES (?, ?, ?) ";
+                String queryC = "INSERT INTO Cliente (dni, idTipo, cantCompras ) VALUES (?, ?, ?)";
+                String queryT = "INSERT INTO Telefonos (idPersona, telefono) VALUES (?, ?)";
 
                 PreparedStatement stmtP = conn.prepareStatement(queryP);
                 PreparedStatement stmtC = conn.prepareStatement(queryC);
@@ -244,8 +247,7 @@ public class VentanaClientes {
         Button btnCancelar = new Button("❌ Cancelar nuevo Cliente");
         btnCancelar.getStyleClass().add("boton-cancelar");
         btnCancelar.setOnAction(e -> {
-            contenedor.getChildren().clear();
-            contenedor.getChildren().add(outputArea);
+            verClientes();
         });
 
         HBox filaCancelar = new HBox(btnCancelar);
@@ -258,7 +260,161 @@ public class VentanaClientes {
     }
 
     public void modificarCliente() {
-        outputArea.setText("✏️ Función modificar cliente (en construcción)");
+        contenedor.getChildren().clear();
+
+        VBox form = new VBox(10);
+        form.setPadding(new Insets(20));
+        form.getStyleClass().add("form-box");
+
+        Label titulo = new Label("📋 Modificar Cliente");
+        titulo.getStyleClass().add("titulo-principal");
+
+        Label lblCampo = new Label("Buscar Cliente");
+        lblCampo.getStyleClass().add("label-form");
+
+        ChoiceBox<String> choiceCampo = new ChoiceBox<>();
+        choiceCampo.getItems().addAll("ID");
+        choiceCampo.setValue("ID");
+        choiceCampo.getStyleClass().add("input-form");
+
+        TextField txtValor = new TextField();
+        txtValor.setPromptText("Ej: 1");
+        txtValor.getStyleClass().add("input-form");
+        txtValor.setMaxWidth(220);
+
+        Button btnBuscar = new Button("Buscar");
+        btnBuscar.getStyleClass().add("btn-verde");
+
+        HBox barraBusqueda = new HBox(10, lblCampo, choiceCampo, txtValor, btnBuscar);
+        barraBusqueda.setAlignment(Pos.CENTER_LEFT);
+        barraBusqueda.setPadding(new Insets(10));
+
+        TextField txtmDNI = new TextField();
+        txtmDNI.setPromptText("DNI");
+        //txtmDNI.setText(String.valueOf(cliente.getDNI()));
+        txtmDNI.getStyleClass().add("text-field");
+
+        txtmDNI.setEditable(false); // setea para que el txt no se pueda modificar
+
+        TextField txtmNombre = new TextField();
+        txtmNombre.setPromptText("Nombre");
+        txtmNombre.getStyleClass().add("text-field");
+
+        TextField txtmApellido = new TextField();
+        txtmApellido.setPromptText("Apellido");
+        txtmApellido.getStyleClass().add("text-field");
+
+        TextField txtmTipo = new TextField();
+        txtmTipo.setPromptText("Tipo de Cliente");
+        txtmTipo.getStyleClass().add("text-field");
+
+        TextField txtmCantCompras = new TextField();
+        txtmCantCompras.setPromptText("Cantidad de Compras");
+        txtmCantCompras.getStyleClass().add("text-field");
+
+        TextField txtmTelefono = new TextField();
+        txtmTelefono.setPromptText("Teléfono");
+        txtmTelefono.getStyleClass().add("text-field");
+        //Tamanios limite
+        txtmDNI.setMaxWidth(350);
+        txtmNombre.setMaxWidth(350);
+        txtmApellido.setMaxWidth(350);
+        txtmTipo.setMaxWidth(350);
+        txtmCantCompras.setMaxWidth(350);
+        txtmTelefono.setMaxWidth(350);
+
+        btnBuscar.setOnAction(ev -> {
+            try {
+                int id = Integer.parseInt(txtValor.getText().trim());
+                Cliente c = ClienteDAO.obtenerClientePorId(id);
+
+                if (c != null) {
+                    txtmDNI.setText(String.valueOf(c.getDNI()));
+                    txtmNombre.setText(c.getNombre());
+                    txtmApellido.setText(c.getApellido());
+                    txtmTipo.setText(String.valueOf(c.getTipo().getTipo()));
+                    txtmCantCompras.setText(String.valueOf(c.getCantCompras()));
+                    txtmTelefono.setText(String.valueOf(c.getTelefono().getTelefono()));
+                } else {
+                    mostrarAlerta("❌ No se encontró el cliente con ID: " + id);
+                }
+            } catch (NumberFormatException ex) {
+                mostrarAlerta("❌ Ingresá un número válido para el ID.");
+            }
+        });
+
+        Button btnModificarc = new Button("✅ Modificar Cliente");
+        btnModificarc.getStyleClass().add("boton-accion");
+        btnModificarc.setOnAction(e -> {
+            try {
+                int DNI = Integer.parseInt(txtmDNI.getText().trim());
+                String Nombre = txtmNombre.getText().trim();
+                String Apellido = txtmApellido.getText().trim();
+                int tipoId = Integer.parseInt(txtmTipo.getText().trim());
+                int cantCompras = Integer.parseInt(txtmCantCompras.getText().trim());
+                Long telefono = Long.parseLong(txtmTelefono.getText().trim());
+
+                TiposClientes tipo = new TiposClientes(tipoId, "");
+                Telefono tel = new Telefono(DNI, telefono);
+
+                Cliente c = new Cliente();
+                c.setDNI(DNI);
+                c.setNombre(Nombre);
+                c.setApellido(Apellido);
+                c.setTipCliente(tipo);
+                c.setCantCompras(cantCompras);
+                c.setTelefono(tel);
+
+                String queryP = "UPDATE Persona SET nombre = ?, apellido = ? WHERE DNI = ?;";
+                String queryC = "UPDATE Cliente SET idTipo = ?, cantCompras = ? WHERE DNI = ?";
+                String queryT = "UPDATE Telefonos SET idPersona = ?, telefono = ? WHERE idPersona = ?";
+
+                PreparedStatement stmtP = conn.prepareStatement(queryP);
+                PreparedStatement stmtC = conn.prepareStatement(queryC);
+                PreparedStatement stmtT = conn.prepareStatement(queryT);
+
+                Mapper.modPersona(stmtP, c);
+                Mapper.modCliente(stmtC, c);
+                Mapper.modTelefono(stmtT, c);
+
+                stmtP.executeUpdate();
+                stmtC.executeUpdate();
+                stmtT.executeUpdate();
+
+                mostrarAlerta("✅ Cliente modificado correctamente.");
+                verClientes();
+
+            } catch (Exception ex) {
+                mostrarAlerta("❌ Error: " + ex.getMessage());
+            }
+        });
+
+        form.getChildren().addAll(
+                titulo,
+                barraBusqueda,
+                txtmDNI,
+                txtmNombre,
+                txtmApellido,
+                txtmTipo,
+                txtmCantCompras,
+                txtmTelefono,
+                btnModificarc
+        );
+
+        Button btnCancelar = new Button("❌ Cancelar modificar Cliente");
+        btnCancelar.getStyleClass().add("boton-cancelar");
+        btnCancelar.setOnAction(e -> {
+            contenedor.getChildren().clear();
+            contenedor.getChildren().add(outputArea);
+        });
+
+        HBox filaCancelar = new HBox(btnCancelar);
+        filaCancelar.setAlignment(Pos.BOTTOM_RIGHT);
+
+        form.setAlignment(Pos.TOP_CENTER);
+        form.getChildren().add(filaCancelar);
+        contenedor.setAlignment(Pos.TOP_CENTER);
+        contenedor.getChildren().add(form);
     }
 
     public void EliminarCliente() {
