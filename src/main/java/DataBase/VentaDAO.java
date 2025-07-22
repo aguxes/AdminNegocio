@@ -13,7 +13,7 @@ public class VentaDAO {
         ArrayList<Venta> lista = new ArrayList<>();
 
         String sql = """
-        SELECT v.nFactura, v.idC, v.idE, v.fecha, v.total, fp.descripcion AS medioPago, v.cantidad, v.subtotal,
+        SELECT v.nFactura, v.idC, v.idE, v.fecha, v.total, fp.descripcion AS mediopago, v.cantidad, v.subtotal,
            pc.nombre || ' ' || pc.apellido AS cliente_nombre,
            pe.nombre || ' ' || pe.apellido AS empleado_nombre,
            pr.nombre AS producto_nombre
@@ -74,8 +74,8 @@ public class VentaDAO {
 
         //esta consulta me la paso chat, debe poder mejorarse pero no se bien como
         String sql = """
-        SELECT v.nFactura, v.idC, v.idE, v.fecha, v.total, v.subtotal,
-               fp.descripcion AS medio_pago,
+        SELECT v.nFactura, v.idC, v.idE, v.fecha, v.total, v.subtotal, v.cantidad,
+               fp.descripcion AS mediopago,
                pc.nombre || ' ' || pc.apellido AS cliente_nombre,
                pe.nombre || ' ' || pe.apellido AS empleado_nombre,
                pr.nombre AS producto_nombre
@@ -87,6 +87,7 @@ public class VentaDAO {
         JOIN FormaDePagos fp ON v.formaDePago = fp.idPago
         JOIN Producto pr ON v.idProd = pr.idProducto
         WHERE v.idC = ?;
+        
     """;
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {

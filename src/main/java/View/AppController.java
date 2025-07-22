@@ -52,7 +52,6 @@ public class AppController {
         menuLateral.getChildren().addAll(
                 crearBoton("Ver Ventas", e -> ventanaVentas.verVentas()),
                 crearBoton("Nueva Venta", e -> ventanaVentas.registrarVenta()),
-                crearBoton("Ventas por Cliente", e -> ventanaVentas.ventasPorCliente()),
                 crearBoton("⬅ Volver", e -> cargarMenuPrincipal())
         );
     }

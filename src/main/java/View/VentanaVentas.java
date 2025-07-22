@@ -39,17 +39,42 @@ public class VentanaVentas {
     public void verVentas() {
         contenedor.getChildren().clear();
 
+        VBox tarjeta = new VBox(15);
+        tarjeta.setPadding(new Insets(20));
+        tarjeta.setAlignment(Pos.TOP_CENTER);
+        tarjeta.setMaxWidth(Double.MAX_VALUE);
+        tarjeta.getStyleClass().add("card");
+
         // Título
         Label titulo = new Label("📊 Lista de Ventas");
-        titulo.getStyleClass().add("titulo-principal");
+        titulo.getStyleClass().add("titulo-seccion");
+
+        // Barra de búsqueda por cliente
+        HBox barraSuperior = new HBox(10);
+        barraSuperior.setAlignment(Pos.CENTER_LEFT);
+
+        Label lblBuscar = new Label("🔍 Ver por Cliente:");
+        TextField campoCliente = new TextField();
+        campoCliente.setPromptText("ID Cliente");
+        campoCliente.setPrefWidth(120);
+
+        Button btnAbrirLista = new Button("Seleccionar Cliente");
+        btnAbrirLista.getStyleClass().add("btn-azul");
+
+        // Acción para abrir la ventana de selección
+        btnAbrirLista.setOnAction(e -> mostrarVentanaSeleccionCliente(campoCliente));
+
+        Button btnFiltrar = new Button("Buscar");
+        btnFiltrar.getStyleClass().add("btn-verde");
+
+        barraSuperior.getChildren().addAll(lblBuscar, campoCliente, btnAbrirLista, btnFiltrar);
 
         // Tabla de ventas
         TableView<Venta> tabla = new TableView<>();
         tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        tabla.setPlaceholder(new Label("No hay ventas registradas."));
+        tabla.setPlaceholder(new Label("No hay ventas cargadas."));
         tabla.getStyleClass().add("tabla-clientes");
 
-        // Columnas
         TableColumn<Venta, Integer> colFactura = new TableColumn<>("Factura");
         colFactura.setCellValueFactory(new PropertyValueFactory<>("idVenta"));
 
@@ -77,21 +102,44 @@ public class VentanaVentas {
         TableColumn<Venta, Double> colTotal = new TableColumn<>("Total");
         colTotal.setCellValueFactory(new PropertyValueFactory<>("importeTotal"));
 
-        tabla.getColumns().addAll(colFactura, colCliente, colEmpleado, colProducto, colCantidad, colFecha, colPago, colSubtotal, colTotal);
+        tabla.getColumns().addAll(
+                colFactura, colCliente, colEmpleado, colProducto,
+                colCantidad, colFecha, colPago, colSubtotal, colTotal
+        );
 
-        // Cargar datos
-        tabla.getItems().addAll(VentaDAO.cargarVentasEnLista());
+        // Acción del botón de búsqueda
+        btnFiltrar.setOnAction(e -> {
+            String textoID = campoCliente.getText().trim();
+            if (textoID.isEmpty()) {
+                tabla.getItems().setAll(VentaDAO.cargarVentasEnLista());
+            } else {
+                try {
+                    int idCliente = Integer.parseInt(textoID);
+                    ArrayList<Venta> filtradas = VentaDAO.obtenerVentasPorCliente(idCliente);
+                    tabla.getItems().setAll(filtradas);
+                } catch (NumberFormatException ex) {
+                    mostrarAlerta("ID inválido.");
+                }
+            }
+        });
 
-        // Caja tipo tarjeta
-        VBox tarjeta = new VBox(10, titulo, tabla);
-        tarjeta.getStyleClass().add("card");
-        tarjeta.setPadding(new Insets(20));
-        tarjeta.setMaxWidth(Double.MAX_VALUE);
-        VBox.setVgrow(tarjeta, Priority.ALWAYS);
 
-        // Mostrar en pantalla
-        contenedor.getChildren().add(tarjeta);
+
+        // Cargar todas las ventas por defecto
+        ArrayList<Venta> lista = VentaDAO.cargarVentasEnLista();
+        tabla.getItems().addAll(lista);
+
+        VBox.setVgrow(tarjeta, Priority.ALWAYS); // Esto permite que se expanda verticalmente si hay espacio
+        VBox.setVgrow(tabla, Priority.ALWAYS);
+        tabla.setMaxHeight(Double.MAX_VALUE); // para que no se achique
+
+
+        // Armado final
+        tarjeta.getChildren().addAll(titulo, barraSuperior, tabla);
+        contenedor.getChildren().setAll(tarjeta);
     }
+
+
 
 
     public void registrarVenta() {
@@ -376,26 +424,54 @@ public class VentanaVentas {
     }
 
     public void ventasPorCliente() {
-        Stage ventana = new Stage();
-        ventana.setTitle("Ventas por Cliente");
-        ventana.initModality(Modality.APPLICATION_MODAL);
+        contenedor.getChildren().clear();
 
-        VBox layout = new VBox(10);
-        layout.setPadding(new Insets(15));
+        Label titulo = new Label("🧾 Ventas por Cliente");
+        titulo.getStyleClass().add("titulo-seccion");
 
-        // Mostrar lista de clientes
-        ArrayList<Cliente> clientes = new ArrayList<>();
-        ClienteDAO.cargarClientesEnLista(clientes);
-        TextArea areaTexto = new TextArea(ClienteDAO.obtenerClientes(clientes));
-        areaTexto.setEditable(false);
-        areaTexto.setWrapText(true);
-        areaTexto.setPrefHeight(300);
-
-        // Campo para ingresar DNI
+        // Campo para DNI
         TextField dniInput = new TextField();
         dniInput.setPromptText("Ingrese DNI del cliente");
+        dniInput.getStyleClass().add("input-form");
+        dniInput.setMaxWidth(200);
 
-        Button buscarBtn = new Button("🔍 Buscar Ventas");
+        Button buscarBtn = new Button("Buscar");
+        buscarBtn.getStyleClass().add("btn-verde");
+        buscarBtn.setPrefWidth(100);
+
+        HBox buscador = new HBox(10, dniInput, buscarBtn);
+        buscador.setAlignment(Pos.CENTER_LEFT);
+
+        // Tabla de resultados
+        TableView<Venta> tabla = new TableView<>();
+        tabla.setPlaceholder(new Label("Ingrese un DNI para buscar."));
+        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tabla.getStyleClass().add("tabla-clientes");
+
+        TableColumn<Venta, Integer> colFactura = new TableColumn<>("Factura");
+        colFactura.setCellValueFactory(new PropertyValueFactory<>("idVenta"));
+
+        TableColumn<Venta, String> colProducto = new TableColumn<>("Producto");
+        colProducto.setCellValueFactory(new PropertyValueFactory<>("notas"));
+
+        TableColumn<Venta, String> colEmpleado = new TableColumn<>("Empleado");
+        colEmpleado.setCellValueFactory(new PropertyValueFactory<>("nombreEmpleado"));
+
+        TableColumn<Venta, Integer> colCantidad = new TableColumn<>("Cantidad");
+        colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
+
+        TableColumn<Venta, String> colFecha = new TableColumn<>("Fecha");
+        colFecha.setCellValueFactory(new PropertyValueFactory<>("fechaFormateada"));
+
+        TableColumn<Venta, String> colPago = new TableColumn<>("Pago");
+        colPago.setCellValueFactory(new PropertyValueFactory<>("medioPago"));
+
+        TableColumn<Venta, Double> colTotal = new TableColumn<>("Total");
+        colTotal.setCellValueFactory(new PropertyValueFactory<>("importeTotal"));
+
+        tabla.getColumns().addAll(colFactura, colProducto, colEmpleado, colCantidad, colFecha, colPago, colTotal);
+
+        // Acción de búsqueda
         buscarBtn.setOnAction(e -> {
             try {
                 int dni = Integer.parseInt(dniInput.getText().trim());
@@ -403,19 +479,28 @@ public class VentanaVentas {
 
                 if (id != null) {
                     ArrayList<Venta> ventas = VentaDAO.obtenerVentasPorCliente(id);
-                    outputArea.setText(VentaDAO.obtenerVentas(ventas));
-                    ventana.close();
+                    if (ventas.isEmpty()) {
+                        tabla.setPlaceholder(new Label("❌ El cliente no tiene ventas registradas."));
+                        tabla.getItems().clear();
+                    } else {
+                        tabla.getItems().setAll(ventas);
+                    }
                 } else {
                     mostrarAlerta("❌ No se encontró ningún cliente con ese DNI.");
+                    tabla.getItems().clear();
                 }
             } catch (NumberFormatException ex) {
                 mostrarAlerta("❌ DNI inválido.");
             }
         });
 
-        layout.getChildren().addAll(areaTexto, dniInput, buscarBtn);
-        Scene escena = new Scene(layout, 600, 450);
-        ventana.setScene(escena);
-        ventana.showAndWait();
+        VBox tarjeta = new VBox(10, titulo, buscador, tabla);
+        tarjeta.setPadding(new Insets(20));
+        tarjeta.setAlignment(Pos.TOP_LEFT);
+        tarjeta.setMaxWidth(Double.MAX_VALUE);
+        tarjeta.getStyleClass().add("card");
+
+        contenedor.getChildren().setAll(tarjeta);
     }
+
 }
