@@ -1,55 +1,57 @@
+/* -----------------------------------
+   🟦 MENÚ LATERAL Y NAVEGACIÓN
+----------------------------------- */
 .menu-lateral {
     -fx-background-color: #2c3e50;
+}
+
+#menuLateral {
+    -fx-background-color: #2c3e50;
+    -fx-padding: 10;
+    -fx-spacing: 10;
+    -fx-orientation: horizontal;
+    -fx-alignment: TOP_LEFT;
 }
 
 .boton-menu {
     -fx-background-color: #3498db;
     -fx-text-fill: white;
-    -fx-font-size: 14px;
-    -fx-pref-width: 160px;
+    -fx-font-size: 13px;
+    -fx-padding: 4 15;
     -fx-background-radius: 6;
+    -fx-pref-height: 30px;
+    -fx-cursor: hand;
 }
 
 .boton-menu:hover {
     -fx-background-color: #2980b9;
 }
 
+/* -----------------------------------
+   🧾 CONTENEDOR PRINCIPAL GENERAL
+----------------------------------- */
 .contenido-principal {
     -fx-background-color: #ecf0f1;
 }
 
-
-
-/* Estilo general para formularios */
-VBox{
+VBox, HBox {
     -fx-spacing: 10px;
-    -fx-alignment: top-left;
-}
-HBox {
-     -fx-spacing: 23px;
-     -fx-alignment: center;
-
- }
-
-
-
-/* Inputs y botones con look moderno */
-.text-field, .choice-box {
-    -fx-pref-height: 30px;
-    -fx-font-size: 13px;
+    -fx-alignment: center;
 }
 
-.button {
-    -fx-font-size: 13px;
-    -fx-padding: 6 15;
+.card {
+    -fx-background-color: #ffffff;
+    -fx-padding: 20 25 25 25;
+    -fx-spacing: 15;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0.2, 0, 4);
+    -fx-alignment: top-left; /* 🔼 clave */
 }
 
-/* Etiquetas */
-.label {
-    -fx-font-size: 13px;
-    -fx-text-fill: #2c3e50;
-}
 
+/* -----------------------------------
+   📋 FORMULARIOS GENERALES
+----------------------------------- */
 .form-box {
     -fx-padding: 20px;
     -fx-background-color: white;
@@ -62,57 +64,51 @@ HBox {
     -fx-translate-y: 10px;
 }
 
-/* 🔲 Títulos */
-.titulo-principal {
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #2c3e50;
-}
-
-/* 🧾 Campos de texto */
-.text-field {
+.text-field, .choice-box, .input-cantidad {
+    -fx-pref-height: 30px;
+    -fx-font-size: 13px;
     -fx-background-radius: 6;
     -fx-border-color: #bdc3c7;
     -fx-border-radius: 6;
     -fx-background-color: #ffffff;
     -fx-padding: 4 10;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.02), 3, 0.3, 0, 1);
-
 }
 
-/* ⬇️ ChoiceBox estilo combo moderno */
-.choice-box {
+.input-form {
+    -fx-pref-width: 200px; /* o lo que uses en ventas */
+    -fx-padding: 6 10;
     -fx-background-radius: 6;
-    -fx-border-color: #bdc3c7;
+    -fx-border-color: #ccc;
     -fx-border-radius: 6;
-    -fx-background-color: #ffffff;
-}
-
-/* 🖱️ Botones secundarios como 'Agregar' */
-.boton-secundario {
-    -fx-background-color: linear-gradient(to bottom, #e0e0e0, #d5d5d5);
-    -fx-border-color: #b0b0b0;
-    -fx-border-radius: 5;
-    -fx-background-radius: 5;
     -fx-font-size: 13px;
-    -fx-text-fill: #2c3e50;
-    -fx-cursor: hand;
 }
 
-.boton-secundario:hover {
-    -fx-background-color: linear-gradient(to bottom, #d5d5d5, #cfcfcf);
+.text-field {
+    -fx-pref-width: 200px;
 }
 
-/* 💾 Botón principal de acción */
-.boton-accion {
-    -fx-background-color: #27ae60;
-    -fx-text-fill: white;
+/* -----------------------------------
+   🏷️ ETIQUETAS Y TÍTULOS
+----------------------------------- */
+.label, .label-form {
+    -fx-font-size: 14px;
     -fx-font-weight: bold;
-    -fx-background-radius: 6;
+    -fx-text-fill: #2c3e50;
 }
 
-.boton-accion:hover {
-    -fx-background-color: #229954;
+.titulo-principal {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+    -fx-padding: 10 0;
+}
+
+/* -----------------------------------
+   ✅ BOTONES GENERALES
+----------------------------------- */
+.button {
+    -fx-font-size: 13px;
+    -fx-padding: 6 15;
 }
 
 .boton-accion {
@@ -122,7 +118,6 @@ HBox {
     -fx-padding: 8px 16px;
     -fx-background-radius: 10;
 }
-
 .boton-accion:hover {
     -fx-background-color: #218838;
 }
@@ -132,30 +127,10 @@ HBox {
     -fx-text-fill: white;
     -fx-padding: 6px 12px;
     -fx-background-radius: 10;
+    -fx-pref-width: 140px;
 }
-
 .boton-secundario:hover {
-    -fx-background-color: #3498db;
-}
-
-.text-field {
-    -fx-padding: 6px;
-    -fx-font-size: 14px;
-    -fx-border-radius: 5;
-    -fx-background-radius: 5;
-    -fx-width: 200px;
-}
-
-.choice-box {
-    -fx-font-size: 14px;
-    -fx-background-radius: 5;
-}
-
-.titulo-principal {
-    -fx-font-size: 22px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #333;
-    -fx-padding: 10px 0;
+    -fx-background-color: #2980b9;
 }
 
 .boton-cancelar {
@@ -169,6 +144,20 @@ HBox {
     -fx-background-color: #c0392b;
 }
 
+.btn-verde {
+    -fx-background-color: #28a745;
+    -fx-text-fill: white;
+    -fx-padding: 6 12;
+    -fx-background-radius: 6;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-pref-width: 100px;  /* ← ancho fijo para el botón */
+}
+
+
+/* -----------------------------------
+   📄 ÁREA DE SALIDA (OutputArea)
+----------------------------------- */
 .area-salida {
     -fx-font-family: "Courier New";
     -fx-font-size: 14px;
@@ -176,77 +165,13 @@ HBox {
     -fx-background-color: #ffffff;
 }
 
+/* -----------------------------------
+   🧑 CLIENTES - TABLA
+----------------------------------- */
 .table-view {
-    -fx-font-size: 14px;
+    -fx-font-size: 12px;
     -fx-font-family: "Segoe UI";
 }
-
-/* Card general de mensaje */
-.card-error {
-    -fx-background-color: #f8d7da;
-    -fx-border-color: #f5c6cb;
-    -fx-border-width: 2px;
-    -fx-background-radius: 10;
-    -fx-border-radius: 10;
-    -fx-padding: 20;
-    -fx-spacing: 10;
-    -fx-alignment: center;
-}
-
-/* Título del mensaje de error */
-.card-error-titulo {
-    -fx-font-size: 18px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #721c24;
-}
-
-/* Mensaje */
-.card-error-mensaje {
-    -fx-font-size: 14px;
-    -fx-text-fill: #721c24;
-}
-
-/* Botón de volver */
-.btn-error-volver {
-    -fx-background-color: #f5c6cb;
-    -fx-text-fill: #721c24;
-}
-
-.card {
-    -fx-background-color: #ffffff;
-    -fx-padding: 25;
-    -fx-spacing: 15;
-    -fx-background-radius: 10;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0.2, 0, 4);
-}
-
-.label-form {
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #333;
-}
-
-.input-form {
-    -fx-pref-width: 300px;
-    -fx-padding: 8;
-    -fx-background-radius: 6;
-    -fx-border-color: #ccc;
-    -fx-border-radius: 6;
-}
-
-.btn-verde {
-    -fx-background-color: #28a745;
-    -fx-text-fill: white;
-    -fx-padding: 8 16;
-    -fx-background-radius: 6;
-    -fx-font-weight: bold;
-    -fx-cursor: hand;
-}
-
-.btn-verde:hover {
-    -fx-background-color: #218838;
-}
-
 .tabla-clientes {
     -fx-background-radius: 8;
     -fx-border-color: #e0e0e0;
@@ -254,27 +179,29 @@ HBox {
     -fx-padding: 10;
 }
 
-/* Por si querés estilizar el mensaje de error también */
+/* -----------------------------------
+   ❌ MENSAJES DE ERROR (Tarjetas)
+----------------------------------- */
 .card-error {
     -fx-background-color: #fff0f0;
+    -fx-border-color: #f5c6cb;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10;
     -fx-padding: 30;
     -fx-spacing: 20;
     -fx-alignment: center;
     -fx-background-radius: 10;
     -fx-effect: dropshadow(gaussian, rgba(255,0,0,0.1), 10, 0.2, 0, 4);
 }
-
 .card-error-titulo {
     -fx-font-size: 18px;
     -fx-font-weight: bold;
     -fx-text-fill: #c0392b;
 }
-
 .card-error-mensaje {
     -fx-font-size: 14px;
     -fx-text-fill: #a93226;
 }
-
 .btn-error-volver {
     -fx-background-color: #e74c3c;
     -fx-text-fill: white;
@@ -282,38 +209,16 @@ HBox {
     -fx-background-radius: 6;
     -fx-cursor: hand;
 }
-
 .btn-error-volver:hover {
     -fx-background-color: #c0392b;
 }
 
+/* -----------------------------------
+   💲 VENTAS - TOTAL
+----------------------------------- */
 .etiqueta-total {
     -fx-font-size: 16px;
     -fx-font-weight: bold;
     -fx-text-fill: #2e7d32; /* verde suave */
     -fx-padding: 10 0 10 0;
 }
-
-.input-cantidad {
-    -fx-pref-height: 30px;
-    -fx-font-size: 13px;
-    -fx-background-radius: 6;
-    -fx-border-color: #bdc3c7;
-    -fx-border-radius: 6;
-    -fx-background-color: #ffffff;
-    -fx-padding: 4 10;
-}
-.label {
-    -fx-font-size: 13px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #2c3e50;
-}
-
-.boton-secundario {
-    -fx-pref-width: 140px;
-}
-
-.text-field {
-    -fx-pref-width: 200px;
-}
-

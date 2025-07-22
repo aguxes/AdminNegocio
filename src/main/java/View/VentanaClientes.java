@@ -12,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -30,6 +31,108 @@ public class VentanaClientes {
     public VentanaClientes(VBox contenedor, TextArea outputArea) {
         this.contenedor = contenedor;
         this.outputArea = outputArea;
+    }
+
+    public void verClientes() {
+        VBox tarjeta = new VBox(10);
+        tarjeta.setPadding(new Insets(20));
+        tarjeta.setAlignment(Pos.TOP_LEFT);
+        tarjeta.getStyleClass().add("card");
+
+        Label lblCampo = new Label("Buscar por:");
+        lblCampo.getStyleClass().add("label-form");
+
+        ChoiceBox<String> choiceCampo = new ChoiceBox<>();
+        choiceCampo.getItems().addAll("nombre", "apellido", "ID", "DNI", "tipo", "cantCompras", "telefono");
+        choiceCampo.setValue("nombre");
+        choiceCampo.getStyleClass().add("input-form");
+
+        TextField txtValor = new TextField();
+        txtValor.setPromptText("Ej: Juan o 2");
+        txtValor.getStyleClass().add("input-form");
+        txtValor.setMaxWidth(220);
+
+        Button btnBuscar = new Button("Buscar");
+        btnBuscar.getStyleClass().add("btn-verde");
+
+        TableView<Cliente> tabla = new TableView<>();
+        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tabla.setPlaceholder(new Label("No hay clientes cargados."));
+        tabla.getStyleClass().add("tabla-clientes");
+
+        TableColumn<Cliente, Integer> colId = new TableColumn<>("ID");
+        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
+
+        TableColumn<Cliente, Integer> colDni = new TableColumn<>("DNI");
+        colDni.setCellValueFactory(new PropertyValueFactory<>("dni"));
+
+        TableColumn<Cliente, String> colNombre = new TableColumn<>("Nombre");
+        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+
+        TableColumn<Cliente, String> colApellido = new TableColumn<>("Apellido");
+        colApellido.setCellValueFactory(new PropertyValueFactory<>("apellido"));
+
+        TableColumn<Cliente, String> colTipo = new TableColumn<>("Tipo");
+        colTipo.setCellValueFactory(new PropertyValueFactory<>("tipCliente"));
+
+        TableColumn<Cliente, Integer> colCompras = new TableColumn<>("Compras");
+        colCompras.setCellValueFactory(new PropertyValueFactory<>("cantCompras"));
+
+        TableColumn<Cliente, String> colTelefono = new TableColumn<>("Teléfono");
+        colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefonoStr"));
+
+        tabla.getColumns().addAll(colId, colDni, colNombre, colApellido, colTipo, colCompras, colTelefono);
+
+        // Layout de búsqueda agrupado
+        HBox barraBusqueda = new HBox(10); // espacio entre elementos
+        barraBusqueda.setAlignment(Pos.CENTER_LEFT);
+        barraBusqueda.getChildren().addAll(lblCampo, choiceCampo, txtValor, btnBuscar);
+
+        //anchos
+        choiceCampo.setPrefWidth(140);
+        txtValor.setPrefWidth(180);
+        btnBuscar.setPrefWidth(100);
+
+
+        // Cargar todos los clientes por defecto
+        ArrayList<Cliente> listaInicial = new ArrayList<>();
+        ClienteDAO.cargarClientesEnLista(listaInicial);
+        tabla.getItems().addAll(listaInicial);
+
+        btnBuscar.setOnAction(e -> {
+            String campo = choiceCampo.getValue();
+            String valor = txtValor.getText();
+            ArrayList<Cliente> resultado = ClienteDAO.buscarClientePorDato(campo, valor);
+
+            if (resultado.isEmpty()) {
+                VBox card = new VBox();
+                card.getStyleClass().add("card-error");
+
+                Label titulo = new Label("Sin resultados");
+                titulo.getStyleClass().add("card-error-titulo");
+
+                Label mensaje = new Label("No se encontró ningún cliente con ese dato.");
+                mensaje.getStyleClass().add("card-error-mensaje");
+
+                Button volverBtn = new Button("Volver");
+                volverBtn.getStyleClass().add("btn-error-volver");
+                volverBtn.setOnAction(ev -> contenedor.getChildren().setAll(tarjeta));
+
+                card.getChildren().addAll(titulo, mensaje, volverBtn);
+                contenedor.getChildren().setAll(card);
+            } else {
+                tabla.getItems().setAll(resultado);
+            }
+        });
+
+        btnBuscar.setPrefWidth(240); // mismo ancho que txtValor
+        btnBuscar.setAlignment(Pos.CENTER);
+
+        tarjeta.setMaxWidth(Double.MAX_VALUE); // Ocupa todo el ancho disponible
+        VBox.setVgrow(tarjeta, Priority.ALWAYS); // Opcional para que crezca si hay espacio
+
+        tarjeta.getChildren().addAll(barraBusqueda, tabla);
+        contenedor.getChildren().setAll(tarjeta);
     }
 
     public void agregarCliente() {
@@ -65,6 +168,14 @@ public class VentanaClientes {
         TextField txtTelefono = new TextField();
         txtTelefono.setPromptText("Teléfono");
         txtTelefono.getStyleClass().add("text-field");
+        //Tamanios limite
+        txtDNI.setMaxWidth(350);
+        txtNombre.setMaxWidth(350);
+        txtApellido.setMaxWidth(350);
+        txtTipo.setMaxWidth(350);
+        txtCantCompras.setMaxWidth(350);
+        txtTelefono.setMaxWidth(350);
+
 
         Button btnRegistrarc = new Button("✅ Registrar Cliente");
         btnRegistrarc.getStyleClass().add("boton-accion");
@@ -140,96 +251,14 @@ public class VentanaClientes {
         HBox filaCancelar = new HBox(btnCancelar);
         filaCancelar.setAlignment(Pos.BOTTOM_RIGHT);
 
+        form.setAlignment(Pos.TOP_CENTER);
         form.getChildren().add(filaCancelar);
+        contenedor.setAlignment(Pos.TOP_CENTER);
         contenedor.getChildren().add(form);
     }
 
     public void modificarCliente() {
         outputArea.setText("✏️ Función modificar cliente (en construcción)");
-    }
-
-    public void verClientes() {
-        VBox tarjeta = new VBox(10);
-        tarjeta.setPadding(new Insets(20));
-        tarjeta.setAlignment(Pos.CENTER_LEFT);
-        tarjeta.getStyleClass().add("card");
-
-        Label lblCampo = new Label("Buscar por:");
-        lblCampo.getStyleClass().add("label-form");
-
-        ChoiceBox<String> choiceCampo = new ChoiceBox<>();
-        choiceCampo.getItems().addAll("nombre", "apellido", "ID", "DNI", "tipo", "cantCompras", "telefono");
-        choiceCampo.setValue("nombre");
-        choiceCampo.getStyleClass().add("input-form");
-
-        TextField txtValor = new TextField();
-        txtValor.setPromptText("Ej: Juan o 2");
-        txtValor.getStyleClass().add("input-form");
-
-        Button btnBuscar = new Button("Buscar");
-        btnBuscar.getStyleClass().add("btn-verde");
-
-        TableView<Cliente> tabla = new TableView<>();
-        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        tabla.setPlaceholder(new Label("No hay clientes cargados."));
-        tabla.getStyleClass().add("tabla-clientes");
-
-        TableColumn<Cliente, Integer> colId = new TableColumn<>("ID");
-        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
-
-        TableColumn<Cliente, Integer> colDni = new TableColumn<>("DNI");
-        colDni.setCellValueFactory(new PropertyValueFactory<>("dni"));
-
-        TableColumn<Cliente, String> colNombre = new TableColumn<>("Nombre");
-        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-
-        TableColumn<Cliente, String> colApellido = new TableColumn<>("Apellido");
-        colApellido.setCellValueFactory(new PropertyValueFactory<>("apellido"));
-
-        TableColumn<Cliente, String> colTipo = new TableColumn<>("Tipo");
-        colTipo.setCellValueFactory(new PropertyValueFactory<>("tipCliente"));
-
-        TableColumn<Cliente, Integer> colCompras = new TableColumn<>("Compras");
-        colCompras.setCellValueFactory(new PropertyValueFactory<>("cantCompras"));
-
-        TableColumn<Cliente, String> colTelefono = new TableColumn<>("Teléfono");
-        colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefonoStr"));
-
-        tabla.getColumns().addAll(colId, colDni, colNombre, colApellido, colTipo, colCompras, colTelefono);
-
-        // Cargar todos los clientes por defecto
-        ArrayList<Cliente> listaInicial = new ArrayList<>();
-        ClienteDAO.cargarClientesEnLista(listaInicial);
-        tabla.getItems().addAll(listaInicial);
-
-        btnBuscar.setOnAction(e -> {
-            String campo = choiceCampo.getValue();
-            String valor = txtValor.getText();
-            ArrayList<Cliente> resultado = ClienteDAO.buscarClientePorDato(campo, valor);
-
-            if (resultado.isEmpty()) {
-                VBox card = new VBox();
-                card.getStyleClass().add("card-error");
-
-                Label titulo = new Label("Sin resultados");
-                titulo.getStyleClass().add("card-error-titulo");
-
-                Label mensaje = new Label("No se encontró ningún cliente con ese dato.");
-                mensaje.getStyleClass().add("card-error-mensaje");
-
-                Button volverBtn = new Button("Volver");
-                volverBtn.getStyleClass().add("btn-error-volver");
-                volverBtn.setOnAction(ev -> contenedor.getChildren().setAll(tarjeta));
-
-                card.getChildren().addAll(titulo, mensaje, volverBtn);
-                contenedor.getChildren().setAll(card);
-            } else {
-                tabla.getItems().setAll(resultado);
-            }
-        });
-
-        tarjeta.getChildren().addAll(lblCampo, choiceCampo, txtValor, btnBuscar, tabla);
-        contenedor.getChildren().setAll(tarjeta);
     }
 
     public void EliminarCliente() {
