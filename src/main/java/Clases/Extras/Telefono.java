@@ -10,9 +10,9 @@ public class Telefono {
     }
 
     public int getIdPersona() { return idPersona; }
-    public void setIdPersona(int idPersona) { this.idPersona = idPersona; }
-
     public long getTelefono() { return telefono; }
+
+    public void setIdPersona(int idPersona) { this.idPersona = idPersona; }
     public void setTelefono(long telefono) { this.telefono = telefono; }
 
     @Override

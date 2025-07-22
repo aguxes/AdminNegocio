@@ -14,6 +14,7 @@ public class AppController {
     @FXML private TextArea outputArea;
     @FXML
     private VBox contenedor;
+    private VentanaEmpleado ventanaEmpleado;
     private VentanaProducto ventanaProducto;
     private VentanaVentas ventanaVentas;
     private VentanaClientes ventanaClientes;

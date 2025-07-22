@@ -10,12 +10,11 @@ public class TiposClientes {
     }
 
     public int getTipo() { return tipo; }
-    public void setTipo(int tipo) { this.tipo = tipo; }
-
     public String getDescripcion() { return descripcion; }
+
+    public void setTipo(int tipo) { this.tipo = tipo; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+
     @Override
-    public String toString() {
-        return descripcion;
-    }
+    public String toString() { return descripcion; }
 }

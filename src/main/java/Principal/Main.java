@@ -21,13 +21,5 @@ public class Main {
         Scanner scan = new Scanner(System.in);
         int opcion = 0;
         //ClienteDAO.cargarClientesEnLista(listaClientes); //con cada vuelta del bucle si borro un dato se actualiza
-        do{
-            try{
-                opcion = MetodosSwitch.menuPrincipal(scan, listaClientes,listaVentas, listaProdutos, listaReportes, daoCliente, daoVenta, daoProducto, daoReportes);
-
-            }catch(Exception e){
-                System.out.println("Opcion no permitida, solo numeros");
-            }
-        }while(opcion != 6);
     }
 }
