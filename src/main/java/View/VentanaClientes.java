@@ -5,6 +5,7 @@ import Clases.Extras.TiposClientes;
 import Clases.Principales.Cliente;
 import DataBase.DataBaseConnection;
 import DataBase.*;
+
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -16,7 +17,9 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+
 import util.Mapper;
+import util.Tablas;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -55,33 +58,19 @@ public class VentanaClientes {
         Button btnBuscar = new Button("Buscar");
         btnBuscar.getStyleClass().add("btn-verde");
 
-        TableView<Cliente> tabla = new TableView<>();
-        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        tabla.setPlaceholder(new Label("No hay clientes cargados."));
-        tabla.getStyleClass().add("tabla-clientes");
 
-        TableColumn<Cliente, Integer> colId = new TableColumn<>("ID");
-        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        String[][] columnas = { // array de strings para permitir el ingreso de datos llamados entre "".
+                {"ID", "id"},
+                {"DNI", "dni"},
+                {"Nombre", "nombre"},
+                {"Apellido", "apellido"},
+                {"Tipo", "tipCliente"},
+                {"Compras", "cantCompras"},
+                {"Teléfono", "telefonoStr"}
+        };
 
-        TableColumn<Cliente, Integer> colDni = new TableColumn<>("DNI");
-        colDni.setCellValueFactory(new PropertyValueFactory<>("dni"));
+        TableView<Cliente> tabla = Tablas.crearTabla(Cliente.class, columnas);
 
-        TableColumn<Cliente, String> colNombre = new TableColumn<>("Nombre");
-        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-
-        TableColumn<Cliente, String> colApellido = new TableColumn<>("Apellido");
-        colApellido.setCellValueFactory(new PropertyValueFactory<>("apellido"));
-
-        TableColumn<Cliente, String> colTipo = new TableColumn<>("Tipo");
-        colTipo.setCellValueFactory(new PropertyValueFactory<>("tipCliente"));
-
-        TableColumn<Cliente, Integer> colCompras = new TableColumn<>("Compras");
-        colCompras.setCellValueFactory(new PropertyValueFactory<>("cantCompras"));
-
-        TableColumn<Cliente, String> colTelefono = new TableColumn<>("Teléfono");
-        colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefonoStr"));
-
-        tabla.getColumns().addAll(colId, colDni, colNombre, colApellido, colTipo, colCompras, colTelefono);
 
         // Layout de búsqueda agrupado
         HBox barraBusqueda = new HBox(10); // espacio entre elementos
