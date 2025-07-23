@@ -23,6 +23,8 @@ import Clases.Principales.*;
 import DataBase.*;
 import javafx.stage.Modality; // que es esto??
 import javafx.stage.Stage; // que es esto??
+import util.Tablas;
+
 import static View.AppController.mostrarAlerta; // importo funcion de otro archivo para ser utilizada mas de una vez
 
 public class VentanaProducto {
@@ -39,25 +41,14 @@ public class VentanaProducto {
         ventana.setTitle("Seleccionar Producto");
         ventana.initModality(Modality.APPLICATION_MODAL);
 
-        TableView<Producto> tabla = new TableView<>();
-
-        TableColumn<Producto, Integer> colId = new TableColumn<>("ID");
-        colId.setCellValueFactory(new PropertyValueFactory<>("productoID"));
-
-        TableColumn<Producto, String> colNombre = new TableColumn<>("Nombre");
-        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombreProducto"));
-
-        TableColumn<Producto, Double> colPrecio = new TableColumn<>("Precio");
-        colPrecio.setCellValueFactory(new PropertyValueFactory<>("precioUnitario"));
-
-        TableColumn<Producto, Double> colCosto = new TableColumn<>("Costo");
-        colCosto.setCellValueFactory(new PropertyValueFactory<>("costo"));
-
-        TableColumn<Producto, Integer> colStock = new TableColumn<>("Stock");
-        colStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
-
-        tabla.getColumns().addAll(colId, colNombre, colPrecio, colCosto, colStock);
-        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        String[][] columnas = {
+                {"ID", "productoID"},
+                {"Nombre", "nombreProducto"},
+                {"Precio", "precioUnitario"},
+                {"Costo", "costo"},
+                {"Stock", "stock"}
+        };
+        TableView<Producto> tabla = Tablas.crearTabla(Producto.class, columnas);
 
         // Obtener y cargar productos
         ArrayList <Producto> productos = ProductoDAO.cargarProductosEnLista();

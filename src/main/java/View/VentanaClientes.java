@@ -58,8 +58,8 @@ public class VentanaClientes {
         Button btnBuscar = new Button("Buscar");
         btnBuscar.getStyleClass().add("btn-verde");
 
-
-        String[][] columnas = { // array de strings para permitir el ingreso de datos llamados entre "".
+       // = [] [] matriz con dos arrays
+        String[][] columnas = { // matriz de strings para permitir el ingreso de datos llamados entre = "".
                 {"ID", "id"},
                 {"DNI", "dni"},
                 {"Nombre", "nombre"},
@@ -71,13 +71,11 @@ public class VentanaClientes {
 
         TableView<Cliente> tabla = Tablas.crearTabla(Cliente.class, columnas);
 
-
-        // Layout de búsqueda agrupado
-        HBox barraBusqueda = new HBox(10); // espacio entre elementos
+        HBox barraBusqueda = new HBox(10); // espacio entre elementos STYLE
         barraBusqueda.setAlignment(Pos.CENTER_LEFT);
         barraBusqueda.getChildren().addAll(lblCampo, choiceCampo, txtValor, btnBuscar);
 
-        //anchos
+        //anchos //STYLE
         choiceCampo.setPrefWidth(140);
         txtValor.setPrefWidth(180);
         btnBuscar.setPrefWidth(100);
@@ -100,27 +98,6 @@ public class VentanaClientes {
             } else {
                 tabla.getItems().setAll(resultado);
             }
-
-/*
-            if (resultado.isEmpty()) {
-                VBox card = new VBox();
-                card.getStyleClass().add("card-error");
-
-                Label titulo = new Label("Sin resultados");
-                titulo.getStyleClass().add("card-error-titulo");
-
-                Label mensaje = new Label("No se encontró ningún cliente con ese dato.");
-                mensaje.getStyleClass().add("card-error-mensaje");
-
-                Button volverBtn = new Button("Volver");
-                volverBtn.getStyleClass().add("btn-error-volver");
-                volverBtn.setOnAction(ev -> contenedor.getChildren().setAll(tarjeta));
-
-                card.getChildren().addAll(titulo, mensaje, volverBtn);
-                contenedor.getChildren().setAll(card);
-            } else {
-                tabla.getItems().setAll(resultado);
-            }*/
         });
 
         btnBuscar.setPrefWidth(240); // mismo ancho que txtValor

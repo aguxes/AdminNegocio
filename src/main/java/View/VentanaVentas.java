@@ -18,6 +18,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import util.Mapper;
+import util.Tablas;
+
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
@@ -70,42 +72,18 @@ public class VentanaVentas {
         barraSuperior.getChildren().addAll(lblBuscar, campoCliente, btnAbrirLista, btnFiltrar);
 
         // Tabla de ventas
-        TableView<Venta> tabla = new TableView<>();
-        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        tabla.setPlaceholder(new Label("No hay ventas cargadas."));
-        tabla.getStyleClass().add("tabla-clientes");
-
-        TableColumn<Venta, Integer> colFactura = new TableColumn<>("Factura");
-        colFactura.setCellValueFactory(new PropertyValueFactory<>("idVenta"));
-
-        TableColumn<Venta, String> colCliente = new TableColumn<>("Cliente");
-        colCliente.setCellValueFactory(new PropertyValueFactory<>("nombreCliente"));
-
-        TableColumn<Venta, String> colEmpleado = new TableColumn<>("Empleado");
-        colEmpleado.setCellValueFactory(new PropertyValueFactory<>("nombreEmpleado"));
-
-        TableColumn<Venta, String> colProducto = new TableColumn<>("Producto");
-        colProducto.setCellValueFactory(new PropertyValueFactory<>("notas"));
-
-        TableColumn<Venta, Integer> colCantidad = new TableColumn<>("Cantidad");
-        colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
-
-        TableColumn<Venta, String> colFecha = new TableColumn<>("Fecha");
-        colFecha.setCellValueFactory(new PropertyValueFactory<>("fechaFormateada"));
-
-        TableColumn<Venta, String> colPago = new TableColumn<>("Pago");
-        colPago.setCellValueFactory(new PropertyValueFactory<>("medioPago"));
-
-        TableColumn<Venta, Double> colSubtotal = new TableColumn<>("Subtotal");
-        colSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));
-
-        TableColumn<Venta, Double> colTotal = new TableColumn<>("Total");
-        colTotal.setCellValueFactory(new PropertyValueFactory<>("importeTotal"));
-
-        tabla.getColumns().addAll(
-                colFactura, colCliente, colEmpleado, colProducto,
-                colCantidad, colFecha, colPago, colSubtotal, colTotal
-        );
+        String[][] columnas = {
+                {"Factura", "idVenta"},
+                {"Cliente", "nombreCliente"},
+                {"Empleado", "nombreEmpleado"},
+                {"Producto", "notas"},
+                {"Cantidad", "cantidad"},
+                {"Fecha", "fechaFormateada"},
+                {"Pago", "medioPago"},
+                {"Subtotal", "subtotal"},
+                {"Total", "importeTotal"},
+        };
+        TableView<Venta> tabla = Tablas.crearTabla(Venta.class, columnas);
 
         // Cargar todas las ventas por defecto
         ArrayList<Venta> lista = VentaDAO.cargarVentasEnLista();
