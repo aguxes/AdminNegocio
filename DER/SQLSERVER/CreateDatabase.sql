@@ -57,11 +57,7 @@ CREATE TABLE Monedas (
 CREATE TABLE Persona (
     DNI INT PRIMARY KEY,
     nombre VARCHAR(25) NOT NULL,
-    apellido VARCHAR(25) NOT NULL,
-    genero INT NOT NULL,
-    nacionalidad INT NOT NULL,
-    FOREIGN KEY (genero) REFERENCES Generos(idSexo),
-    FOREIGN KEY (nacionalidad) REFERENCES Paises(idPais)
+    apellido VARCHAR(25) NOT NULL
 );
 
 CREATE TABLE Correos (

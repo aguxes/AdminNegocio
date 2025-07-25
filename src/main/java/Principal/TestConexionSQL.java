@@ -9,7 +9,7 @@ public class TestConexionSQL {
         try {
             Connection conn = DataBaseConnection.getConnection();
             if (conn != null && !conn.isClosed()) {
-                System.out.println("✅ Conexión exitosa a SQL Server.");
+                System.out.println("✅ Conexión exitosa a Supabase PostgreSQL");
             } else {
                 System.out.println("⚠️ La conexión está cerrada o es nula.");
             }

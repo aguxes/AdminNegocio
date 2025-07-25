@@ -7,13 +7,14 @@ import java.sql.SQLException;
 
 // ruta :  data\dbNegocio.db
 public class DataBaseConnection {
-        private static final String URL = "jdbc:sqlite:data/dbNegocio.db";
+        private static final String URL = "jdbc:postgresql://aws-0-sa-east-1.pooler.supabase.com:6543/postgres";
+        private static final String USER = "postgres.fxyzekhrzihgojvgdyfl";
+            private static final String PASSWORD = "dblolNegocio_1";
         private static Connection conn;
     static {
         try {
-            File dbFolder = new File("data");
-            if (!dbFolder.exists()) dbFolder.mkdirs();
-            conn = DriverManager.getConnection("jdbc:sqlite:data/dbNegocio.db");
+            conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            System.out.println("✅ Conexión exitosa a Supabase PostgreSQL");
 
         } catch (SQLException e) {
             throw new RuntimeException("Error al conectar con la base de datos", e);
@@ -21,7 +22,7 @@ public class DataBaseConnection {
     }
         public static Connection getConnection() {
             try {
-                if (conn == null || conn.isClosed()) conn = DriverManager.getConnection(URL);
+                if (conn == null || conn.isClosed()) conn = DriverManager.getConnection(URL, USER, PASSWORD);
             } catch (SQLException e) {
                 throw new RuntimeException("Error al reconectar con la base de datos", e);
             }
