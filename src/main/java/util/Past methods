@@ -1,5 +1,5 @@
         Codigo pasado para creacion de tabla con columnas para el muestreo de datos de clientes.
-
+        -//-VerClientes
         TableView<Cliente> tabla = new TableView<>();
         tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         tabla.setPlaceholder(new Label("No hay clientes cargados."));
@@ -29,3 +29,36 @@
 
         tabla.getColumns().addAll(colId, colDni, colNombre, colApellido, colTipo, colCompras, colTelefono);
         //
+        -//-AgregarCliente
+        contenedor.getChildren().clear();
+
+                VBox form = new VBox(10);
+                form.setPadding(new Insets(20));
+                form.getStyleClass().add("form-box");
+
+                Label titulo = new Label("📋 Registrar Cliente");
+                titulo.getStyleClass().add("titulo-principal");
+
+                TextField txtDNI = new TextField();
+                txtDNI.setPromptText("DNI");
+                txtDNI.getStyleClass().add("text-field");
+
+                TextField txtNombre = new TextField();
+                txtNombre.setPromptText("Nombre");
+                txtNombre.getStyleClass().add("text-field");
+
+                TextField txtApellido = new TextField();
+                txtApellido.setPromptText("Apellido");
+                txtApellido.getStyleClass().add("text-field");
+
+                TextField txtTipo = new TextField();
+                txtTipo.setPromptText("Tipo de Cliente");
+                txtTipo.getStyleClass().add("text-field");
+
+                TextField txtCantCompras = new TextField();
+                txtCantCompras.setPromptText("Cantidad de Compras");
+                txtCantCompras.getStyleClass().add("text-field");
+
+                TextField txtTelefono = new TextField();
+                txtTelefono.setPromptText("Teléfono");
+                txtTelefono.getStyleClass().add("text-field");

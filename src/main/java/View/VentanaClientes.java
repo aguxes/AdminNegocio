@@ -17,17 +17,19 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
+ 
 import util.Mapper;
 import util.Tablas;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static View.AppController.mostrarAlerta;
 
 public class VentanaClientes {
-    @FXML private TextArea outputArea;
-    @FXML private VBox contenedor;
+    @FXML private static TextArea outputArea;
+    @FXML private static VBox contenedor;
 
     private static final Connection conn = DataBaseConnection.getConnection();
 
@@ -113,55 +115,41 @@ public class VentanaClientes {
     public void agregarCliente() {
         contenedor.getChildren().clear();
 
-        VBox form = new VBox(10);
-        form.setPadding(new Insets(20));
-        form.getStyleClass().add("form-box");
+        Map<String, TextField> campos = new HashMap<>();
+        String[][] lineas = {
+                {"DNI", "dni"},
+                {"Nombre", "nombre"},
+                {"Apellido", "apellido"},
+                {"Tipo de Cliente", "tipo"},
+                {"Cantidad de Compras", "cantCompras"},
+                {"Teléfono", "telefono"}
+        };
+
+        VBox formCampos = Tablas.crearform(lineas, campos);
 
         Label titulo = new Label("📋 Registrar Cliente");
         titulo.getStyleClass().add("titulo-principal");
 
-        TextField txtDNI = new TextField();
-        txtDNI.setPromptText("DNI");
-        txtDNI.getStyleClass().add("text-field");
-
-        TextField txtNombre = new TextField();
-        txtNombre.setPromptText("Nombre");
-        txtNombre.getStyleClass().add("text-field");
-
-        TextField txtApellido = new TextField();
-        txtApellido.setPromptText("Apellido");
-        txtApellido.getStyleClass().add("text-field");
-
-        TextField txtTipo = new TextField();
-        txtTipo.setPromptText("Tipo de Cliente");
-        txtTipo.getStyleClass().add("text-field");
-
-        TextField txtCantCompras = new TextField();
-        txtCantCompras.setPromptText("Cantidad de Compras");
-        txtCantCompras.getStyleClass().add("text-field");
-
-        TextField txtTelefono = new TextField();
-        txtTelefono.setPromptText("Teléfono");
-        txtTelefono.getStyleClass().add("text-field");
         //Tamanios limite
+        /*
         txtDNI.setMaxWidth(350);
         txtNombre.setMaxWidth(350);
         txtApellido.setMaxWidth(350);
         txtTipo.setMaxWidth(350);
         txtCantCompras.setMaxWidth(350);
         txtTelefono.setMaxWidth(350);
-
+        */
 
         Button btnRegistrarc = new Button("✅ Registrar Cliente");
         btnRegistrarc.getStyleClass().add("boton-accion");
         btnRegistrarc.setOnAction(e -> {
             try {
-                int DNI = Integer.parseInt(txtDNI.getText().trim());
-                String Nombre = txtNombre.getText().trim();
-                String Apellido = txtApellido.getText().trim();
-                int tipoId = Integer.parseInt(txtTipo.getText().trim());
-                int cantCompras = Integer.parseInt(txtCantCompras.getText().trim());
-                Long telefono = Long.parseLong(txtTelefono.getText().trim());
+                int DNI = Integer.parseInt(campos.get("dni").getText().trim());
+                String Nombre = campos.get("nombre").getText().trim();
+                String Apellido = campos.get("apellido").getText().trim();
+                int tipoId = Integer.parseInt(campos.get("tipo").getText().trim());
+                int cantCompras = Integer.parseInt(campos.get("cantCompras").getText().trim());
+                Long telefono = Long.parseLong(campos.get("telefono").getText().trim());
 
                 TiposClientes tipo = new TiposClientes(tipoId, "");
                 Telefono tel = new Telefono(DNI, telefono);
@@ -199,17 +187,6 @@ public class VentanaClientes {
             }
         });
 
-        form.getChildren().addAll(
-                titulo,
-                txtDNI,
-                txtNombre,
-                txtApellido,
-                txtTipo,
-                txtCantCompras,
-                txtTelefono,
-                btnRegistrarc
-        );
-
         Button btnCancelar = new Button("❌ Cancelar nuevo Cliente");
         btnCancelar.getStyleClass().add("boton-cancelar");
         btnCancelar.setOnAction(e -> {
@@ -219,10 +196,14 @@ public class VentanaClientes {
         HBox filaCancelar = new HBox(btnCancelar);
         filaCancelar.setAlignment(Pos.BOTTOM_RIGHT);
 
-        form.setAlignment(Pos.TOP_CENTER);
-        form.getChildren().add(filaCancelar);
+
+        VBox formFinal = new VBox(10, titulo, formCampos, btnRegistrarc, filaCancelar);
+        formFinal.setAlignment(Pos.TOP_CENTER);
+
         contenedor.setAlignment(Pos.TOP_CENTER);
-        contenedor.getChildren().add(form);
+        contenedor.getChildren().add(formFinal);
+        contenedor.setAlignment(Pos.TOP_CENTER);
+        contenedor.getChildren().add(formFinal);
     }
 
     public void modificarCliente() {

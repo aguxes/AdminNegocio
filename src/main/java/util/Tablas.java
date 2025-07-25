@@ -1,12 +1,24 @@
 package util;
 
+import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
+
+import java.util.Map;
+import java.util.HashMap;
+import javafx.geometry.Pos;
+
+
 import java.lang.reflect.Method;
 import java.util.Date;
 
+
 public class Tablas {
-    public static <T> TableView<T> crearTabla(Class<T> tipoClase, String[][] columnas) {
+
+    public static <T> TableView<T> crearTabla(Class<T> tipoClase, String[][] columnas)
+    {
         /*  <T> Permite el llamado a cualquier clase(cliente, producto, etc..)
             La funcion crea una tabla de estilo TableView<T> es decir una tabla
             que se basa en los datos que obtiene de la clase que llamemos.  */
@@ -48,10 +60,35 @@ public class Tablas {
                 tabla.getColumns().add(columnaDetectada);
 
             } catch (NoSuchMethodException e) {
-                System.err.println("❌ No se encontró getter para propiedad: " + valor);
+                System.err.println("❌ No se encontró el getter adecuado para la columna: " + valor);
             }
         }
 
         return tabla;
+    }
+    public static VBox crearform( String [][] lineas, Map<String, TextField> entradas) {
+
+        VBox formulario = new VBox(10);
+
+        formulario.setPadding(new Insets(20));
+        formulario.setAlignment(Pos.TOP_CENTER);
+        formulario.getStyleClass().add("form-box");
+
+        for (String[] linea : lineas) {
+            String label = linea[0];
+            String valor = linea[1];
+
+            Label lbl = new Label(label);
+            TextField txt = new TextField();
+
+            txt.setPromptText(label);
+            txt.setMaxWidth(350);
+            txt.getStyleClass().add("text-field");
+
+            entradas.put(valor, txt);
+
+            formulario.getChildren().addAll(lbl, txt);
+        }
+        return formulario;
     }
 }
