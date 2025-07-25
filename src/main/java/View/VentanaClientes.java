@@ -28,8 +28,8 @@ import java.util.Map;
 import static View.AppController.mostrarAlerta;
 
 public class VentanaClientes {
-    @FXML private static TextArea outputArea;
-    @FXML private static VBox contenedor;
+    @FXML private TextArea outputArea;
+    @FXML private VBox contenedor;
 
     private static final Connection conn = DataBaseConnection.getConnection();
 
@@ -115,6 +115,7 @@ public class VentanaClientes {
     public void agregarCliente() {
         contenedor.getChildren().clear();
 
+
         Map<String, TextField> campos = new HashMap<>();
         String[][] lineas = {
                 {"DNI", "dni"},
@@ -130,20 +131,11 @@ public class VentanaClientes {
         Label titulo = new Label("📋 Registrar Cliente");
         titulo.getStyleClass().add("titulo-principal");
 
-        //Tamanios limite
-        /*
-        txtDNI.setMaxWidth(350);
-        txtNombre.setMaxWidth(350);
-        txtApellido.setMaxWidth(350);
-        txtTipo.setMaxWidth(350);
-        txtCantCompras.setMaxWidth(350);
-        txtTelefono.setMaxWidth(350);
-        */
-
         Button btnRegistrarc = new Button("✅ Registrar Cliente");
         btnRegistrarc.getStyleClass().add("boton-accion");
         btnRegistrarc.setOnAction(e -> {
             try {
+
                 int DNI = Integer.parseInt(campos.get("dni").getText().trim());
                 String Nombre = campos.get("nombre").getText().trim();
                 String Apellido = campos.get("apellido").getText().trim();

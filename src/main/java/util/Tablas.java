@@ -69,16 +69,13 @@ public class Tablas {
     public static VBox crearform( String [][] lineas, Map<String, TextField> entradas) {
 
         VBox formulario = new VBox(10);
-
         formulario.setPadding(new Insets(20));
-        formulario.setAlignment(Pos.TOP_CENTER);
         formulario.getStyleClass().add("form-box");
 
         for (String[] linea : lineas) {
             String label = linea[0];
             String valor = linea[1];
 
-            Label lbl = new Label(label);
             TextField txt = new TextField();
 
             txt.setPromptText(label);
@@ -87,7 +84,7 @@ public class Tablas {
 
             entradas.put(valor, txt);
 
-            formulario.getChildren().addAll(lbl, txt);
+            formulario.getChildren().addAll(txt);
         }
         return formulario;
     }
