@@ -156,7 +156,7 @@ public class VentanaClientes {
 
                 String queryP = "INSERT INTO Persona (dni, nombre, apellido ) VALUES (?, ?, ?) ";
                 String queryC = "INSERT INTO Cliente (dni, idTipo, cantCompras ) VALUES (?, ?, ?)";
-                String queryT = "INSERT INTO Telefonos (idPersona, telefono) VALUES (?, ?)";
+                String queryT = "INSERT INTO Telefonos (idpersona, telefono) VALUES (?, ?)";
 
                 PreparedStatement stmtP = conn.prepareStatement(queryP);
                 PreparedStatement stmtC = conn.prepareStatement(queryC);
@@ -192,8 +192,6 @@ public class VentanaClientes {
         VBox formFinal = new VBox(10, titulo, formCampos, btnRegistrarc, filaCancelar);
         formFinal.setAlignment(Pos.TOP_CENTER);
 
-        contenedor.setAlignment(Pos.TOP_CENTER);
-        contenedor.getChildren().add(formFinal);
         contenedor.setAlignment(Pos.TOP_CENTER);
         contenedor.getChildren().add(formFinal);
     }
