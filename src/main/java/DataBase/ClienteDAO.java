@@ -106,22 +106,20 @@ public class ClienteDAO {
 
         String queryDNI = "SELECT ID FROM Cliente WHERE DNI = ?";
 
-        try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement stmtID = conn.prepareStatement(queryID)) {
-
+        try (PreparedStatement stmtID = ClienteDAO.conn.prepareStatement(queryID)) {  //usa la conexión global sin cerrarla, aca se rompia (video wpp)
             stmtID.setInt(1, id);
             ResultSet rs = stmtID.executeQuery();
 
             if (rs.next()) {
                 return rs.getString("nombre") + " " + rs.getString("apellido");
             } else if (dni != -1) {
-                try (PreparedStatement stmtDNI = conn.prepareStatement(queryDNI)) {
+                try (PreparedStatement stmtDNI = ClienteDAO.conn.prepareStatement(queryDNI)) {
                     stmtDNI.setInt(1, dni);
                     ResultSet rsDNI = stmtDNI.executeQuery();
 
                     if (rsDNI.next()) {
                         int nuevoId = rsDNI.getInt("ID");
-                        try (PreparedStatement retryStmt = conn.prepareStatement(queryID)) {
+                        try (PreparedStatement retryStmt = ClienteDAO.conn.prepareStatement(queryID)) {
                             retryStmt.setInt(1, nuevoId);
                             ResultSet retryRs = retryStmt.executeQuery();
                             if (retryRs.next()) {
@@ -176,7 +174,8 @@ public class ClienteDAO {
     }
     public static Cliente obtenerClientePorId(int id) {
         String sql = """
-        SELECT c.ID, p.DNI, p.nombre, p.apellido, c.idTipo, c.cantCompras, t.telefono, tc.descripcion
+        SELECT c.ID, p.DNI, p.nombre, p.apellido, tc.tipo, tc.descripcion,
+               c.cantCompras, t.telefono
         FROM Cliente c
         JOIN Persona p ON c.DNI = p.DNI
         LEFT JOIN Telefonos t ON p.DNI = t.idPersona
@@ -184,7 +183,6 @@ public class ClienteDAO {
         WHERE c.ID = ?
         """;
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
 
@@ -196,5 +194,6 @@ public class ClienteDAO {
         }
         return null;
     }
+
 }
 
