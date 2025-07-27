@@ -106,20 +106,20 @@ public class ClienteDAO {
 
         String queryDNI = "SELECT ID FROM Cliente WHERE DNI = ?";
 
-        try (PreparedStatement stmtID = ClienteDAO.conn.prepareStatement(queryID)) {  //usa la conexión global sin cerrarla, aca se rompia (video wpp)
+        try (PreparedStatement stmtID = conn.prepareStatement(queryID)) {
             stmtID.setInt(1, id);
             ResultSet rs = stmtID.executeQuery();
 
             if (rs.next()) {
                 return rs.getString("nombre") + " " + rs.getString("apellido");
             } else if (dni != -1) {
-                try (PreparedStatement stmtDNI = ClienteDAO.conn.prepareStatement(queryDNI)) {
+                try (PreparedStatement stmtDNI = conn.prepareStatement(queryDNI)) {
                     stmtDNI.setInt(1, dni);
                     ResultSet rsDNI = stmtDNI.executeQuery();
 
                     if (rsDNI.next()) {
                         int nuevoId = rsDNI.getInt("ID");
-                        try (PreparedStatement retryStmt = ClienteDAO.conn.prepareStatement(queryID)) {
+                        try (PreparedStatement retryStmt = conn.prepareStatement(queryID)) {
                             retryStmt.setInt(1, nuevoId);
                             ResultSet retryRs = retryStmt.executeQuery();
                             if (retryRs.next()) {

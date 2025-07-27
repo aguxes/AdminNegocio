@@ -318,7 +318,6 @@ public class VentanaClientes {
                 String queryP = "UPDATE Persona SET nombre = ?, apellido = ? WHERE DNI = ?;";
                 String queryC = "UPDATE Cliente SET idTipo = ?, cantCompras = ? WHERE DNI = ?";
                 String queryT = "UPDATE Telefonos SET telefono = ? WHERE idPersona = ?";
-                // una querry mas simple
 
                 PreparedStatement stmtP = conn.prepareStatement(queryP);
                 PreparedStatement stmtC = conn.prepareStatement(queryC);
