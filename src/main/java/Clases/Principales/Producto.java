@@ -2,6 +2,7 @@ package Clases.Principales;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Producto implements Imprimible {
     private int productoID;
@@ -12,8 +13,8 @@ public class Producto implements Imprimible {
 
     private int idMedida;
     private int idCategoria;
-    private LocalDate fechaAlta;
-    private LocalDate fechaBaja;
+    private LocalDateTime fechaAlta;
+    private LocalDateTime fechaBaja;
 
     // Opcionales si hacés JOINs para mostrar
     private String nombreUnidadMedida; // opcional
@@ -21,7 +22,7 @@ public class Producto implements Imprimible {
 
     // Constructor principal
     public Producto(int productoID, String nombreProducto, BigDecimal precioUnitario, double costo, int stock,
-                    int idMedida, int idCategoria, LocalDate fechaAlta, LocalDate fechaBaja) {
+                    int idMedida, int idCategoria, LocalDateTime fechaAlta, LocalDateTime fechaBaja) {
         this.productoID = productoID;
         this.nombreProducto = nombreProducto;
         this.precioUnitario = precioUnitario;
@@ -36,7 +37,7 @@ public class Producto implements Imprimible {
     //aca se usan los atributos opcionales de arriba
     public Producto(int productoID, String nombreProducto, BigDecimal precioUnitario, double costo, int stock,
                     String nombreUnidadMedida, String nombreCategoria,
-                    LocalDate fechaAlta, LocalDate fechaBaja) {
+                    LocalDateTime fechaAlta, LocalDateTime fechaBaja) {
         this.productoID = productoID;
         this.nombreProducto = nombreProducto;
         this.precioUnitario = precioUnitario;
@@ -58,8 +59,8 @@ public class Producto implements Imprimible {
     public int getStock() { return stock; }
     public int getIdMedida() { return idMedida; }
     public int getIdCategoria() { return idCategoria; }
-    public LocalDate getFechaAlta() { return fechaAlta; }
-    public LocalDate getFechaBaja() { return fechaBaja; }
+    public LocalDateTime getFechaAlta() { return fechaAlta; }
+    public LocalDateTime getFechaBaja() { return fechaBaja; }
 
     public String getMedidaNombre() {return nombreUnidadMedida;}
 

@@ -234,8 +234,8 @@ public class VentanaProducto {
         btnCategoria.getStyleClass().add("boton-secundario");
         btnCategoria.setOnAction(e -> mostrarVentanaSeleccionCategoria(idCategoria));
 
-        DatePicker fechaAlta = new DatePicker();
-        fechaAlta.setPromptText("Fecha de alta");
+        DatePicker fechAlta = new DatePicker();
+        fechAlta.setPromptText("Fecha de alta");
 
         DatePicker fechaBaja = new DatePicker();
         fechaBaja.setPromptText("Fecha de baja (opcional)");
@@ -253,8 +253,9 @@ public class VentanaProducto {
                         Integer.parseInt(stock.getText()),
                         Integer.parseInt(idMedida.getText()),
                         Integer.parseInt(idCategoria.getText()),
-                        fechaAlta.getValue(),
-                        (fechaBaja.getValue() == null) ? null : fechaBaja.getValue()
+                        fechAlta.getValue().atStartOfDay(),
+                        (fechaBaja.getValue() == null) ? null : fechaBaja.getValue().atStartOfDay()
+
                 );
                 if (ProductoDAO.insertarProducto(nuevo)) {
                     mostrarAlerta("✅ Producto agregado con éxito.");
@@ -273,7 +274,7 @@ public class VentanaProducto {
                 nombre, precio, costo, stock,
                 new HBox(10, idMedida, btnMedida),
                 new HBox(10, idCategoria, btnCategoria),
-                fechaAlta, fechaBaja,
+                fechAlta, fechaBaja,
                 btnGuardar
         );
         contenedor.getChildren().setAll(tarjeta);

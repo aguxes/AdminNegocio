@@ -10,6 +10,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 public class Mapper {
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     // Entidades Primarias
 
     // Mapeo de Persona
@@ -65,7 +67,7 @@ public class Mapper {
     // Mapeo de Venta
     // ========================================
     //Formato de sql para guardar y leer la fecha
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    //private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static Venta getVenta(ResultSet rs) throws SQLException {
         String fechaStr = rs.getString("fecha");
@@ -136,9 +138,13 @@ public class Mapper {
     }
 
     //PRODUCTO
+
     public static Producto getProducto(ResultSet rs) throws SQLException {
+        String fechaAltaRaw = rs.getString("fechAlta");
+        LocalDateTime fechaAlta = LocalDateTime.parse(fechaAltaRaw, FORMATTER);
+
         String fechaBajaRaw = rs.getString("fechaBaja");
-        LocalDate fechaBaja = (fechaBajaRaw == null || fechaBajaRaw.isBlank()) ? null : LocalDate.parse(fechaBajaRaw);
+        LocalDateTime fechaBaja = (fechaBajaRaw == null || fechaBajaRaw.isBlank()) ? null : LocalDateTime.parse(fechaBajaRaw);
 
         return new Producto(
                 rs.getInt("idProducto"),
@@ -148,7 +154,7 @@ public class Mapper {
                 rs.getInt("stock"),
                 rs.getString("medidanombre"),
                 rs.getString("categorianombre"),
-                LocalDate.parse(rs.getString("fechAlta")),
+                fechaAlta,
                 fechaBaja
         );
     }
@@ -159,8 +165,13 @@ public class Mapper {
         stmt.setInt(4, p.getStock());
         stmt.setInt(5, p.getIdMedida());
         stmt.setInt(6, p.getIdCategoria());
-        stmt.setString(7, p.getFechaAlta().toString());
-        // stmt.setString(8, p.getFechaBaja().toString()); // ⚠️ Esto se comenta por ahora
+        stmt.setObject(7, p.getFechaAlta());
+        if (p.getFechaBaja() != null) {
+            stmt.setObject(8, p.getFechaBaja());
+        } else {
+            stmt.setNull(8, java.sql.Types.TIMESTAMP);
+        }
+
     }
     // Entidades secundarias
     //Mapeo Telefono
