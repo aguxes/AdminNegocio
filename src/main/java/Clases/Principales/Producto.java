@@ -37,7 +37,7 @@ public class Producto implements Imprimible {
     //aca se usan los atributos opcionales de arriba
     public Producto(int productoID, String nombreProducto, BigDecimal precioUnitario, double costo, int stock,
                     String nombreUnidadMedida, String nombreCategoria,
-                    LocalDateTime fechaAlta, LocalDateTime fechaBaja) {
+                    LocalDateTime fechaAlta /* ,LocalDateTime fechaBaja*/) {
         this.productoID = productoID;
         this.nombreProducto = nombreProducto;
         this.precioUnitario = precioUnitario;
@@ -46,7 +46,7 @@ public class Producto implements Imprimible {
         this.nombreUnidadMedida = nombreUnidadMedida;
         this.nombreCategoria = nombreCategoria;
         this.fechaAlta = fechaAlta;
-        this.fechaBaja = fechaBaja;
+        //this.fechaBaja = fechaBaja;
     }
 
     public Producto() { }// Constructor vacío

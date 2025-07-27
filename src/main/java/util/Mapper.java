@@ -154,8 +154,8 @@ public class Mapper {
                 rs.getInt("stock"),
                 rs.getString("medidanombre"),
                 rs.getString("categorianombre"),
-                fechaAlta,
-                fechaBaja
+                fechaAlta
+                //fechaBaja
         );
     }
     public static void setProducto(PreparedStatement stmt, Producto p) throws SQLException {
@@ -166,12 +166,13 @@ public class Mapper {
         stmt.setInt(5, p.getIdMedida());
         stmt.setInt(6, p.getIdCategoria());
         stmt.setObject(7, p.getFechaAlta());
+        /*
         if (p.getFechaBaja() != null) {
             stmt.setObject(8, p.getFechaBaja());
         } else {
             stmt.setNull(8, java.sql.Types.TIMESTAMP);
         }
-
+            */
     }
     // Entidades secundarias
     //Mapeo Telefono

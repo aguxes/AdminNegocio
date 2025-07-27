@@ -123,8 +123,9 @@ public class ProductoDAO {
 
     public static boolean insertarProducto(Producto producto) {
         String sql = """
-        INSERT INTO Producto (nombre, precio, costo, stock, idMedida, idCategoria, fechAlta)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+INSERT INTO Producto (nombre, precio, costo, stock, idMedida, idCategoria, fechAlta)
+VALUES (?, ?, ?, ?, ?, ?, ?);
+
     """;
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             Mapper.setProducto(stmt, producto);
