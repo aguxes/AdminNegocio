@@ -175,8 +175,10 @@ public class Mapper {
         stmt.setInt(1, c.getDNI());
         stmt.setLong(2, c.getTelefono().getTelefono());
     }
+    //entre esto y la querry simple anda modificar clinete, antes esperaba 3 parametros y le pasamos oslo 2, x eso se rompia
     public static void modTelefono(PreparedStatement stmt, Cliente c) throws SQLException {
         stmt.setLong(1, c.getTelefono().getTelefono());
         stmt.setInt(2, c.getDNI());
     }
+
 }
