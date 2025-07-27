@@ -141,7 +141,15 @@ public class VentanaClientes {
                 String Apellido = campos.get("apellido").getText().trim();
                 int tipoId = Integer.parseInt(campos.get("tipo").getText().trim());
                 int cantCompras = Integer.parseInt(campos.get("cantCompras").getText().trim());
-                Long telefono = Long.parseLong(campos.get("telefono").getText().trim());
+                String telefonoStr = campos.get("telefono").getText().trim();
+
+                if (!telefonoStr.matches("\\d{8,11}")) {
+                    mostrarAlerta("⚠El numero de teléfono debe tener entre 8 y 11 dígitos y solo contener números.");
+                    return;
+                }
+
+                Long telefono = Long.parseLong(telefonoStr);
+
 
                 TiposClientes tipo = new TiposClientes(tipoId, "");
                 Telefono tel = new Telefono(DNI, telefono);
@@ -289,7 +297,12 @@ public class VentanaClientes {
                 String Apellido = txtmApellido.getText().trim();
                 int tipoId = Integer.parseInt(txtmTipo.getText().trim());
                 int cantCompras = Integer.parseInt(txtmCantCompras.getText().trim());
-                Long telefono = Long.parseLong(txtmTelefono.getText().trim());
+                String telefonoStr = txtmTelefono.getText().trim();
+                if (!telefonoStr.matches("\\d{8,15}")) {
+                    mostrarAlerta("Ingresa un número de teléfono válido (solo números, 8 a 15 dígitos).");
+                    return;
+                }
+                Long telefono = Long.parseLong(telefonoStr);
 
                 TiposClientes tipo = new TiposClientes(tipoId, "");
                 Telefono tel = new Telefono(DNI, telefono);
