@@ -100,7 +100,7 @@ public class Mapper {
         stmt.setInt(3, venta.getIdEmpleado());
         stmt.setInt(4, venta.getIdFormaDePago());
         stmt.setInt(5, venta.getCantidad());
-        stmt.setString(6, LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        stmt.setTimestamp(6, Timestamp.valueOf(LocalDateTime.now()));
         stmt.setBigDecimal(7, venta.getSubtotal());
         stmt.setBigDecimal(8, venta.getImporteTotal());
     }
@@ -117,7 +117,7 @@ public class Mapper {
         int faltas = rs.getInt("Faltas");
         String fechaIngreso = rs.getString("FechaIngreso");
         String fechaEgreso = rs.getString("FechaEgreso");
-        boolean activo = rs.getInt("Activo") == 1;
+        boolean activo = rs.getBoolean("Activo");
 
         return new Empleado(
                 dni, nombre, apellido, empleadoID, dni, rolID,

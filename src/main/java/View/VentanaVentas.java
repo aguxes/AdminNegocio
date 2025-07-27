@@ -157,7 +157,7 @@ public class VentanaVentas {
         txtEmpleadoId.getStyleClass().add("text-field");
 
         ComboBox<String> medioPago = new ComboBox<>();
-        medioPago.getItems().addAll("Efectivo", "Crédito", "Débito", "Transferencia");
+        medioPago.getItems().addAll("Efectivo", "Debito", "Credito", "Transferencia", "MercadoPago");
         medioPago.setPromptText("Medio de Pago");
         medioPago.getStyleClass().add("choice-box");
 
@@ -210,9 +210,10 @@ public class VentanaVentas {
 
                 int idPago = switch (medio) {
                     case "Efectivo" -> 1;
-                    case "Crédito" -> 2;
-                    case "Débito" -> 3;
+                    case "Debito" -> 2;
+                    case "Credito" -> 3;
                     case "Transferencia" -> 4;
+                    case "MercadoPago" -> 5;
                     default -> throw new IllegalArgumentException("Forma de pago inválida.");
                 };
 
