@@ -164,7 +164,8 @@ public class ClienteDAO {
                         "INNER JOIN Persona p ON p.DNI = c.DNI " +
                         "LEFT JOIN Telefonos t ON t.idPersona = p.DNI " +
                         "INNER JOIN TiposClientes tc ON c.idTipo = tc.tipo " +
-                        "WHERE " + campoSQL + (esNumerico ? " = ?" : " ILIKE ?");
+                        "WHERE " + (esNumerico? campoSQL + " = ?"
+                        : "unaccent(" + campoSQL + ") ILIKE unaccent(?)");
 
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             if (esNumerico) {
