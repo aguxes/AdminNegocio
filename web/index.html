@@ -1,10 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panel AdminNegocio</title>
+    <link rel="stylesheet" href="estilos/estilos.css" />
 </head>
 <body>
+<div class="container">
+    <h1>Bienvenido a AdminNegocio</h1>
+    <p>Este es el panel web de prueba.</p>
+    <button onclick="cargarClientes()">Cargar Clientes</button>
+    <pre id="resultado"></pre>
 
+    <script>
+        function cargarClientes() {
+            fetch("http://localhost:4567/clientes")
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById("resultado").textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(err => {
+                    document.getElementById("resultado").textContent = "Error: " + err;
+                });
+        }
+    </script>
+
+    <p id="mensaje"></p>
+</div>
+
+<script src="js/Main.js"></script>
 </body>
 </html>

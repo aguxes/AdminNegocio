@@ -5,6 +5,8 @@ import Clases.Principales.Cliente;
 import util.Mapper;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
+
 /// Extras
 
 public class ClienteDAO {
@@ -193,6 +195,12 @@ public class ClienteDAO {
             System.out.println("❌ Error al obtener cliente por ID: " + e.getMessage());
         }
         return null;
+    }
+    //para la web, toy probando
+    public static List<Cliente> obtenerTodos() {
+        ArrayList<Cliente> lista = new ArrayList<>();
+        cargarClientesEnLista(lista);
+        return lista;
     }
 
 }
