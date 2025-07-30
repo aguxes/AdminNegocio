@@ -140,8 +140,8 @@ public class Mapper {
         String fechaAltaRaw = rs.getString("fechAlta");
         LocalDateTime fechaAlta = LocalDateTime.parse(fechaAltaRaw, FORMATTER);
 
-        String fechaBajaRaw = rs.getString("fechaBaja");
-        LocalDateTime fechaBaja = (fechaBajaRaw == null || fechaBajaRaw.isBlank()) ? null : LocalDateTime.parse(fechaBajaRaw);
+        //String fechaBajaRaw = rs.getString("fechaBaja");
+        //LocalDateTime fechaBaja = (fechaBajaRaw == null || fechaBajaRaw.isBlank()) ? null : LocalDateTime.parse(fechaBajaRaw);
 
         return new Producto(
                 rs.getInt("idProducto"),
@@ -151,8 +151,9 @@ public class Mapper {
                 rs.getInt("stock"),
                 rs.getString("medidanombre"),
                 rs.getString("categorianombre"),
+                rs.getBoolean("activo"),
                 fechaAlta
-                //fechaBaja
+                //rs.getDate("fechabaja")
         );
     }
     public static void setProducto(PreparedStatement stmt, Producto p) throws SQLException {
@@ -162,7 +163,8 @@ public class Mapper {
         stmt.setInt(4, p.getStock());
         stmt.setInt(5, p.getIdMedida());
         stmt.setInt(6, p.getIdCategoria());
-        stmt.setObject(7, p.getFechaAlta());
+        stmt.setBoolean(7, p.getActivo());
+        stmt.setObject(8, p.getFechaAlta());
         /*
         if (p.getFechaBaja() != null) {
             stmt.setObject(8, p.getFechaBaja());

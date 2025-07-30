@@ -91,11 +91,10 @@ public class ProductoDAO {
         }
         return "No encontrado";
     }
-
-        public static String eliminar(int id) {
+    public static String eliminar(int id) {
         StringBuilder result = new StringBuilder();
         String query = "SELECT nombre FROM Producto WHERE idproducto = ?";
-        String deleteSQL = "DELETE FROM Producto WHERE idproducto = ?";
+        String deleteSQL = "Update Producto SET activo = false, fechaBaja = CURRENT_DATE WHERE idproducto = ?";
 
             try (PreparedStatement stmt = conn.prepareStatement(query)) {
 
@@ -111,12 +110,15 @@ public class ProductoDAO {
                         deleteStmt.executeUpdate();
                         conn.commit();
                         result.append("✅ Producto eliminado: ").append(nombre);
-                    }
-                } else {
+                    } catch (SQLException e) {
                     conn.rollback();
+                    result.append("❌ Error eliminando producto: ").append(e.getMessage());
+                } finally { conn.setAutoCommit(true); }
+                } else {
                     result.append("⚠️ No se encontró ningún producto con ese ID.");
                 }
             } catch (SQLException e) {
+                try { conn.rollback(); } catch (SQLException ignore) {}
                 result.append("❌ Error en la base de datos: ").append(e.getMessage());
             }
         return result.toString();

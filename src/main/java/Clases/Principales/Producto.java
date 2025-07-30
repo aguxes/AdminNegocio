@@ -13,6 +13,7 @@ public class Producto implements Imprimible {
 
     private int idMedida;
     private int idCategoria;
+    private boolean activo = true;
     private LocalDateTime fechaAlta;
     private LocalDateTime fechaBaja;
 
@@ -22,7 +23,7 @@ public class Producto implements Imprimible {
 
     // Constructor principal
     public Producto(int productoID, String nombreProducto, BigDecimal precioUnitario, double costo, int stock,
-                    int idMedida, int idCategoria, LocalDateTime fechaAlta, LocalDateTime fechaBaja) {
+                    int idMedida, int idCategoria, boolean activo, LocalDateTime fechaAlta /*LocalDateTime fechaBaja */) {
         this.productoID = productoID;
         this.nombreProducto = nombreProducto;
         this.precioUnitario = precioUnitario;
@@ -30,13 +31,14 @@ public class Producto implements Imprimible {
         this.stock = stock;
         this.idMedida = idMedida;
         this.idCategoria = idCategoria;
+        this.activo = activo;
         this.fechaAlta = fechaAlta;
-        this.fechaBaja = fechaBaja;
+        //this.fechaBaja = fechaBaja;
     }
 
     //aca se usan los atributos opcionales de arriba
     public Producto(int productoID, String nombreProducto, BigDecimal precioUnitario, double costo, int stock,
-                    String nombreUnidadMedida, String nombreCategoria,
+                    String nombreUnidadMedida, String nombreCategoria, boolean activo,
                     LocalDateTime fechaAlta /* ,LocalDateTime fechaBaja*/) {
         this.productoID = productoID;
         this.nombreProducto = nombreProducto;
@@ -45,6 +47,7 @@ public class Producto implements Imprimible {
         this.stock = stock;
         this.nombreUnidadMedida = nombreUnidadMedida;
         this.nombreCategoria = nombreCategoria;
+        this.activo = activo;
         this.fechaAlta = fechaAlta;
         //this.fechaBaja = fechaBaja;
     }
@@ -59,6 +62,7 @@ public class Producto implements Imprimible {
     public int getStock() { return stock; }
     public int getIdMedida() { return idMedida; }
     public int getIdCategoria() { return idCategoria; }
+    public boolean getActivo() { return activo; }
     public LocalDateTime getFechaAlta() { return fechaAlta; }
     public LocalDateTime getFechaBaja() { return fechaBaja; }
 
@@ -66,6 +70,7 @@ public class Producto implements Imprimible {
 
     public String getCategoriaNombre() {return nombreCategoria;}
 
+    public void setActivo(boolean activo) { this.activo = activo; }
 
     // Métodos para impresión
     public void imprimirEncabezado() {

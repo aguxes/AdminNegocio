@@ -234,6 +234,8 @@ public class VentanaProducto {
         btnCategoria.getStyleClass().add("boton-secundario");
         btnCategoria.setOnAction(e -> mostrarVentanaSeleccionCategoria(idCategoria));
 
+        //boolean activo = true;
+
         DatePicker fechAlta = new DatePicker();
         fechAlta.setPromptText("Fecha de alta");
 
@@ -253,8 +255,9 @@ public class VentanaProducto {
                         Integer.parseInt(stock.getText()),
                         Integer.parseInt(idMedida.getText()),
                         Integer.parseInt(idCategoria.getText()),
-                        fechAlta.getValue().atStartOfDay(),
-                        (fechaBaja.getValue() == null) ? null : fechaBaja.getValue().atStartOfDay()
+                        true,
+                        fechAlta.getValue().atStartOfDay()
+                        //(fechaBaja.getValue() == null) ? null : fechaBaja.getValue().atStartOfDay()
 
                 );
                 if (ProductoDAO.insertarProducto(nuevo)) {
