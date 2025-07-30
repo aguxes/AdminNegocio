@@ -90,7 +90,7 @@ public class VentanaClientes {
 
         btnBuscar.setOnAction(e -> {
             String campo = choiceCampo.getValue();
-            String valor = txtValor.getText();
+            String valor = txtValor.getText().trim();
             ArrayList<Cliente> resultado = ClienteDAO.buscarClientePorDato(campo, valor);
 
             if (resultado.isEmpty()) {
@@ -234,39 +234,19 @@ public class VentanaClientes {
         barraBusqueda.setAlignment(Pos.CENTER_LEFT);
         barraBusqueda.setPadding(new Insets(10));
 
-        TextField txtmDNI = new TextField();
-        txtmDNI.setPromptText("DNI");
-        //txtmDNI.setText(String.valueOf(cliente.getDNI()));
-        txtmDNI.getStyleClass().add("text-field");
+        Map<String, TextField> campos = new HashMap<>();
+        String[][] lineas = {
+                {"DNI", "dni"},
+                {"Nombre", "nombre"},
+                {"Apellido", "apellido"},
+                {"Tipo de Cliente", "tipo"},
+                {"Cantidad de Compras", "cantCompras"},
+                {"Teléfono", "telefono"}
+        };
 
-        txtmDNI.setEditable(false); // setea para que el txt no se pueda modificar
+        VBox formCampos = Tablas.crearform(lineas, campos);
 
-        TextField txtmNombre = new TextField();
-        txtmNombre.setPromptText("Nombre");
-        txtmNombre.getStyleClass().add("text-field");
-
-        TextField txtmApellido = new TextField();
-        txtmApellido.setPromptText("Apellido");
-        txtmApellido.getStyleClass().add("text-field");
-
-        TextField txtmTipo = new TextField();
-        txtmTipo.setPromptText("Tipo de Cliente");
-        txtmTipo.getStyleClass().add("text-field");
-
-        TextField txtmCantCompras = new TextField();
-        txtmCantCompras.setPromptText("Cantidad de Compras");
-        txtmCantCompras.getStyleClass().add("text-field");
-
-        TextField txtmTelefono = new TextField();
-        txtmTelefono.setPromptText("Teléfono");
-        txtmTelefono.getStyleClass().add("text-field");
-        //Tamanios limite
-        txtmDNI.setMaxWidth(350);
-        txtmNombre.setMaxWidth(350);
-        txtmApellido.setMaxWidth(350);
-        txtmTipo.setMaxWidth(350);
-        txtmCantCompras.setMaxWidth(350);
-        txtmTelefono.setMaxWidth(350);
+        campos.get("dni").setEditable(false);
 
         btnBuscar.setOnAction(ev -> {
             try {
@@ -274,12 +254,12 @@ public class VentanaClientes {
                 Cliente c = ClienteDAO.obtenerClientePorId(id);
 
                 if (c != null) {
-                    txtmDNI.setText(String.valueOf(c.getDNI()));
-                    txtmNombre.setText(c.getNombre());
-                    txtmApellido.setText(c.getApellido());
-                    txtmTipo.setText(String.valueOf(c.getTipo().getTipo()));
-                    txtmCantCompras.setText(String.valueOf(c.getCantCompras()));
-                    txtmTelefono.setText(String.valueOf(c.getTelefono().getTelefono()));
+                    campos.get("dni").setText(String.valueOf(c.getDNI()));
+                    campos.get("nombre").setText(c.getNombre());
+                    campos.get("apellido").setText(c.getApellido());
+                    campos.get("tipo").setText(String.valueOf(c.getTipo().getTipo()));
+                    campos.get("cantCompras").setText(String.valueOf(c.getCantCompras()));
+                    campos.get("telefono").setText(String.valueOf(c.getTelefono().getTelefono()));
                 } else {
                     mostrarAlerta("❌ No se encontró el cliente con ID: " + id);
                 }
@@ -292,12 +272,12 @@ public class VentanaClientes {
         btnModificarc.getStyleClass().add("boton-accion");
         btnModificarc.setOnAction(e -> {
             try {
-                int DNI = Integer.parseInt(txtmDNI.getText().trim());
-                String Nombre = txtmNombre.getText().trim();
-                String Apellido = txtmApellido.getText().trim();
-                int tipoId = Integer.parseInt(txtmTipo.getText().trim());
-                int cantCompras = Integer.parseInt(txtmCantCompras.getText().trim());
-                String telefonoStr = txtmTelefono.getText().trim();
+                int DNI = Integer.parseInt(campos.get("dni").getText().trim());
+                String Nombre = campos.get("nombre").getText().trim();
+                String Apellido = campos.get("apellido").getText().trim();
+                int tipoId = Integer.parseInt(campos.get("tipo").getText().trim());
+                int cantCompras = Integer.parseInt(campos.get("cantCompras").getText().trim());
+                String telefonoStr = campos.get("telefono").getText().trim();
                 if (!telefonoStr.matches("\\d{8,15}")) {
                     mostrarAlerta("Ingresa un número de teléfono válido (solo números, 8 a 15 dígitos).");
                     return;
@@ -342,12 +322,7 @@ public class VentanaClientes {
         form.getChildren().addAll(
                 titulo,
                 barraBusqueda,
-                txtmDNI,
-                txtmNombre,
-                txtmApellido,
-                txtmTipo,
-                txtmCantCompras,
-                txtmTelefono,
+                formCampos,
                 btnModificarc
         );
 

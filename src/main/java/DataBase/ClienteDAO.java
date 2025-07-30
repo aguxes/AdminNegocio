@@ -143,8 +143,10 @@ public class ClienteDAO {
     //Ahora devuelve un arrayList para poder hacer la muestra de datos copada
     public static ArrayList<Cliente> buscarClientePorDato(String campo, String valor) {
         ArrayList<Cliente> listaTemp = new ArrayList<>();
+        boolean esNumerico = false;
         String campoSQL = switch (campo) {
-            case "nombre", "apellido", "DNI" -> "p." + campo;
+            case "nombre", "apellido"        -> "p." + campo;
+            case "DNI"                       -> "p." + campo;
             case "ID", "cantCompras"         -> "c." + campo;
             case "tipo"                      -> "tc.descripcion";
             case "telefono"                  -> "t.telefono";
@@ -152,17 +154,24 @@ public class ClienteDAO {
         };
 
         if (campoSQL == null) return listaTemp;
-
+        esNumerico = switch (campo) {
+            case "ID", "DNI", "cantCompras", "telefono" -> true;
+            default -> false;
+        };
         String query =
                 "SELECT c.ID, p.DNI, p.nombre, p.apellido, tc.tipo, tc.descripcion, c.cantCompras, t.telefono " +
                         "FROM Cliente c " +
                         "INNER JOIN Persona p ON p.DNI = c.DNI " +
                         "LEFT JOIN Telefonos t ON t.idPersona = p.DNI " +
                         "INNER JOIN TiposClientes tc ON c.idTipo = tc.tipo " +
-                        "WHERE " + campoSQL + " LIKE ?";
+                        "WHERE " + campoSQL + (esNumerico ? " = ?" : " ILIKE ?");
 
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, "%" + valor + "%");
+            if (esNumerico) {
+                stmt.setInt(1, Integer.parseInt(valor));
+            } else {
+                stmt.setString(1, "%" + valor + "%");
+            }
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
