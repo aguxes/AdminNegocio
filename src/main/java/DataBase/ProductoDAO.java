@@ -74,7 +74,53 @@ public class ProductoDAO {
         }
         return null;
     }
+    public static String buscarxNombre(int id) { return buscarNombrePorId(id);}
+    public static String buscarNombrePorId(int id)
+    {
+        String queryID = "SELECT nombre FROM producto WHERE idproducto = ?";
 
+        try (PreparedStatement stmtID = conn.prepareStatement(queryID)) {
+            stmtID.setInt(1, id);
+            ResultSet rs = stmtID.executeQuery();
+
+            if (rs.next()) { return rs.getString("nombre"); }
+
+        } catch (SQLException e) {
+            System.out.println("❌ Error al buscar nombre: " + e.getMessage());
+            return "Error";
+        }
+        return "No encontrado";
+    }
+
+        public static String eliminar(int id) {
+        StringBuilder result = new StringBuilder();
+        String query = "SELECT nombre FROM Producto WHERE idproducto = ?";
+        String deleteSQL = "DELETE FROM Producto WHERE idproducto = ?";
+
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+
+                stmt.setInt(1, id);
+                ResultSet rs = stmt.executeQuery();
+
+                if (rs.next()) {
+                    String nombre = rs.getString("nombre");
+
+                    conn.setAutoCommit(false);
+                    try (PreparedStatement deleteStmt = conn.prepareStatement(deleteSQL)) {
+                        deleteStmt.setInt(1, id);
+                        deleteStmt.executeUpdate();
+                        conn.commit();
+                        result.append("✅ Producto eliminado: ").append(nombre);
+                    }
+                } else {
+                    conn.rollback();
+                    result.append("⚠️ No se encontró ningún producto con ese ID.");
+                }
+            } catch (SQLException e) {
+                result.append("❌ Error en la base de datos: ").append(e.getMessage());
+            }
+        return result.toString();
+    }
     public static ArrayList<String> obtenerCategorias() {
         ArrayList<String> lista = new ArrayList<>();
         String sql = "SELECT descripcion FROM CategoriasProd";
@@ -123,8 +169,8 @@ public class ProductoDAO {
 
     public static boolean insertarProducto(Producto producto) {
         String sql = """
-INSERT INTO Producto (nombre, precio, costo, stock, idMedida, idCategoria, fechAlta)
-VALUES (?, ?, ?, ?, ?, ?, ?);
+INSERT INTO Producto (nombre, precio, costo, stock, idMedida, idCategoria, fechAlta, fechabaja)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?);
 
     """;
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {

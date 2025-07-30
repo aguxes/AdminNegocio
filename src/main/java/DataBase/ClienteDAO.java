@@ -15,7 +15,7 @@ public class ClienteDAO {
     public static void cargarClientesEnLista(ArrayList<Cliente> lista) {
         String sql = """
         
-                SELECT c.ID, p.DNI, p.nombre, p.apellido, tc.tipo, tc.descripcion, c.cantCompras, t.telefono
+                SELECT c.ID, p.DNI, p.nombre, p.apellido, tc.tipo, tc.descripcion, c.cantcompras, t.telefono
         FROM Cliente c
          INNER JOIN Persona p ON c.DNI = p.DNI
          LEFT JOIN Telefonos t ON t.idPersona = p.DNI
@@ -61,15 +61,13 @@ public class ClienteDAO {
         return sb.toString();
     }
 
-    public static String eliminarPorId(int id) {
+    public static String eliminar(int id) {
         StringBuilder result = new StringBuilder();
         String query =
                 """
-        SELECT p.nombre FROM
-                Cliente c
-        INNER JOIN Persona p
-                ON p.DNI = c.DNI
-         WHERE c.id = ?
+        SELECT p.nombre FROM Cliente c
+        INNER JOIN Persona p ON p.DNI = c.DNI
+        WHERE c.id = ?
         """;
         String deleteSQL = "DELETE FROM Cliente WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -97,7 +95,7 @@ public class ClienteDAO {
 
         return result.toString();
     }
-    public static String buscarNombreCliente(int id) { return buscarNombrePorId(id, -1); }
+    public static String buscarxNombre(int id) { return buscarNombrePorId(id, -1); }
     public static String buscarNombrePorId(int id, int dni) {
         String queryID = """
         SELECT p.nombre, p.apellido
@@ -140,14 +138,13 @@ public class ClienteDAO {
         return "No encontrado";
     }
 
-    //Ahora devuelve un arrayList para poder hacer la muestra de datos copada
     public static ArrayList<Cliente> buscarClientePorDato(String campo, String valor) {
         ArrayList<Cliente> listaTemp = new ArrayList<>();
         boolean esNumerico = false;
         String campoSQL = switch (campo) {
             case "nombre", "apellido"        -> "p." + campo;
             case "DNI"                       -> "p." + campo;
-            case "ID", "cantCompras"         -> "c." + campo;
+            case "ID", "cantcompras"         -> "c." + campo;
             case "tipo"                      -> "tc.descripcion";
             case "telefono"                  -> "t.telefono";
             default                          -> null;
@@ -155,11 +152,11 @@ public class ClienteDAO {
 
         if (campoSQL == null) return listaTemp;
         esNumerico = switch (campo) {
-            case "ID", "DNI", "cantCompras", "telefono" -> true;
+            case "ID", "DNI", "cantcompras", "telefono" -> true;
             default -> false;
         };
         String query =
-                "SELECT c.ID, p.DNI, p.nombre, p.apellido, tc.tipo, tc.descripcion, c.cantCompras, t.telefono " +
+                "SELECT c.ID, p.DNI, p.nombre, p.apellido, tc.tipo, tc.descripcion, c.cantcompras, t.telefono " +
                         "FROM Cliente c " +
                         "INNER JOIN Persona p ON p.DNI = c.DNI " +
                         "LEFT JOIN Telefonos t ON t.idPersona = p.DNI " +
@@ -187,7 +184,7 @@ public class ClienteDAO {
     public static Cliente obtenerClientePorId(int id) {
         String sql = """
         SELECT c.ID, p.DNI, p.nombre, p.apellido, tc.tipo, tc.descripcion,
-               c.cantCompras, t.telefono
+               c.cantcompras, t.telefono
         FROM Cliente c
         JOIN Persona p ON c.DNI = p.DNI
         LEFT JOIN Telefonos t ON p.DNI = t.idPersona

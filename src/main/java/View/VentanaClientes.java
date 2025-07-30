@@ -90,7 +90,7 @@ public class VentanaClientes {
 
         btnBuscar.setOnAction(e -> {
             String campo = choiceCampo.getValue();
-            String valor = txtValor.getText().trim();
+            String valor = txtValor.getText();
             ArrayList<Cliente> resultado = ClienteDAO.buscarClientePorDato(campo, valor);
 
             if (resultado.isEmpty()) {
@@ -354,7 +354,7 @@ public class VentanaClientes {
         Button btnBuscar = new Button("Buscar");
         btnBuscar.setOnAction(e -> {
             int id = Integer.parseInt(txtId.getText());
-            String nombre = ClienteDAO.buscarNombreCliente(id);
+            String nombre = ClienteDAO.buscarxNombre(id);
             if (nombre != null) {
                 lblConfirmacion.setText("¿Eliminar a " + nombre + "?");
             } else {
@@ -364,7 +364,7 @@ public class VentanaClientes {
 
         Button btnEliminar = new Button("Sí, eliminar");
         btnEliminar.setOnAction(e -> {
-            ClienteDAO.eliminarPorId(Integer.parseInt(txtId.getText()));
+            ClienteDAO.eliminar(Integer.parseInt(txtId.getText()));
             ventana.close();
         });
 

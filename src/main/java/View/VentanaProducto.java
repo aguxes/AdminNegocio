@@ -349,8 +349,46 @@ public class VentanaProducto {
         outputArea.setText("✏️ Editar un producto existente.");
     }
 
-    public void eliminarProducto() {
-        outputArea.setText("🗑️ Eliminar producto por ID.");
-    }
+    public void eliminarProducto()
+    {
+        Stage ventana = new Stage();
+        ventana.setTitle("Eliminar Producto");
 
+        TextField txtId = new TextField();
+        txtId.setPromptText("ID del Producto");
+
+        Label lblConfirmacion = new Label();
+
+        Button btnBuscar = new Button("Buscar");
+        btnBuscar.setOnAction(e -> {
+            int id = Integer.parseInt(txtId.getText());
+            String nombre = ProductoDAO.buscarxNombre(id);
+            if (nombre != null) {
+                lblConfirmacion.setText("¿Eliminar " + nombre + "?");
+            } else {
+                lblConfirmacion.setText("Producto no encontrado.");
+            }
+        });
+
+        Button btnEliminar = new Button("Sí, eliminar");
+        btnEliminar.setOnAction(e -> {
+            ProductoDAO.eliminar(Integer.parseInt(txtId.getText()));
+            ventana.close();
+        });
+
+        Button btnCancelar = new Button("Cancelar");
+        btnCancelar.setOnAction(e -> ventana.close());
+
+        HBox botones = new HBox(10, btnEliminar, btnCancelar);
+        botones.setAlignment(Pos.CENTER);
+
+        VBox layout = new VBox(10, new Label("ID Producto:"), txtId, btnBuscar, lblConfirmacion, botones);
+        layout.setPadding(new Insets(20));
+        layout.setAlignment(Pos.CENTER);
+
+        Scene escena = new Scene(layout, 300, 250);
+        ventana.setScene(escena);
+        ventana.initModality(Modality.APPLICATION_MODAL);
+        ventana.showAndWait();
+    }
 }
