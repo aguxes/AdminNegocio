@@ -1,0 +1,76 @@
+Ordena los controles =                              --Ordenar
+HBox = de manera Horizontal
+
+VBox = de manera Vertical
+
+contenedor.getChildren().clear();                   --Limpia el espacio
+Borra todos los elementos que tenía el contenedor
+
+.trim() elimina espacios antes y después del texto. --Espacios
+
+Tablas.formtoAddEntidad(...):                       --formulario avanzado
+Recorre la matriz lineas.
+Crea los controles (TextField, etc.).
+Los mete en un VBox para que se vean en pantalla.
+Guarda cada control en el Map campos usando la clave interna.
+la Clave interna son "nombre" el atributo de una clase.
+
+Cada fila representa un campo en el formulario:    --Matriz generada para formtoAddEntidad
+Etiqueta visible ("DNI", "Nombre", etc.).
+Clave interna para el Map campos ("dni", "nombre", etc.).
+Tipo de control ("text" = TextField, "select" = selector, "combo" = ComboBox, "date" = DatePicker).
+Esta configuración se pasa a formtoAddEntidad para generar los controles automáticamente sin tener que escribirlos uno por uno.
+
+Map<String, Object> campos = new HashMap<>();       --Sin estos dos Map formtoAddEntidad no sirve
+Map<String, Runnable> acciones = new HashMap<>();
+
+campos: Guarda referencias a los controles (TextField, ComboBox, etc.) que se crean para cada campo del formulario.
+Clave (String) → nombre lógico del campo ("dni", "nombre", etc.).
+Valor (Object) → el control gráfico real (TextField, ComboBox, etc.).
+acciones: Guarda acciones especiales asociadas a ciertos campos.
+Clave (String) → nombre del campo.
+Valor (Runnable) → código que se ejecuta cuando se hace algo especial (por ejemplo, abrir una ventana de selección).
+En este caso, como es un formulario simple, acciones se deja vacío. (null)
+
+.size() cuenta elementos en una lista
+
+(campo puede ser cualquier cosa, desde un textfield hasta un dropdownlist)  campo.setOnAction(e -> btnFiltrar.fire());      --Con esto el ENTER funciona igual que el click sobre un boton
+
+((TextField) campos.get("cantidad")).textProperty().addListener((obs, oldVal, newVal) -> actualizarTotal.run());            --ABAJO Explicacion:
+
+campos es un Map<String, Object> que guarda todos los controles del formulario.
+"cantidad" es la clave asociada al campo de texto donde el usuario escribe la cantidad.
+Como el Map está declarado como Object, hay que hacer casting a TextField para poder acceder a sus métodos
+
+.textProperty() ===
+                    En JavaFX, cada control tiene propiedades observables (ObservableValue).
+                    textProperty() devuelve un objeto observable que representa el contenido del TextField.
+                    Esto permite escuchar cambios en el texto en tiempo real, sin necesidad de esperar un clic o un enter.
+.addListener(...) ===
+                     Registra un listener que se ejecuta cada vez que cambia el texto del campo.
+
+                     Los parámetros:
+                     obs → El observable que está siendo observado (no lo usamos aquí).
+                     oldVal → El valor anterior del texto.
+                     newVal → El nuevo valor que el usuario acaba de escribir.
+
+Cuando llamás a .addListener(...) o .setOnAction(...), estás diciendo:
+“Quiero que este código se ejecute cuando pase tal cosa.”
+JavaFX guarda tu listener en una lista interna de observadores.
+
+Cuando ocurre el evento (cambia el texto, se hace clic, etc.):
+JavaFX recorre su lista de listeners.
+Ejecuta cada uno en orden.
+Vos no tenés que preguntar todo el tiempo “¿Cambió ya?”.
+Es reactivo: solo te avisa cuando pasa.
+
+Runnable es una interfaz funcional de Java (tiene un solo método llamado run()).
+Representa una tarea que se puede ejecutar.
+No devuelve nada y no recibe parámetros.
+
+Creamos el runable =
+Runnable actualizarTotal = () -> {
+    // lógica para recalcular el total
+};
+Lo utilizamos = actualizarTotal.run();
+

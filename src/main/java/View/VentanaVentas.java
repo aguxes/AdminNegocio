@@ -113,8 +113,7 @@ public class VentanaVentas {
                 }
             }
         });
-
-
+        campoCliente.setOnAction(e -> btnFiltrar.fire()); //ENTER para filtrar
         VBox.setVgrow(tarjeta, Priority.ALWAYS); // Esto permite que se expanda verticalmente si hay espacio
         VBox.setVgrow(tabla, Priority.ALWAYS);
         tabla.setMaxHeight(Double.MAX_VALUE); // para que no se achique
@@ -148,9 +147,9 @@ public class VentanaVentas {
         };
         VBox formCampos = Tablas.formtoAddEntidad(lineas, campos, acciones);
 
-        ((ComboBox<String>) campos.get("formaPago")).getItems().addAll(
-                "Efectivo", "Debito", "Credito", "Transferencia", "MercadoPago"
-        );
+         ComboBox<String> comboFormaPago = (ComboBox<String>) campos.get("formaPago");
+         comboFormaPago.getItems().addAll("Efectivo", "Debito", "Credito", "Transferencia", "MercadoPago");
+         comboFormaPago.getStyleClass().add("choice-box");
 
         Label lblTotalVenta = new Label("Total de la venta: $0.00");
         lblTotalVenta.getStyleClass().add("etiqueta-total");
@@ -166,9 +165,7 @@ public class VentanaVentas {
                     BigDecimal total = precio.multiply(BigDecimal.valueOf(cantidad));
                     lblTotalVenta.setText("Total de la venta: $" + total);
                 }
-            } catch (Exception e) {
-                lblTotalVenta.setText("Total de la venta: $0.00");
-            }
+            } catch (Exception e) {}
         };
 
         ((TextField) campos.get("cantidad")).textProperty().addListener((obs, oldVal, newVal) -> actualizarTotal.run());
@@ -184,19 +181,20 @@ public class VentanaVentas {
                 int cantidad = Integer.parseInt(((TextField) campos.get("cantidad")).getText().trim());
                 String medio = ((ComboBox<String>) campos.get("formaPago")).getValue();
 
-                if (medio == null) {
+                if (medio == null) { //Mini validaciones MV
                     mostrarAlerta("⚠ Seleccioná una forma de pago.");
                     return;
                 }
                 Producto prod = ProductoDAO.obtenerProductoPorID(productoId);
-                if (prod == null) {
+                if (prod == null) { //MV
                     mostrarAlerta("❌ Producto no encontrado.");
                     return;
                 }
 
                 BigDecimal precio = prod.getPrecioUnitario();
                 BigDecimal subtotal = precio.multiply(BigDecimal.valueOf(cantidad));
-                BigDecimal total = subtotal;
+                BigDecimal total = BigDecimal.valueOf(0);
+                total = total.add(subtotal);
 
                 int idPago = switch (medio) {
                     case "Efectivo" -> 1;

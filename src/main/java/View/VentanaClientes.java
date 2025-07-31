@@ -101,7 +101,7 @@ public class VentanaClientes {
                 tabla.getItems().setAll(resultado);
             }
         });
-
+        txtValor.setOnAction(e -> btnBuscar.fire());
         btnBuscar.setPrefWidth(240); // mismo ancho que txtValor
         btnBuscar.setAlignment(Pos.CENTER);
 
@@ -116,7 +116,6 @@ public class VentanaClientes {
         contenedor.getChildren().clear();
 
         Map<String, Object> campos = new HashMap<>();
-        Map<String, Runnable> acciones = new HashMap<>();
         String[][] lineas = {
                 {"DNI", "dni", "text"},
                 {"Nombre", "nombre","text"},
@@ -126,7 +125,7 @@ public class VentanaClientes {
                 {"Teléfono", "telefono", "text"}
         };
 
-        VBox formCampos = Tablas.formtoAddEntidad(lineas, campos, acciones);
+        VBox formCampos = Tablas.formtoAddEntidad(lineas, campos, null);
 
         Label titulo = new Label("📋 Registrar Cliente");
         titulo.getStyleClass().add("titulo-principal");

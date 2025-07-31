@@ -159,7 +159,7 @@ public class VentanaProducto {
                 lblCantidad.setText("Coincidencias: " + filtrados.size());
             }
         });
-
+        campoBusqueda.setOnAction(e -> btnBuscar.fire());
         //Armado final
         tarjeta.getChildren().addAll(titulo, barraBusqueda, tabla, lblCantidad);
         contenedor.getChildren().setAll(tarjeta);
@@ -220,7 +220,7 @@ public class VentanaProducto {
                 mostrarAlerta("❌ Verificá los campos. Error: " + ex.getMessage());
             }
         });
-        
+
         VBox formFinal = new VBox(10, titulo, formCampos, btnGuardar);
         contenedor.getChildren().add(formFinal);
     }

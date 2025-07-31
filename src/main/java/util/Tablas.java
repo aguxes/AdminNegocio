@@ -133,7 +133,6 @@ public class Tablas {
                 case "combo" -> {
                     ComboBox<String> comboBox = new ComboBox<>();
                     comboBox.setPromptText(label);
-                    comboBox.setMaxWidth(350);
                     entradas.put(key, comboBox);
                     formulario.getChildren().add(comboBox);
                 }
