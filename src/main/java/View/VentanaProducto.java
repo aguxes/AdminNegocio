@@ -16,6 +16,9 @@ import java.math.BigDecimal;
 import java.sql.Connection; // conecxion sql
 import java.time.LocalDate; //Para la fecha
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import javafx.fxml.FXML;
 
 import javafx.scene.control.cell.PropertyValueFactory; // setear los col
@@ -36,7 +39,7 @@ public class VentanaProducto {
         this.outputArea = outputArea;
     }
 
-    public void mostrarVentanaSeleccionProducto(TextField idProductoField) {
+    public static void mostrarVentanaSeleccionProducto(TextField idProductoField) {
         Stage ventana = new Stage();
         ventana.setTitle("Seleccionar Producto");
         ventana.initModality(Modality.APPLICATION_MODAL);
@@ -95,7 +98,7 @@ public class VentanaProducto {
     public void verProductos() {
         contenedor.getChildren().clear();
 
-        VBox tarjeta = new VBox(15);
+        VBox tarjeta = new VBox(10);
         tarjeta.setPadding(new Insets(20));
         tarjeta.setAlignment(Pos.TOP_CENTER);
         tarjeta.setMaxWidth(Double.MAX_VALUE);
@@ -118,53 +121,27 @@ public class VentanaProducto {
 
         barraBusqueda.getChildren().addAll(new Label("🔍 Buscar:"), campoBusqueda, btnBuscar);
 
-        //Tabla
-        TableView<Producto> tabla = new TableView<>();
-        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        tabla.setPlaceholder(new Label("No hay productos cargados."));
-        tabla.getStyleClass().add("tabla-clientes");
-        VBox.setVgrow(tabla, Priority.ALWAYS);
+        String[][] columnas = {
+                {"ID", "productoID"},
+                {"Nombre", "nombreProducto"},
+                {"Precio", "precioUnitario"},
+                {"Costo", "costo"},
+                {"Stock", "stock"},
+                {"Medida", "medidaNombre"},
+                {"Categoría", "categoriaNombre"},
+                {"Fecha Alta", "fechaAlta"},
+                {"Fecha Baja", "fechaBaja"}
+        };
 
-        TableColumn<Producto, Integer> colId = new TableColumn<>("ID");
-        colId.setCellValueFactory(new PropertyValueFactory<>("productoID"));
+        TableView<Producto> tabla = Tablas.crearTabla(Producto.class, columnas);
 
-        TableColumn<Producto, String> colNombre = new TableColumn<>("Nombre");
-        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombreProducto"));
-
-        TableColumn<Producto, Double> colPrecio = new TableColumn<>("Precio");
-        colPrecio.setCellValueFactory(new PropertyValueFactory<>("precioUnitario"));
-
-        TableColumn<Producto, Double> colCosto = new TableColumn<>("Costo");
-        colCosto.setCellValueFactory(new PropertyValueFactory<>("costo"));
-
-        TableColumn<Producto, Integer> colStock = new TableColumn<>("Stock");
-        colStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
-
-        TableColumn<Producto, String> colMedida = new TableColumn<>("Medida");
-        colMedida.setCellValueFactory(new PropertyValueFactory<>("medidaNombre"));
-
-        TableColumn<Producto, String> colCategoria = new TableColumn<>("Categoría");
-        colCategoria.setCellValueFactory(new PropertyValueFactory<>("categoriaNombre"));
-
-        TableColumn<Producto, LocalDate> colAlta = new TableColumn<>("Fecha Alta");
-        colAlta.setCellValueFactory(new PropertyValueFactory<>("fechaAlta"));
-
-        TableColumn<Producto, LocalDate> colBaja = new TableColumn<>("Fecha Baja");
-        colBaja.setCellValueFactory(new PropertyValueFactory<>("fechaBaja"));
-
-        tabla.getColumns().addAll(colId, colNombre, colPrecio, colCosto, colStock,
-                colMedida, colCategoria, colAlta, colBaja);
-
-        // Label Cantidad
         Label lblCantidad = new Label();
         lblCantidad.getStyleClass().add("label-cantidad");
 
-        // Cargar datos
         ArrayList<Producto> listaOriginal = ProductoDAO.cargarProductosEnLista();
         tabla.setItems(FXCollections.observableArrayList(listaOriginal));
         lblCantidad.setText("Total de productos: " + listaOriginal.size());
 
-        //  Acción del boton Buscar
         btnBuscar.setOnAction(e -> {
             String texto = campoBusqueda.getText().trim().toLowerCase();
             if (texto.isEmpty()) {
@@ -191,56 +168,28 @@ public class VentanaProducto {
     public void agregarProducto() {
         contenedor.getChildren().clear();
 
-        VBox tarjeta = new VBox(12);
-        tarjeta.setPadding(new Insets(20));
-        tarjeta.setAlignment(Pos.TOP_CENTER);
-        tarjeta.setMaxWidth(Double.MAX_VALUE);
-        tarjeta.getStyleClass().add("form-box");
-
         Label titulo = new Label("➕ Agregar Producto");
         titulo.getStyleClass().add("titulo-principal");
 
-        TextField nombre = new TextField();
-        nombre.setPromptText("Nombre del producto");
-        nombre.getStyleClass().add("input-form");
+        Map<String, Object> campos = new HashMap<>();
+        Map<String, Runnable> acciones = new HashMap<>();
 
-        TextField precio = new TextField();
-        precio.setPromptText("Precio unitario");
-        precio.getStyleClass().add("input-form");
+        // Acciones para botones de selección
+        acciones.put("idMedida", () -> mostrarVentanaSeleccionMedida((TextField) campos.get("idMedida")));
+        acciones.put("idCategoria", () -> mostrarVentanaSeleccionCategoria((TextField) campos.get("idCategoria")));
 
-        TextField costo = new TextField();
-        costo.setPromptText("Costo");
-        costo.getStyleClass().add("input-form");
-
-        TextField stock = new TextField();
-        stock.setPromptText("Stock");
-        stock.getStyleClass().add("input-form");
-
-        TextField idMedida = new TextField();
-        idMedida.setPromptText("ID medida");
-        idMedida.setEditable(false);
-        idMedida.getStyleClass().add("input-form");
-
-        Button btnMedida = new Button("📏 Seleccionar medida");
-        btnMedida.getStyleClass().add("boton-secundario");
-        btnMedida.setOnAction(e -> mostrarVentanaSeleccionMedida(idMedida));
-
-        TextField idCategoria = new TextField();
-        idCategoria.setPromptText("ID categoría");
-        idCategoria.setEditable(false);
-        idCategoria.getStyleClass().add("input-form");
-
-        Button btnCategoria = new Button("🏷️ Seleccionar categoría");
-        btnCategoria.getStyleClass().add("boton-secundario");
-        btnCategoria.setOnAction(e -> mostrarVentanaSeleccionCategoria(idCategoria));
-
-        //boolean activo = true;
-
-        DatePicker fechAlta = new DatePicker();
-        fechAlta.setPromptText("Fecha de alta");
-
-        DatePicker fechaBaja = new DatePicker();
-        fechaBaja.setPromptText("Fecha de baja (opcional)");
+        // Definición de campos
+        String[][] lineas = {
+                {"Nombre del producto", "nombreProducto", "text"},
+                {"Precio unitario", "precioUnitario", "text"},
+                {"Costo", "costo", "text"},
+                {"Stock", "stock", "text"},
+                {"ID medida", "idMedida", "select"},
+                {"ID categoría", "idCategoria", "select"},
+                {"Fecha de alta", "fechaAlta", "date"},
+                {"Fecha de baja (opcional)", "fechaBaja", "date"}
+        };
+        VBox formCampos = Tablas.formtoAddEntidad(lineas, campos, acciones);
 
         Button btnGuardar = new Button("💾 Guardar Producto");
         btnGuardar.getStyleClass().add("boton-accion");
@@ -249,16 +198,17 @@ public class VentanaProducto {
             try {
                 Producto nuevo = new Producto(
                         0,
-                        nombre.getText(),
-                        new BigDecimal(precio.getText()),
-                        Double.parseDouble(costo.getText()),
-                        Integer.parseInt(stock.getText()),
-                        Integer.parseInt(idMedida.getText()),
-                        Integer.parseInt(idCategoria.getText()),
+                        ((TextField) campos.get("nombreProducto")).getText().trim(),
+                        new BigDecimal(((TextField) campos.get("precioUnitario")).getText().trim()),
+                        Double.parseDouble(((TextField) campos.get("costo")).getText().trim()),
+                        Integer.parseInt(((TextField) campos.get("stock")).getText().trim()),
+                        Integer.parseInt(((TextField) campos.get("idMedida")).getText().trim()),
+                        Integer.parseInt(((TextField) campos.get("idCategoria")).getText().trim()),
                         true,
-                        fechAlta.getValue().atStartOfDay()
-                        //(fechaBaja.getValue() == null) ? null : fechaBaja.getValue().atStartOfDay()
-
+                        ((DatePicker) campos.get("fechaAlta")).getValue().atStartOfDay()
+                        // Fecha baja opcional
+                        // ((DatePicker) campos.get("fechaBaja")).getValue() != null ?
+                        // ((DatePicker) campos.get("fechaBaja")).getValue().atStartOfDay() : null
                 );
                 if (ProductoDAO.insertarProducto(nuevo)) {
                     mostrarAlerta("✅ Producto agregado con éxito.");
@@ -270,17 +220,9 @@ public class VentanaProducto {
                 mostrarAlerta("❌ Verificá los campos. Error: " + ex.getMessage());
             }
         });
-
-        // Agrupación visual
-        tarjeta.getChildren().addAll(
-                titulo,
-                nombre, precio, costo, stock,
-                new HBox(10, idMedida, btnMedida),
-                new HBox(10, idCategoria, btnCategoria),
-                fechAlta, fechaBaja,
-                btnGuardar
-        );
-        contenedor.getChildren().setAll(tarjeta);
+        
+        VBox formFinal = new VBox(10, titulo, formCampos, btnGuardar);
+        contenedor.getChildren().add(formFinal);
     }
 
 

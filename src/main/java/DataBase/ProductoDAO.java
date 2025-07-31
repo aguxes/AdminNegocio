@@ -16,6 +16,7 @@ public class ProductoDAO {
         FROM Producto p
         INNER JOIN CategoriasProd c ON c.Categoria = p.idCategoria
         INNER JOIN MedidasProd m ON m.unidadMedida = p.idMedida
+        WHERE p.activo = true;
         """;
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -55,7 +56,7 @@ public class ProductoDAO {
     public static Producto obtenerProductoPorID(int id) {
         try {
             String sql = """
-            SELECT p.idProducto, p.nombre, p.precio, p.costo, p.stock,
+            SELECT p.idProducto, p.nombre, p.precio, p.costo, p.stock, p.activo,
                 p.fechAlta, p.fechaBaja, m.descripcion AS medidanombre,
                 c.descripcion AS categorianombre
             FROM Producto p
@@ -171,10 +172,10 @@ public class ProductoDAO {
 
     public static boolean insertarProducto(Producto producto) {
         String sql = """
-INSERT INTO Producto (nombre, precio, costo, stock, idMedida, idCategoria, fechAlta, fechabaja)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?);
-
-    """;
+        INSERT INTO Producto (nombre, precio, costo, stock, idMedida, idCategoria, activo, fechAlta, fechabaja)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, null);
+        
+        """;
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             Mapper.setProducto(stmt, producto);
             return stmt.executeUpdate() > 0;

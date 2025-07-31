@@ -23,9 +23,12 @@ import util.Tablas;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static View.AppController.agregarDobleClickSeleccion;
 import static View.AppController.mostrarAlerta; // te copie papu
+import static View.VentanaProducto.mostrarVentanaSeleccionProducto;
 
 public class VentanaVentas {
     @FXML private TextArea outputArea;
@@ -122,64 +125,41 @@ public class VentanaVentas {
         contenedor.getChildren().setAll(tarjeta);
     }
 
-
-
-
     public void registrarVenta() {
         contenedor.getChildren().clear();
-
-        VBox form = new VBox(10);
-        form.setPadding(new Insets(20));
-        form.getStyleClass().add("form-box");
 
         Label titulo = new Label("📋 Registrar Venta");
         titulo.getStyleClass().add("titulo-principal");
 
-        TextField txtProductoId = new TextField();
-        txtProductoId.setPromptText("ID Producto");
-        txtProductoId.getStyleClass().add("text-field");
+        Map<String, Object> campos = new HashMap<>();
+        Map<String, Runnable> acciones = new HashMap<>();
 
-        Label lblCantidad = new Label("Cantidad:");
-        TextField txtCantidad = new TextField();
-        txtCantidad.setPromptText("Ej: 3");
+        acciones.put("productoID", () -> mostrarVentanaSeleccionProducto((TextField) campos.get("productoID")));
+        acciones.put("idC", () -> mostrarVentanaSeleccionCliente((TextField) campos.get("idC")));
+        acciones.put("idE", () -> mostrarVentanaSeleccionEmpleado((TextField) campos.get("idE")));
 
-        Button btnAgregarProducto = new Button(" Agregar Producto");
-        btnAgregarProducto.getStyleClass().add("boton-secundario");
-        VentanaProducto ventanaProducto = new VentanaProducto(contenedor, outputArea);
-        btnAgregarProducto.setOnAction(e -> ventanaProducto.mostrarVentanaSeleccionProducto(txtProductoId));
+        String[][] lineas = {
+                {"ID", "productoID", "select"},
+                {"Cantidad", "cantidad", "text"},
+                {"Cliente", "idC", "select"},
+                {"Empleado", "idE", "select"},
+                {"Forma de Pago", "formaPago", "combo"},
+                {"Fecha de Venta", "fechaVenta", "date"},
+        };
+        VBox formCampos = Tablas.formtoAddEntidad(lineas, campos, acciones);
 
-        TextField txtClienteId = new TextField();
-        txtClienteId.setPromptText("ID Cliente");
-        txtClienteId.getStyleClass().add("text-field");
-
-        TextField txtEmpleadoId = new TextField();
-        txtEmpleadoId.setPromptText("ID Empleado");
-        txtEmpleadoId.getStyleClass().add("text-field");
-
-        ComboBox<String> medioPago = new ComboBox<>();
-        medioPago.getItems().addAll("Efectivo", "Debito", "Credito", "Transferencia", "MercadoPago");
-        medioPago.setPromptText("Medio de Pago");
-        medioPago.getStyleClass().add("choice-box");
+        ((ComboBox<String>) campos.get("formaPago")).getItems().addAll(
+                "Efectivo", "Debito", "Credito", "Transferencia", "MercadoPago"
+        );
 
         Label lblTotalVenta = new Label("Total de la venta: $0.00");
-        lblTotalVenta.getStyleClass().add("etiqueta-total"); // opcional si tenés CSS
+        lblTotalVenta.getStyleClass().add("etiqueta-total");
 
-
-        Button btnAgregarCliente = new Button(" Agregar Cliente");
-        btnAgregarCliente.getStyleClass().add("boton-secundario");
-        btnAgregarCliente.setOnAction(e -> mostrarVentanaSeleccionCliente(txtClienteId));
-
-        Button btnAgregarEmpleado = new Button(" Agregar Empleado");
-        btnAgregarEmpleado.getStyleClass().add("boton-secundario");
-        btnAgregarEmpleado.setOnAction(e -> mostrarVentanaSeleccionEmpleado(txtEmpleadoId));
-
-        Button btnRegistrar = new Button("✅ Registrar Venta");
-        btnRegistrar.getStyleClass().add("boton-accion");
-
+        // Actualizar total en tiempo real
         Runnable actualizarTotal = () -> {
             try {
-                int cantidad = Integer.parseInt(txtCantidad.getText().trim());
-                int idProd = Integer.parseInt(txtProductoId.getText().trim());
+                int cantidad = Integer.parseInt(((TextField) campos.get("cantidad")).getText().trim());
+                int idProd = Integer.parseInt(((TextField) campos.get("productoID")).getText().trim());
                 Producto p = ProductoDAO.obtenerProductoPorID(idProd);
                 if (p != null) {
                     BigDecimal precio = p.getPrecioUnitario();
@@ -191,22 +171,32 @@ public class VentanaVentas {
             }
         };
 
+        ((TextField) campos.get("cantidad")).textProperty().addListener((obs, oldVal, newVal) -> actualizarTotal.run());
+        ((TextField) campos.get("productoID")).textProperty().addListener((obs, oldVal, newVal) -> actualizarTotal.run());
+
+        Button btnRegistrar = new Button("✅ Registrar Venta");
+        btnRegistrar.getStyleClass().add("boton-accion");
         btnRegistrar.setOnAction(e -> {
             try {
-                int productoId = Integer.parseInt(txtProductoId.getText().trim());
-                int clienteId = Integer.parseInt(txtClienteId.getText().trim());
-                int empleadoId = Integer.parseInt(txtEmpleadoId.getText().trim());
-                int cantidad =  Integer.parseInt(txtCantidad.getText().trim());
-                String medio = medioPago.getValue();
+                int productoId = Integer.parseInt(((TextField) campos.get("productoID")).getText().trim());
+                int clienteId = Integer.parseInt(((TextField) campos.get("idC")).getText().trim());
+                int empleadoId = Integer.parseInt(((TextField) campos.get("idE")).getText().trim());
+                int cantidad = Integer.parseInt(((TextField) campos.get("cantidad")).getText().trim());
+                String medio = ((ComboBox<String>) campos.get("formaPago")).getValue();
 
+                if (medio == null) {
+                    mostrarAlerta("⚠ Seleccioná una forma de pago.");
+                    return;
+                }
                 Producto prod = ProductoDAO.obtenerProductoPorID(productoId);
                 if (prod == null) {
                     mostrarAlerta("❌ Producto no encontrado.");
                     return;
                 }
+
                 BigDecimal precio = prod.getPrecioUnitario();
-                BigDecimal subtotal =  precio.multiply(BigDecimal.valueOf(cantidad));
-                BigDecimal total = subtotal; //El subtotal es para calcular los descuentos y cualquier extra que se le sume o reste a la venta antes de dar el total final de la venta
+                BigDecimal subtotal = precio.multiply(BigDecimal.valueOf(cantidad));
+                BigDecimal total = subtotal;
 
                 int idPago = switch (medio) {
                     case "Efectivo" -> 1;
@@ -216,83 +206,41 @@ public class VentanaVentas {
                     case "MercadoPago" -> 5;
                     default -> throw new IllegalArgumentException("Forma de pago inválida.");
                 };
-
-                Venta venta = new Venta(); // Forma de reducir lineas aca?? Mapper extra o que??
+                Venta venta = new Venta();
                 venta.setIdProducto(productoId);
                 venta.setIdCliente(clienteId);
                 venta.setIdEmpleado(empleadoId);
                 venta.setIdFormaDePago(idPago);
                 venta.setCantidad(cantidad);
-                venta.setSubtotal(total);
+                venta.setSubtotal(subtotal);
                 venta.setImporteTotal(total);
+                venta.setFecha(((DatePicker) campos.get("fechaVenta")).getValue().atStartOfDay());
 
                 String sql = "INSERT INTO Venta (idProd, idC, idE, formaDePago, cantidad, fecha, subtotal, total) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-                PreparedStatement stmt = conn.prepareStatement(sql);
-
-                Mapper.setVenta(stmt, venta);
-                stmt.executeUpdate();
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    Mapper.setVenta(stmt, venta);
+                    stmt.executeUpdate();
+                }
                 mostrarAlerta("✅ Venta registrada correctamente.");
-                contenedor.getChildren().clear();
-                contenedor.getChildren().add(outputArea);
-
                 boolean exito = VentaDAO.actualizarStockProducto(productoId, cantidad);
                 if (!exito) {
                     mostrarAlerta("⚠ No se pudo actualizar el stock.");
                 }
+
+                verVentas();
 
             } catch (Exception ex) {
                 mostrarAlerta("❌ Error: " + ex.getMessage());
             }
         });
 
-        txtCantidad.textProperty().addListener((obs, oldVal, newVal) -> actualizarTotal.run());
-        txtProductoId.textProperty().addListener((obs, oldVal, newVal) -> actualizarTotal.run());
-
-        //Al crear esto asi puedo darle un estilo mas cool
-        HBox filaProducto = new HBox(15, btnAgregarProducto, txtProductoId);
-        filaProducto.setAlignment(Pos.CENTER);
-
-        HBox filaCliente = new HBox(15, btnAgregarCliente, txtClienteId);
-        filaCliente.setAlignment(Pos.CENTER);
-
-        HBox filaEmpleado = new HBox(15, btnAgregarEmpleado, txtEmpleadoId);
-        filaEmpleado.setAlignment(Pos.CENTER);
-
-        HBox filaCantidad = new HBox(15, lblCantidad, txtCantidad);
-        filaCantidad.setAlignment(Pos.CENTER);
-
-        form.setAlignment(Pos.TOP_CENTER);
-        btnAgregarProducto.setPrefWidth(140);
-        btnAgregarCliente.setPrefWidth(140);
-        btnAgregarEmpleado.setPrefWidth(140);
-
-        txtProductoId.setPrefWidth(200);
-        txtClienteId.setPrefWidth(200);
-        txtEmpleadoId.setPrefWidth(200);
-        txtCantidad.setPrefWidth(200);
-        // hasta aca, dsp los agregas abajo y list
-        form.getChildren().addAll(
-                titulo,
-                filaProducto,
-                filaCantidad,
-                filaCliente,
-                filaEmpleado,
-                medioPago,
-                lblTotalVenta,
-                btnRegistrar
-        );
-
         Button btnCancelar = new Button("❌ Cancelar Venta");
         btnCancelar.getStyleClass().add("boton-cancelar");
-        btnCancelar.setOnAction(e -> {
-            contenedor.getChildren().clear();
-            contenedor.getChildren().add(outputArea);
-        });
+        btnCancelar.setOnAction(e -> verVentas());
 
-        HBox filaCancelar = new HBox(btnCancelar);
-        filaCancelar.setAlignment(Pos.BOTTOM_RIGHT);
-        form.getChildren().add(filaCancelar);
-        contenedor.getChildren().add(form);
+        VBox formFinal = new VBox(10, titulo, formCampos, lblTotalVenta, btnRegistrar, btnCancelar);
+        formFinal.setAlignment(Pos.TOP_CENTER);
+        contenedor.getChildren().add(formFinal);
     }
 
     public  void mostrarVentanaSeleccionCliente(TextField campoDestino) {

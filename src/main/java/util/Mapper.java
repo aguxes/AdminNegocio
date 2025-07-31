@@ -151,7 +151,6 @@ public class Mapper {
                 rs.getInt("stock"),
                 rs.getString("medidanombre"),
                 rs.getString("categorianombre"),
-                rs.getBoolean("activo"),
                 fechaAlta
                 //rs.getDate("fechabaja")
         );

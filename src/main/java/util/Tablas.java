@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.util.Map;
@@ -66,7 +67,7 @@ public class Tablas {
 
         return tabla;
     }
-    public static VBox crearform( String [][] lineas, Map<String, TextField> entradas) {
+    public static VBox crearform( String [][] lineas, Map<String, TextField> entradas) { // form de creacion de identidad que solamente admite Text-Field
 
         VBox formulario = new VBox(10);
         formulario.setPadding(new Insets(20));
@@ -88,4 +89,58 @@ public class Tablas {
         }
         return formulario;
     }
+    public static VBox formtoAddEntidad( String[][] lineas, Map<String, Object> entradas, Map<String, Runnable> acciones) { // form de creacion de identidad que admite practicamente cualquier cosa
+        VBox formulario = new VBox(10);
+        formulario.setPadding(new Insets(20));
+        formulario.getStyleClass().add("form-box");
+
+        for (String[] linea : lineas) {
+            String label = linea[0];
+            String key = linea[1];
+            String tipo = linea.length > 2 ? linea[2] : "text";
+
+            switch (tipo) {
+                case "text" -> {
+                    TextField txt = new TextField();
+                    txt.setPromptText(label);
+                    txt.setMaxWidth(350);
+                    txt.getStyleClass().add("input-form");
+                    entradas.put(key, txt);
+                    formulario.getChildren().add(txt);
+                }
+                case "select" -> {
+                    TextField txt = new TextField();
+                    txt.setPromptText(label);
+                    txt.setEditable(false);
+                    txt.getStyleClass().add("input-form");
+
+                    Button btn = new Button("Seleccionar");
+                    btn.getStyleClass().add("boton-secundario");
+
+                    Runnable accion = acciones.get(key);
+                    if (accion != null) btn.setOnAction(e -> accion.run());
+
+                    HBox hbox = new HBox(10, txt, btn);
+                    entradas.put(key, txt);
+                    formulario.getChildren().add(hbox);
+                }
+                case "date" -> {
+                    DatePicker datePicker = new DatePicker();
+                    datePicker.setPromptText(label);
+                    entradas.put(key, datePicker);
+                    formulario.getChildren().add(datePicker);
+                }
+                case "combo" -> {
+                    ComboBox<String> comboBox = new ComboBox<>();
+                    comboBox.setPromptText(label);
+                    comboBox.setMaxWidth(350);
+                    entradas.put(key, comboBox);
+                    formulario.getChildren().add(comboBox);
+                }
+            }
+        }
+
+        return formulario;
+    }
+
 }

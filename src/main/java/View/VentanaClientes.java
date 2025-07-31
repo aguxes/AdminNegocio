@@ -115,18 +115,18 @@ public class VentanaClientes {
     public void agregarCliente() {
         contenedor.getChildren().clear();
 
-
-        Map<String, TextField> campos = new HashMap<>();
+        Map<String, Object> campos = new HashMap<>();
+        Map<String, Runnable> acciones = new HashMap<>();
         String[][] lineas = {
-                {"DNI", "dni"},
-                {"Nombre", "nombre"},
-                {"Apellido", "apellido"},
-                {"Tipo de Cliente", "tipo"},
-                {"Cantidad de Compras", "cantCompras"},
-                {"Teléfono", "telefono"}
+                {"DNI", "dni", "text"},
+                {"Nombre", "nombre","text"},
+                {"Apellido", "apellido", "text"},
+                {"Tipo de Cliente", "tipo", "text"},
+                {"Cantidad de Compras", "cantCompras", "text"},
+                {"Teléfono", "telefono", "text"}
         };
 
-        VBox formCampos = Tablas.crearform(lineas, campos);
+        VBox formCampos = Tablas.formtoAddEntidad(lineas, campos, acciones);
 
         Label titulo = new Label("📋 Registrar Cliente");
         titulo.getStyleClass().add("titulo-principal");
@@ -136,12 +136,13 @@ public class VentanaClientes {
         btnRegistrarc.setOnAction(e -> {
             try {
 
-                int DNI = Integer.parseInt(campos.get("dni").getText().trim());
-                String Nombre = campos.get("nombre").getText().trim();
-                String Apellido = campos.get("apellido").getText().trim();
-                int tipoId = Integer.parseInt(campos.get("tipo").getText().trim());
-                int cantCompras = Integer.parseInt(campos.get("cantCompras").getText().trim());
-                String telefonoStr = campos.get("telefono").getText().trim();
+                int DNI = Integer.parseInt(((TextField) campos.get("dni")).getText().trim());
+                String Nombre = ((TextField) campos.get("nombre")).getText().trim();
+                String Apellido = ((TextField) campos.get("apellido")).getText().trim();
+                int tipoId = Integer.parseInt(((TextField) campos.get("tipo")).getText().trim());
+                int cantCompras = Integer.parseInt(((TextField) campos.get("cantCompras")).getText().trim());
+                String telefonoStr = ((TextField) campos.get("telefono")).getText().trim();
+
 
                 if (!telefonoStr.matches("\\d{8,11}")) {
                     mostrarAlerta("⚠El numero de teléfono debe tener entre 8 y 11 dígitos y solo contener números.");
