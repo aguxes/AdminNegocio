@@ -5,11 +5,23 @@ public class Persona {
     protected String nombre;
     protected String apellido;
 
+    private static int cont = 0;//Contador de personas registradas en el programa
+
     public Persona(int dni, String nombre, String apellido) {
+        cont++;
         this.DNI = dni;
         this.nombre = nombre;
         this.apellido = apellido;
     }
+    public Persona()
+    {
+        cont++;
+        this.DNI = 0;
+        this.nombre = "Sin nombre";
+        this.apellido = "Sin apellido";
+    }
+
+    public static int cantPersonas() { return cont+1; }
 
     public int getDNI() { return DNI; }
     public String getNombre() { return nombre; }

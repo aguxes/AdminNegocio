@@ -17,4 +17,5 @@ public class TiposClientes {
 
     @Override
     public String toString() { return descripcion; }
+
 }
