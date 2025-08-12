@@ -17,10 +17,13 @@ public class Mapper {
     // Mapeo de Persona
     // ========================================
     public static Persona getPersona(ResultSet rs) throws SQLException {
+        Telefono tel = new Telefono(rs.getInt("DNI"), rs.getLong("telefono"));
+
         Persona p = new Persona(
                 rs.getInt("DNI"),
                 rs.getString("nombre"),
-                rs.getString("apellido")
+                rs.getString("apellido"),
+                tel
         );
         return p;
     }
@@ -42,15 +45,15 @@ public class Mapper {
     public static Cliente getCliente(ResultSet rs) throws SQLException {
 
         TiposClientes tipoC = new TiposClientes( rs.getInt("tipo"), rs.getString("descripcion")); // Extra de la clase cliente
-        Telefono tel = new Telefono(rs.getInt("DNI"), rs.getLong("telefono")); // Extra de la clase cliente
+        Telefono tel = new Telefono(rs.getInt("DNI"), rs.getLong("telefono"));
         return new Cliente(
                 rs.getInt("DNI"),
                 rs.getString("nombre"),
                 rs.getString("apellido"),
+                tel,
                 rs.getInt("id"),
                 tipoC,
-                rs.getInt("cantCompras"),
-                tel
+                rs.getInt("cantCompras")
         );
     }
     public static void setCliente(PreparedStatement stmt, Cliente c) throws SQLException {
@@ -115,9 +118,9 @@ public class Mapper {
         String fechaIngreso = rs.getString("FechaIngreso");
         String fechaEgreso = rs.getString("FechaEgreso");
         boolean activo = rs.getBoolean("Activo");
-
+        Telefono tel = new Telefono(rs.getInt("DNI"), rs.getLong("telefono"));
         return new Empleado(
-                dni, nombre, apellido, empleadoID, dni, rolID,
+                dni, nombre, apellido, tel, empleadoID,/* rolID,*/
                 sueldo, vacaciones, faltas, fechaIngreso, fechaEgreso, activo
         );
     }
@@ -125,7 +128,7 @@ public class Mapper {
     public static void setEmpleado(PreparedStatement stmt, Empleado e) throws SQLException {
         stmt.setInt(1, e.getEmpleadoID());
         stmt.setInt(2, e.getDNI());
-        stmt.setInt(3, e.getRolID());
+        //stmt.setInt(3, e.getRolID());
         stmt.setDouble(4, e.getSueldo());
         stmt.setBoolean(5, e.getVacacionesActivas());
         stmt.setInt(6, e.getFaltas());
@@ -181,9 +184,9 @@ public class Mapper {
         );
         return t;
     }
-    public static void setTelefono(PreparedStatement stmt, Cliente c) throws SQLException {
-        stmt.setInt(1, c.getDNI());
-        stmt.setLong(2, c.getTelefono().getTelefono());
+    public static <T extends Persona> void setTelefono(PreparedStatement stmt, T obj) throws SQLException {
+        stmt.setInt(1, obj.getDNI());
+        stmt.setLong(2, obj.getTelefono().getTelefono());
     }
     public static void modTelefono(PreparedStatement stmt, Cliente c) throws SQLException {
         stmt.setLong(1, c.getTelefono().getTelefono());

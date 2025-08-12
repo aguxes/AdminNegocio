@@ -47,6 +47,16 @@ public class AppController {
                 crearBoton("🔙 Volver", e -> cargarMenuPrincipal())
         );
     }
+    private void mostrarSubmenuEmpleados() {
+        menuLateral.getChildren().clear();
+     //   menuLateral.getChildren().addAll(
+             //   crearBoton("Ver Empleados", e -> ventanaEmpleado.verEmpleados()),
+                //   crearBoton("Agregar Empleado", e -> ventanaEmpleado.agregarEmpleado()),
+                //  crearBoton("Modificar Empleado", e -> ventanaEmpleado.modificarEmpleado()),
+                // crearBoton("Eliminar Empleado", e -> ventanaEmpleado.EliminarEmpleado()),
+                // crearBoton("🔙 Volver", e -> cargarMenuPrincipal())
+     //   );
+    }
     private void mostrarSubmenuVentas() {
         menuLateral.getChildren().clear();
         menuLateral.getChildren().addAll(

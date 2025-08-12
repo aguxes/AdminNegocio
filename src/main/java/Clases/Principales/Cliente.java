@@ -10,15 +10,15 @@ public class Cliente extends Persona implements Imprimible {
     private Telefono telefono;
 
 
-    public Cliente(int dni, String nombre, String apellido, int id, TiposClientes tipo, int cantCompras, Telefono telefono) {
-        super(dni, nombre, apellido );
+    public Cliente(int dni, String nombre, String apellido, Telefono telefono, int id, TiposClientes tipo, int cantCompras) {
+        super(dni, nombre, apellido, telefono);
         this.id = id;
         this.tipo = tipo;
         this.cantCompras = cantCompras;
         this.telefono = telefono;
     }
 
-    public Cliente() { super(0, "", ""); }// Constructor vacío
+    public Cliente() { super(0, "", "", new Telefono (0,0)); }// Constructor vacío
 
     public int getId() { return id; }
     public void setid(int id) { this.id = id; }
@@ -29,11 +29,6 @@ public class Cliente extends Persona implements Imprimible {
     public int getCantCompras() { return cantCompras; }
     public void setCantCompras(int cantCompras) { this.cantCompras = cantCompras; }
 
-    public Telefono getTelefono() { return telefono; }
-    public void setTelefono(Telefono telefono) { this.telefono = telefono; }
-
-
-
     public int getDni() { return getDNI(); } // Persona.getDNI()
     public String getNombre() { return super.getNombre(); }
     public String getApellido() { return super.getApellido(); }
@@ -41,8 +36,6 @@ public class Cliente extends Persona implements Imprimible {
     public String getTipCliente() {
         return tipo != null ? tipo.getDescripcion() : "";
     } // Caso de uso de esta cosa??
-    public String getTelefonoStr() { return telefono != null ? String.valueOf(telefono.getTelefono()) : ""; }
-    // Caso de uso de esta cosa??
 
 
     @Override

@@ -49,11 +49,11 @@ public class VentanaClientes {
 
         ChoiceBox<String> choiceCampo = new ChoiceBox<>();
         choiceCampo.getItems().addAll("nombre", "apellido", "ID", "DNI", "tipo", "cantCompras", "telefono");
-        choiceCampo.setValue("nombre");
+        choiceCampo.setValue("ID");
         choiceCampo.getStyleClass().add("input-form");
 
         TextField txtValor = new TextField();
-        txtValor.setPromptText("Ej: Juan o 2");
+        txtValor.setPromptText("Ej: 2");
         txtValor.getStyleClass().add("input-form");
         txtValor.setMaxWidth(220);
 
