@@ -31,8 +31,10 @@ import static View.AppController.mostrarAlerta; // te copie papu
 import static View.VentanaProducto.mostrarVentanaSeleccionProducto;
 
 public class VentanaVentas {
-    @FXML private TextArea outputArea;
-    @FXML private VBox contenedor;
+    @FXML
+    private TextArea outputArea;
+    @FXML
+    private VBox contenedor;
 
     private static final Connection conn = DataBaseConnection.getConnection();
 
@@ -147,9 +149,9 @@ public class VentanaVentas {
         };
         VBox formCampos = Tablas.formtoAddEntidad(lineas, campos, acciones);
 
-         ComboBox<String> comboFormaPago = (ComboBox<String>) campos.get("formaPago");
-         comboFormaPago.getItems().addAll("Efectivo", "Debito", "Credito", "Transferencia", "MercadoPago");
-         comboFormaPago.getStyleClass().add("choice-box");
+        ComboBox<String> comboFormaPago = (ComboBox<String>) campos.get("formaPago");
+        comboFormaPago.getItems().addAll("Efectivo", "Debito", "Credito", "Transferencia", "MercadoPago");
+        comboFormaPago.getStyleClass().add("choice-box");
 
         Label lblTotalVenta = new Label("Total de la venta: $0.00");
         lblTotalVenta.getStyleClass().add("etiqueta-total");
@@ -165,7 +167,8 @@ public class VentanaVentas {
                     BigDecimal total = precio.multiply(BigDecimal.valueOf(cantidad));
                     lblTotalVenta.setText("Total de la venta: $" + total);
                 }
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         };
 
         ((TextField) campos.get("cantidad")).textProperty().addListener((obs, oldVal, newVal) -> actualizarTotal.run());
@@ -241,7 +244,7 @@ public class VentanaVentas {
         contenedor.getChildren().add(formFinal);
     }
 
-    public  void mostrarVentanaSeleccionCliente(TextField campoDestino) {
+    public void mostrarVentanaSeleccionCliente(TextField campoDestino) {
         Stage ventana = new Stage();
         ventana.setTitle("Seleccionar Cliente");
 
@@ -290,31 +293,23 @@ public class VentanaVentas {
         ventana.initModality(Modality.APPLICATION_MODAL);
         ventana.showAndWait();
     }
+
     private void mostrarVentanaSeleccionEmpleado(TextField campoDestino) {
         Stage ventana = new Stage();
         ventana.setTitle("Seleccionar Empleado");
         ventana.initModality(Modality.APPLICATION_MODAL);
 
-        TableView<Empleado> tabla = new TableView<>();
-        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-        TableColumn<Empleado, Integer> colID = new TableColumn<>("ID");
-        colID.setCellValueFactory(new PropertyValueFactory<>("empleadoID"));
-
-        TableColumn<Empleado, Integer> colDNI = new TableColumn<>("DNI");
-        colDNI.setCellValueFactory(new PropertyValueFactory<>("dni"));
-
-        TableColumn<Empleado, String> colNombre = new TableColumn<>("Nombre");
-        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-
-        TableColumn<Empleado, String> colApellido = new TableColumn<>("Apellido");
-        colApellido.setCellValueFactory(new PropertyValueFactory<>("apellido"));
-
-        tabla.getColumns().addAll(colID, colDNI, colNombre, colApellido);
+        String[][] columnas = {
+                {"ID", "empleadoID"},
+                {"DNI", "dni"},
+                {"Nombre", "nombre"},
+                {"Apellido", "apellido"},
+        };
+        TableView<Empleado> tabla3 = Tablas.crearTabla(Empleado.class, columnas);
 
         ArrayList<Empleado> lista = new ArrayList<>();
         VentanaEmpleado.cargarEmpleadosEnLista(lista);
-        tabla.getItems().addAll(lista);
+        tabla3.getItems().addAll(lista);
 
         TextField txtBuscar = new TextField();
         txtBuscar.setPromptText("Ingrese DNI del empleado");
@@ -327,12 +322,12 @@ public class VentanaVentas {
                 if (id != null) {
                     for (Empleado emp : lista) {
                         if (emp.getEmpleadoID() == id) {
-                            tabla.getItems().setAll(emp);
+                            tabla3.getItems().setAll(emp);
                             return;
                         }
                     }
                 } else {
-                    tabla.getItems().clear();
+                    tabla3.getItems().clear();
                 }
             } catch (NumberFormatException ex) {
                 mostrarAlerta("DNI inválido.");
@@ -340,96 +335,16 @@ public class VentanaVentas {
         });
 
         // ✅ Doble click para seleccionar automáticamente
-        agregarDobleClickSeleccion(tabla, empleado -> {
+        agregarDobleClickSeleccion(tabla3, empleado -> {
             campoDestino.setText(String.valueOf(empleado.getEmpleadoID()));
             ventana.close();
         });
 
-        VBox layout = new VBox(10, tabla, txtBuscar, btnBuscar);
+        VBox layout = new VBox(10, tabla3, txtBuscar, btnBuscar);
         layout.setPadding(new Insets(10));
 
         Scene escena = new Scene(layout, 600, 400);
         ventana.setScene(escena);
         ventana.showAndWait();
     }
-
-    /*public void ventasPorCliente() {
-        contenedor.getChildren().clear();
-
-        Label titulo = new Label("🧾 Ventas por Cliente");
-        titulo.getStyleClass().add("titulo-seccion");
-
-        // Campo para DNI
-        TextField dniInput = new TextField();
-        dniInput.setPromptText("Ingrese DNI del cliente");
-        dniInput.getStyleClass().add("input-form");
-        dniInput.setMaxWidth(200);
-
-        Button buscarBtn = new Button("Buscar");
-        buscarBtn.getStyleClass().add("btn-verde");
-        buscarBtn.setPrefWidth(100);
-
-        HBox buscador = new HBox(10, dniInput, buscarBtn);
-        buscador.setAlignment(Pos.CENTER_LEFT);
-
-        // Tabla de resultados
-        TableView<Venta> tabla = new TableView<>();
-        tabla.setPlaceholder(new Label("Ingrese un DNI para buscar."));
-        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        tabla.getStyleClass().add("tabla-clientes");
-
-        TableColumn<Venta, Integer> colFactura = new TableColumn<>("Factura");
-        colFactura.setCellValueFactory(new PropertyValueFactory<>("idVenta"));
-
-        TableColumn<Venta, String> colProducto = new TableColumn<>("Producto");
-        colProducto.setCellValueFactory(new PropertyValueFactory<>("notas"));
-
-        TableColumn<Venta, String> colEmpleado = new TableColumn<>("Empleado");
-        colEmpleado.setCellValueFactory(new PropertyValueFactory<>("nombreEmpleado"));
-
-        TableColumn<Venta, Integer> colCantidad = new TableColumn<>("Cantidad");
-        colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
-
-        TableColumn<Venta, String> colFecha = new TableColumn<>("Fecha");
-        colFecha.setCellValueFactory(new PropertyValueFactory<>("fechaFormateada"));
-
-        TableColumn<Venta, String> colPago = new TableColumn<>("Pago");
-        colPago.setCellValueFactory(new PropertyValueFactory<>("medioPago"));
-
-        TableColumn<Venta, Double> colTotal = new TableColumn<>("Total");
-        colTotal.setCellValueFactory(new PropertyValueFactory<>("importeTotal"));
-
-        tabla.getColumns().addAll(colFactura, colProducto, colEmpleado, colCantidad, colFecha, colPago, colTotal);
-
-        // Acción de búsqueda
-        buscarBtn.setOnAction(e -> {
-            try {
-                int dni = Integer.parseInt(dniInput.getText().trim());
-                Integer id = ClienteDAO.obtenerIdClientePorDni(dni);
-
-                if (id != null) {
-                    ArrayList<Venta> ventas = VentaDAO.obtenerVentasPorCliente(id);
-                    if (ventas.isEmpty()) {
-                        tabla.setPlaceholder(new Label("❌ El cliente no tiene ventas registradas."));
-                        tabla.getItems().clear();
-                    } else {
-                        tabla.getItems().setAll(ventas);
-                    }
-                } else {
-                    mostrarAlerta("❌ No se encontró ningún cliente con ese DNI.");
-                    tabla.getItems().clear();
-                }
-            } catch (NumberFormatException ex) {
-                mostrarAlerta("❌ DNI inválido.");
-            }
-        });
-
-        VBox tarjeta = new VBox(10, titulo, buscador, tabla);
-        tarjeta.setPadding(new Insets(20));
-        tarjeta.setAlignment(Pos.TOP_LEFT);
-        tarjeta.setMaxWidth(Double.MAX_VALUE);
-        tarjeta.getStyleClass().add("card");
-
-        contenedor.getChildren().setAll(tarjeta);
-    }*/
 }

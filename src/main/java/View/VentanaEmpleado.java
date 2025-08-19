@@ -218,10 +218,11 @@ public class VentanaEmpleado {
 */
     public static void cargarEmpleadosEnLista(ArrayList<Empleado> lista) {
         String sql = """
-        SELECT e.ID, e.DNI, p.nombre, p.apellido, e.idRol, e.Sueldo,
+        SELECT e.ID, e.DNI, p.nombre, t.telefono, p.apellido, e.idRol, e.Sueldo,
                e.Vacaciones, e.Faltas, e.FechaIngreso, e.FechaEgreso, e.Activo
         FROM Empleado e
         INNER JOIN Persona p ON e.DNI = p.DNI
+        INNER JOIN Telefonos t ON t.idPersona = p.DNI
         """;
 
         try (Statement stmt = conn.createStatement();

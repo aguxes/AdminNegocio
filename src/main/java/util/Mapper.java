@@ -107,21 +107,22 @@ public class Mapper {
     //EMPLEADO
 
     public static Empleado getEmpleado(ResultSet rs) throws SQLException {
-        int empleadoID = rs.getInt("ID");
-        int dni = rs.getInt("DNI");
-        String nombre = rs.getString("nombre");
-        String apellido = rs.getString("apellido");
-        int rolID = rs.getInt("idRol");
-        double sueldo = rs.getDouble("Sueldo");
-        boolean vacaciones = rs.getBoolean("Vacaciones");
-        int faltas = rs.getInt("Faltas");
-        String fechaIngreso = rs.getString("FechaIngreso");
-        String fechaEgreso = rs.getString("FechaEgreso");
-        boolean activo = rs.getBoolean("Activo");
+
         Telefono tel = new Telefono(rs.getInt("DNI"), rs.getLong("telefono"));
+
         return new Empleado(
-                dni, nombre, apellido, tel, empleadoID,/* rolID,*/
-                sueldo, vacaciones, faltas, fechaIngreso, fechaEgreso, activo
+
+        rs.getInt("DNI"),
+        rs.getString("nombre"),
+        rs.getString("apellido"),
+        tel,
+        rs.getInt("idRol"),
+        rs.getDouble("Sueldo"),
+        rs.getBoolean("Vacaciones"),
+        rs.getInt("Faltas"),
+        rs.getString("FechaIngreso"),
+        rs.getString("FechaEgreso"),
+        rs.getBoolean("Activo")
         );
     }
 
