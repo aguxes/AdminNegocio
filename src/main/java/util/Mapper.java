@@ -56,6 +56,7 @@ public class Mapper {
                 rs.getInt("cantCompras")
         );
     }
+
     public static void setCliente(PreparedStatement stmt, Cliente c) throws SQLException {
         stmt.setInt(1, c.getDNI());
         stmt.setInt(2, c.getTipo().getTipo());
@@ -111,7 +112,6 @@ public class Mapper {
         Telefono tel = new Telefono(rs.getInt("DNI"), rs.getLong("telefono"));
 
         return new Empleado(
-
         rs.getInt("DNI"),
         rs.getString("nombre"),
         rs.getString("apellido"),
@@ -136,6 +136,14 @@ public class Mapper {
         stmt.setString(7, e.getFechaDeIngreso());
         stmt.setString(8, e.getFechaDeEgreso());
         stmt.setInt(9, e.isActivo() ? 1 : 0);
+    }
+
+    public static void modEmpleado(PreparedStatement stmt, Empleado e) throws SQLException {
+        stmt.setDouble(1, e.getSueldo());
+        stmt.setBoolean(2, e.getVacacionesActivas());
+        stmt.setInt(2, e.getFaltas());
+        stmt.setBoolean(2, e.isActivo());
+        stmt.setInt(3, e.getDNI());
     }
 
     //PRODUCTO
@@ -189,9 +197,9 @@ public class Mapper {
         stmt.setInt(1, obj.getDNI());
         stmt.setLong(2, obj.getTelefono().getTelefono());
     }
-    public static void modTelefono(PreparedStatement stmt, Cliente c) throws SQLException {
-        stmt.setLong(1, c.getTelefono().getTelefono());
-        stmt.setInt(2, c.getDNI());
+    public static <T extends Persona> void modTelefono(PreparedStatement stmt, T obj) throws SQLException {
+        stmt.setLong(1, obj.getTelefono().getTelefono());
+        stmt.setInt(2, obj.getDNI());
     }
 
 

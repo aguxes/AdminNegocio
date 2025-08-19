@@ -12,7 +12,7 @@ public class EmpleadoDAO {
 
     public static void cargarEmpleadosEnLista(ArrayList<Empleado> lista) {
         String sql = """
-        SELECT e.ID, e.DNI, p.nombre, t.telefono, p.apellido, e.idRol, e.Sueldo,
+        SELECT e.id, e.DNI, p.nombre, t.telefono, p.apellido, e.idRol, e.Sueldo,
                e.Vacaciones, e.Faltas, e.FechaIngreso, e.FechaEgreso, e.Activo
         FROM Empleado e
         INNER JOIN Persona p ON e.DNI = p.DNI
@@ -142,8 +142,26 @@ public class EmpleadoDAO {
                     listaTemp.add(e);
                 }
             } catch (SQLException e) {
-                System.out.println("❌ Error al buscar cliente: " + e.getMessage());
+                System.out.println("❌ Error al buscar empleado: " + e.getMessage());
             }
             return listaTemp;
         }
+    public static Empleado obtenerEmpleadoPorId(int id) {
+        String sql = """
+        SELECT e.ID, p.DNI, p.nombre, p.apellido, t.telefono
+        FROM Empleado c
+        JOIN Persona p ON c.DNI = p.DNI
+        LEFT JOIN Telefonos t ON p.DNI = t.idPersona
+        WHERE e.ID = ?
+        """;
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {return Mapper.getEmpleado(rs); }
+        } catch (SQLException e) {
+            System.out.println("❌ Error al obtener empleado por ID: " + e.getMessage());
+        }
+        return null;
+    }
 }

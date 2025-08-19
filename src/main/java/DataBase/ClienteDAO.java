@@ -18,7 +18,7 @@ public class ClienteDAO {
                 SELECT c.ID, p.DNI, p.nombre, p.apellido, tc.tipo, tc.descripcion, c.cantcompras, t.telefono
         FROM Cliente c
          INNER JOIN Persona p ON c.DNI = p.DNI
-         LEFT JOIN Telefonos t ON t.idPersona = p.DNI
+         INNER JOIN Telefonos t ON t.idPersona = p.DNI
          INNER JOIN TiposClientes tc ON c.idTipo = tc.tipo
         """;
 
@@ -34,31 +34,6 @@ public class ClienteDAO {
         } catch (SQLException e) {
             System.out.println("❌ Error al cargar clientes: " + e.getMessage());
         }
-    }
-
-    public static String obtenerClientes(ArrayList<Cliente> lista) {
-        if (lista == null || lista.isEmpty()) return "Lista vacía.";
-
-        StringBuilder sb = new StringBuilder();
-
-        // Encabezado
-        sb.append(String.format(" %-5s %-10s %-15s %-15s %-10s %-10s %-15s\n",
-                "ID", "DNI", "Nombre", "Apellido", "Compras", "Tipo", "Teléfono"));
-        sb.append("----------------------------------------------------------------------------------------------------------\n");
-
-        // Datos
-        for (Cliente c : lista) {
-            sb.append(String.format(" %-5d %-10d %-15s %-15s %-10d %-10s %-15s\n",
-                    c.getId(),
-                    c.getDNI(),
-                    c.getNombre(),
-                    c.getApellido(),
-                    c.getCantCompras(),
-                    c.getTipo().getDescripcion(),
-                    c.getTelefono()
-            ));
-        }
-        return sb.toString();
     }
 
     public static String eliminar(int id) {
@@ -195,9 +170,7 @@ public class ClienteDAO {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
 
-            if (rs.next()) {
-                return Mapper.getCliente(rs);
-            }
+            if (rs.next()) { return Mapper.getCliente(rs); }
         } catch (SQLException e) {
             System.out.println("❌ Error al obtener cliente por ID: " + e.getMessage());
         }

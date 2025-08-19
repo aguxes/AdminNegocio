@@ -1,7 +1,6 @@
 package View;
 
 import Clases.Extras.Telefono;
-import Clases.Extras.TiposClientes;
 import Clases.Principales.Cliente;
 import Clases.Principales.Empleado;
 //import Clases.Extras.RolesEmpleados;
@@ -99,7 +98,7 @@ public class VentanaEmpleado {
             if (resultado.isEmpty()) {
 
                 tabla.getItems().clear();
-                mostrarAlerta("❌ No se encontró ningún cliente con ese dato.");
+                mostrarAlerta("❌ No se encontró ningún empleado con ese dato.");
             } else {
                 tabla.getItems().setAll(resultado);
             }
@@ -189,7 +188,7 @@ public class VentanaEmpleado {
                 stmtC.executeUpdate();
                 stmtT.executeUpdate();
 
-                mostrarAlerta("✅ Cliente registrado correctamente.");
+                mostrarAlerta("✅ Empleado registrado correctamente.");
                 contenedor.getChildren().clear();
                 contenedor.getChildren().add(outputArea);
 
@@ -198,7 +197,7 @@ public class VentanaEmpleado {
             }
         });
 
-        Button btnCancelar = new Button("❌ Cancelar nuevo Cliente");
+        Button btnCancelar = new Button("❌ Cancelar nuevo Empleado");
         btnCancelar.getStyleClass().add("boton-cancelar");
         btnCancelar.setOnAction(e -> {
             verEmpleados();
@@ -214,23 +213,179 @@ public class VentanaEmpleado {
         contenedor.setAlignment(Pos.TOP_CENTER);
         contenedor.getChildren().add(formFinal);
     }
+    public void modificarEmpleado() {
+        contenedor.getChildren().clear();
 
-    //esta fletarla capaz, no se usa
-    public static String obtenerTextoEmpleados(ArrayList<Empleado> lista) {
-        if (lista.isEmpty()) return "Lista vacía.";
+        VBox form = new VBox(10);
+        form.setPadding(new Insets(20));
+        form.getStyleClass().add("form-box");
 
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%-5s %-10s %-15s %-15s %-10s\n", "ID", "DNI", "Nombre", "Apellido", "Rol"));
-        sb.append("--------------------------------------------------------------\n");
-        for (Empleado e : lista) {
-            sb.append(String.format("%-5d %-10d %-15s %-15s %-10d\n",
-                    e.getEmpleadoID(),
-                    e.getDNI(),
-                    e.getNombre(),
-                    e.getApellido()
-                    //e.getRolID()
-            ));
-        }
-        return sb.toString();
+        Label titulo = new Label("📋 Modificar Empleado");
+        titulo.getStyleClass().add("titulo-principal");
+
+        Label lblCampo = new Label("Buscar Empleado");
+        lblCampo.getStyleClass().add("label-form");
+
+        ChoiceBox<String> choiceCampo = new ChoiceBox<>();
+        choiceCampo.getItems().addAll("ID");
+        choiceCampo.setValue("ID");
+        choiceCampo.getStyleClass().add("input-form");
+
+        TextField txtValor = new TextField();
+        txtValor.setPromptText("Ej: 1");
+        txtValor.getStyleClass().add("input-form");
+        txtValor.setMaxWidth(220);
+
+        Button btnBuscar = new Button("Buscar");
+        btnBuscar.getStyleClass().add("btn-verde");
+
+        HBox barraBusqueda = new HBox(10, lblCampo, choiceCampo, txtValor, btnBuscar);
+        barraBusqueda.setAlignment(Pos.CENTER_LEFT);
+        barraBusqueda.setPadding(new Insets(10));
+
+        Map<String, TextField> campos = new HashMap<>();
+        String[][] lineas = {
+                {"ID", "id"},
+                {"DNI", "dni"},
+                {"Nombre", "nombre"},
+                {"Apellido", "apellido"},
+                {"Rol", "rol"},
+                {"Sueldo", "sueldo"},
+                {"Faltas", "faltas"},
+                {"Vacaciones", "vacaciones"},
+                {"Activo", "activo"},
+                {"Teléfono", "telefonoStr"}
+        };
+
+        VBox formCampos = Tablas.crearform(lineas, campos);
+
+        campos.get("dni").setEditable(false);
+
+        btnBuscar.setOnAction(ev -> {
+            try {
+                int id = Integer.parseInt(txtValor.getText().trim());
+                Empleado e = EmpleadoDAO.obtenerEmpleadoPorId(id);
+
+                if (e != null) {
+                    campos.get("dni").setText(String.valueOf(e.getDNI()));
+                    campos.get("nombre").setText(e.getNombre());
+                    campos.get("apellido").setText(e.getApellido());
+                    campos.get("telefono").setText(String.valueOf(e.getTelefono().getTelefono()));
+                } else {
+                    mostrarAlerta("❌ No se encontró el Empleado con ID: " + id);
+                }
+            } catch (NumberFormatException ex) {
+                mostrarAlerta("❌ Ingresá un número válido para el ID.");
+            }
+        });
+
+        Button btnModificarc = new Button("✅ Modificar Empleado");
+        btnModificarc.getStyleClass().add("boton-accion");
+        btnModificarc.setOnAction(e -> {
+            try {
+                int DNI = Integer.parseInt(campos.get("dni").getText().trim());
+                String Nombre = campos.get("nombre").getText().trim();
+                String Apellido = campos.get("apellido").getText().trim();
+                String telefonoStr = campos.get("telefono").getText().trim();
+                if (!telefonoStr.matches("\\d{8,15}")) { // Validación
+                    mostrarAlerta("Ingresa un número de teléfono válido (solo números, 8 a 15 dígitos).");
+                    return;
+                }
+                Long telefono = Long.parseLong(telefonoStr);
+
+                Telefono tel = new Telefono(DNI, telefono);
+
+                Empleado em = new Empleado();
+                em.setDNI(DNI);
+                em.setNombre(Nombre);
+                em.setApellido(Apellido);
+                em.setTelefono(tel);
+
+                String queryP = "UPDATE Persona SET nombre = ?, apellido = ? WHERE DNI = ?;";
+                String queryE = "UPDATE Empleado SET idrol = ?, sueldo = ?, vacaciones = ?, faltas = ?, activo = ?, WHERE DNI = ?";
+                String queryT = "UPDATE Telefonos SET telefono = ? WHERE idPersona = ?";
+
+                PreparedStatement stmtP = conn.prepareStatement(queryP);
+                PreparedStatement stmtE = conn.prepareStatement(queryE);
+                PreparedStatement stmtT = conn.prepareStatement(queryT);
+
+                Mapper.modPersona(stmtP, em);
+                Mapper.modEmpleado(stmtE, em);
+                Mapper.modTelefono(stmtT, em);
+
+                stmtP.executeUpdate();
+                stmtE.executeUpdate();
+                stmtT.executeUpdate();
+
+                mostrarAlerta("✅ Empleado modificado correctamente.");
+                verEmpleados();
+
+            } catch (Exception ex) {
+                mostrarAlerta("❌ Error: " + ex.getMessage());
+            }
+        });
+
+        form.getChildren().addAll(
+                titulo,
+                barraBusqueda,
+                formCampos,
+                btnModificarc
+        );
+
+        Button btnCancelar = new Button("❌ Cancelar modificar Empleado");
+        btnCancelar.getStyleClass().add("boton-cancelar");
+        btnCancelar.setOnAction(e -> {
+            contenedor.getChildren().clear();
+            contenedor.getChildren().add(outputArea);
+        });
+
+        HBox filaCancelar = new HBox(btnCancelar);
+        filaCancelar.setAlignment(Pos.BOTTOM_RIGHT);
+
+        form.setAlignment(Pos.TOP_CENTER);
+        form.getChildren().add(filaCancelar);
+        contenedor.setAlignment(Pos.TOP_CENTER);
+        contenedor.getChildren().add(form);
+    }
+    public void EliminarEmpleado() {
+        Stage ventana = new Stage();
+        ventana.setTitle("Eliminar Empleado");
+
+        TextField txtId = new TextField();
+        txtId.setPromptText("ID del Empleado");
+
+        Label lblConfirmacion = new Label();
+
+        Button btnBuscar = new Button("Buscar");
+        btnBuscar.setOnAction(e -> {
+            int id = Integer.parseInt(txtId.getText());
+            String nombre = EmpleadoDAO.buscarxNombre(id);
+            if (nombre != null) {
+                lblConfirmacion.setText("¿Eliminar a " + nombre + "?");
+            } else {
+                lblConfirmacion.setText("Empleado no encontrado.");
+            }
+        });
+
+        Button btnEliminar = new Button("Sí, eliminar");
+        btnEliminar.setOnAction(e -> {
+            EmpleadoDAO.eliminar(Integer.parseInt(txtId.getText()));
+            ventana.close();
+        });
+
+        Button btnCancelar = new Button("Cancelar");
+        btnCancelar.setOnAction(e -> ventana.close());
+
+        HBox botones = new HBox(10, btnEliminar, btnCancelar);
+        botones.setAlignment(Pos.CENTER);
+
+        VBox layout = new VBox(10, new Label("ID Empleado:"), txtId, btnBuscar, lblConfirmacion, botones);
+        layout.setPadding(new Insets(20));
+        layout.setAlignment(Pos.CENTER);
+
+        Scene escena = new Scene(layout, 300, 250);
+        ventana.setScene(escena);
+        ventana.initModality(Modality.APPLICATION_MODAL);
+        ventana.showAndWait();
     }
 }

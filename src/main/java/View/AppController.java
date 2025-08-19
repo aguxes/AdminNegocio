@@ -24,6 +24,8 @@ public class AppController {
         ventanaProducto = new VentanaProducto(contenedor, outputArea);
         ventanaVentas = new VentanaVentas(contenedor, outputArea);
         ventanaClientes = new VentanaClientes(contenedor, outputArea);
+        ventanaEmpleado = new VentanaEmpleado(contenedor, outputArea);
+
 
         cargarMenuPrincipal();
     }
@@ -31,6 +33,7 @@ public class AppController {
         menuLateral.getChildren().clear();
         menuLateral.getChildren().addAll(
                 crearBoton("Clientes", e -> mostrarSubmenuClientes()),
+                crearBoton("Empleados", e -> mostrarSubmenuEmpleados()),
                 crearBoton("Ventas", e -> mostrarSubmenuVentas()),
                 crearBoton("Inventario", e -> mostrarSubmenuInventario()),
                 crearBoton("Reportes", e -> mostrarSubmenuReportes())
@@ -52,8 +55,8 @@ public class AppController {
         menuLateral.getChildren().addAll(
                 crearBoton("Ver Empleados", e -> ventanaEmpleado.verEmpleados()),
                    crearBoton("Agregar Empleado", e -> ventanaEmpleado.agregarEmpleado()),
-                  //crearBoton("Modificar Empleado", e -> ventanaEmpleado.modificarEmpleado()),
-                 //crearBoton("Eliminar Empleado"e -> ventanaEmpleado.EliminarEmpleado()),
+                  crearBoton("Modificar Empleado", e -> ventanaEmpleado.modificarEmpleado()),
+                 crearBoton("Eliminar Empleado", e -> ventanaEmpleado.EliminarEmpleado()),
                  crearBoton("🔙 Volver", e -> cargarMenuPrincipal())
         );
     }

@@ -14,7 +14,7 @@ public class Empleado extends Persona implements Imprimible {
     private boolean activo;
     private Telefono telefono;
 
-    public Empleado(int dni, String nombre, String apellido, Telefono telefono, int empleadoID,
+    public Empleado( int dni, String nombre, String apellido, Telefono telefono, int empleadoID,
                     /*int rolID,*/ double sueldo, boolean vacacionesActivas, int faltas, String fechaDeIngreso,
                     String fechaDeEgreso, boolean activo) {
 
