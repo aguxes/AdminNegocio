@@ -40,7 +40,7 @@ public class VentanaEmpleado {
         this.outputArea = outputArea;
     }
 
-    /*public void verEmpleados() {
+    public void verEmpleados() {
         VBox tarjeta = new VBox(10);
         tarjeta.setPadding(new Insets(20));
         tarjeta.setAlignment(Pos.TOP_LEFT);
@@ -77,7 +77,7 @@ public class VentanaEmpleado {
 
         TableView<Empleado> tabla = Tablas.crearTabla(Empleado.class, columnas);
 
-        HBox barraBusqueda = new HBox(10); // espacio entre elementos STYLE
+        HBox barraBusqueda = new HBox(10);
         barraBusqueda.setAlignment(Pos.CENTER_LEFT);
         barraBusqueda.getChildren().addAll(lblCampo, choiceCampo, txtValor, btnBuscar);
 
@@ -87,7 +87,6 @@ public class VentanaEmpleado {
         btnBuscar.setPrefWidth(100);
 
 
-        // Cargar todos los clientes por defecto
         ArrayList<Empleado> listaInicial = new ArrayList<>();
         EmpleadoDAO.cargarEmpleadosEnLista(listaInicial);
         tabla.getItems().addAll(listaInicial);
@@ -95,7 +94,7 @@ public class VentanaEmpleado {
         btnBuscar.setOnAction(e -> {
             String campo = choiceCampo.getValue();
             String valor = txtValor.getText();
-            ArrayList<Empleado> resultado = EmpleadoDAO.buscarEmpleadoPorDato(campo, valor);
+            ArrayList<Empleado> resultado = EmpleadoDAO.BuscarEmpleadoPorDato(campo, valor);
 
             if (resultado.isEmpty()) {
 
@@ -106,17 +105,17 @@ public class VentanaEmpleado {
             }
         });
         txtValor.setOnAction(e -> btnBuscar.fire());
-        btnBuscar.setPrefWidth(240); // mismo ancho que txtValor
+        btnBuscar.setPrefWidth(240);
         btnBuscar.setAlignment(Pos.CENTER);
 
-        tarjeta.setMaxWidth(Double.MAX_VALUE); // Ocupa todo el ancho disponible
-        VBox.setVgrow(tarjeta, Priority.ALWAYS); // Opcional para que crezca si hay espacio
+        tarjeta.setMaxWidth(Double.MAX_VALUE);
+        VBox.setVgrow(tarjeta, Priority.ALWAYS);
 
         tarjeta.getChildren().addAll(barraBusqueda, tabla);
         contenedor.getChildren().setAll(tarjeta);
     }
 
-    public void agregarEmpleaod() {
+    public void agregarEmpleado() {
         contenedor.getChildren().clear();
 
         Map<String, Object> campos = new HashMap<>();
@@ -160,18 +159,18 @@ public class VentanaEmpleado {
                 //TipoRol rol = new TipoRol(rolId, "");
                 Telefono tel = new Telefono(DNI, telefono);
 
-                Empleado e = new Empleado();
-                e.setDNI(DNI);
-                e.setNombre(Nombre);
-                e.setApellido(Apellido);
+                Empleado em = new Empleado();
+                em.setDNI(DNI);
+                em.setNombre(Nombre);
+                em.setApellido(Apellido);
                 //e.setRolID(rol);
-                e.setSueldo(sueldo);
-                e.setVacacionesActivas(false);
-                e.setActivo(true);
-                e.setTelefono(tel);
+                em.setSueldo(sueldo);
+                em.setVacacionesActivas(false);
+                em.setActivo(true);
+                em.setTelefono(tel);
 
-                e.setFechaDeIngreso("01-01-2001");
-                e.setFechaDeEgreso("01-02-2001");
+                em.setFechaDeIngreso("01-01-2001");
+                em.setFechaDeEgreso("01-02-2001");
 
 
                 String queryP = "INSERT INTO Persona (dni, nombre, apellido ) VALUES (?, ?, ?) ";
@@ -182,9 +181,9 @@ public class VentanaEmpleado {
                 PreparedStatement stmtC = conn.prepareStatement(queryC);
                 PreparedStatement stmtT = conn.prepareStatement(queryT);
 
-                Mapper.setPersona(stmtP, e);
-                Mapper.setEmpleado(stmtC, e);
-                Mapper.setTelefono(stmtT, e);
+                Mapper.setPersona(stmtP, em);
+                Mapper.setEmpleado(stmtC, em);
+                Mapper.setTelefono(stmtT, em);
 
                 stmtP.executeUpdate();
                 stmtC.executeUpdate();
@@ -202,7 +201,7 @@ public class VentanaEmpleado {
         Button btnCancelar = new Button("❌ Cancelar nuevo Cliente");
         btnCancelar.getStyleClass().add("boton-cancelar");
         btnCancelar.setOnAction(e -> {
-            verClientes();
+            verEmpleados();
         });
 
         HBox filaCancelar = new HBox(btnCancelar);
@@ -215,27 +214,7 @@ public class VentanaEmpleado {
         contenedor.setAlignment(Pos.TOP_CENTER);
         contenedor.getChildren().add(formFinal);
     }
-*/
-    public static void cargarEmpleadosEnLista(ArrayList<Empleado> lista) {
-        String sql = """
-        SELECT e.ID, e.DNI, p.nombre, t.telefono, p.apellido, e.idRol, e.Sueldo,
-               e.Vacaciones, e.Faltas, e.FechaIngreso, e.FechaEgreso, e.Activo
-        FROM Empleado e
-        INNER JOIN Persona p ON e.DNI = p.DNI
-        INNER JOIN Telefonos t ON t.idPersona = p.DNI
-        """;
 
-        try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                Empleado e = Mapper.getEmpleado(rs);
-                lista.add(e);
-            }
-        } catch (SQLException e) {
-            System.out.println("❌ Error al cargar empleados: " + e.getMessage());
-        }
-    }
-/*
     //esta fletarla capaz, no se usa
     public static String obtenerTextoEmpleados(ArrayList<Empleado> lista) {
         if (lista.isEmpty()) return "Lista vacía.";
@@ -248,24 +227,10 @@ public class VentanaEmpleado {
                     e.getEmpleadoID(),
                     e.getDNI(),
                     e.getNombre(),
-                    e.getApellido(),
-                    e.getRolID()
+                    e.getApellido()
+                    //e.getRolID()
             ));
         }
         return sb.toString();
-    }
-*/
-    public static Integer obtenerIdEmpleadoPorDni(int dni) {
-        String sql = "SELECT ID FROM Empleado WHERE DNI = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, dni);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) return rs.getInt("ID");
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

@@ -247,23 +247,14 @@ public class VentanaVentas {
     public void mostrarVentanaSeleccionCliente(TextField campoDestino) {
         Stage ventana = new Stage();
         ventana.setTitle("Seleccionar Cliente");
-
-        TableView<Cliente> tabla = new TableView<>();
-        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-        TableColumn<Cliente, Integer> colID = new TableColumn<>("ID");
-        colID.setCellValueFactory(new PropertyValueFactory<>("id"));
-
-        TableColumn<Cliente, Integer> colDNI = new TableColumn<>("DNI");
-        colDNI.setCellValueFactory(new PropertyValueFactory<>("DNI"));
-
-        TableColumn<Cliente, String> colNombre = new TableColumn<>("Nombre");
-        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-
-        TableColumn<Cliente, String> colApellido = new TableColumn<>("Apellido");
-        colApellido.setCellValueFactory(new PropertyValueFactory<>("apellido"));
-
-        tabla.getColumns().addAll(colID, colDNI, colNombre, colApellido);
+        ventana.initModality(Modality.APPLICATION_MODAL);
+        String [][] columnas = {
+            {"ID", "id"},
+            {"DNI", "DNI"},
+            {"Nombre", "nombre"},
+            {"Apellido", "apellido"},
+        };
+        TableView<Cliente> tabla = Tablas.crearTabla(Cliente.class, columnas);
 
         ArrayList<Cliente> lista = new ArrayList<>();
         ClienteDAO.cargarClientesEnLista(lista);
@@ -284,13 +275,11 @@ public class VentanaVentas {
             ventana.close();
         });
 
-
         VBox layout = new VBox(10, tabla, txtBuscar, btnBuscar);
         layout.setPadding(new Insets(10));
 
         Scene escena = new Scene(layout, 600, 400);
         ventana.setScene(escena);
-        ventana.initModality(Modality.APPLICATION_MODAL);
         ventana.showAndWait();
     }
 
@@ -308,7 +297,7 @@ public class VentanaVentas {
         TableView<Empleado> tabla3 = Tablas.crearTabla(Empleado.class, columnas);
 
         ArrayList<Empleado> lista = new ArrayList<>();
-        VentanaEmpleado.cargarEmpleadosEnLista(lista);
+        EmpleadoDAO.cargarEmpleadosEnLista(lista);
         tabla3.getItems().addAll(lista);
 
         TextField txtBuscar = new TextField();
@@ -316,29 +305,15 @@ public class VentanaVentas {
 
         Button btnBuscar = new Button("Buscar");
         btnBuscar.setOnAction(e -> {
-            try {
-                int dni = Integer.parseInt(txtBuscar.getText().trim());
-                Integer id = VentanaEmpleado.obtenerIdEmpleadoPorDni(dni);
-                if (id != null) {
-                    for (Empleado emp : lista) {
-                        if (emp.getEmpleadoID() == id) {
-                            tabla3.getItems().setAll(emp);
-                            return;
-                        }
-                    }
-                } else {
-                    tabla3.getItems().clear();
-                }
-            } catch (NumberFormatException ex) {
-                mostrarAlerta("DNI inválido.");
-            }
-        });
+                String dni = txtBuscar.getText().trim();
+                ArrayList<Empleado> resultado = EmpleadoDAO.BuscarEmpleadoPorDato("dni", dni);
+                tabla3.getItems().setAll(resultado);
+            });
 
-        // ✅ Doble click para seleccionar automáticamente
-        agregarDobleClickSeleccion(tabla3, empleado -> {
-            campoDestino.setText(String.valueOf(empleado.getEmpleadoID()));
-            ventana.close();
-        });
+            agregarDobleClickSeleccion(tabla3, empleado -> {    // ✅ Doble click para seleccionar automáticamente
+                campoDestino.setText(String.valueOf(empleado.getEmpleadoID()));
+                ventana.close();
+            });
 
         VBox layout = new VBox(10, tabla3, txtBuscar, btnBuscar);
         layout.setPadding(new Insets(10));
