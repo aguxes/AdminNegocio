@@ -1,5 +1,6 @@
 package util;
 
+import Clases.Extras.Roles;
 import Clases.Principales.*;
 import Clases.Extras.Telefono;
 import Clases.Extras.TiposClientes;
@@ -110,13 +111,14 @@ public class Mapper {
     public static Empleado getEmpleado(ResultSet rs) throws SQLException {
 
         Telefono tel = new Telefono(rs.getInt("DNI"), rs.getLong("telefono"));
-
+        Roles rol = new Roles(rs.getInt("rol"), rs.getString("descripcion"));
         return new Empleado(
         rs.getInt("DNI"),
         rs.getString("nombre"),
         rs.getString("apellido"),
         tel,
-        rs.getInt("idRol"),
+        rs.getInt("EmpleadoID"),
+        rol,
         rs.getDouble("Sueldo"),
         rs.getBoolean("Vacaciones"),
         rs.getInt("Faltas"),
@@ -129,7 +131,7 @@ public class Mapper {
     public static void setEmpleado(PreparedStatement stmt, Empleado e) throws SQLException {
         stmt.setInt(1, e.getEmpleadoID());
         stmt.setInt(2, e.getDNI());
-        //stmt.setInt(3, e.getRolID());
+        stmt.setInt(3, e.getRolID().getRol());
         stmt.setDouble(4, e.getSueldo());
         stmt.setBoolean(5, e.getVacacionesActivas());
         stmt.setInt(6, e.getFaltas());

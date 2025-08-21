@@ -1,11 +1,12 @@
 package Clases.Principales;
 
 import Clases.Extras.Telefono;
+import Clases.Extras.Roles;
 
 public class Empleado extends Persona implements Imprimible {
     private int empleadoID;
     private int dni;
-    //private int rolID;
+    private Roles rolID;
     private double sueldo;
     private boolean vacacionesActivas;
     private int faltas;
@@ -15,13 +16,13 @@ public class Empleado extends Persona implements Imprimible {
     private Telefono telefono;
 
     public Empleado( int dni, String nombre, String apellido, Telefono telefono, int empleadoID,
-                    /*int rolID,*/ double sueldo, boolean vacacionesActivas, int faltas, String fechaDeIngreso,
+                    Roles rolID, double sueldo, boolean vacacionesActivas, int faltas, String fechaDeIngreso,
                     String fechaDeEgreso, boolean activo) {
 
         super(dni, nombre, apellido, telefono);
         this.empleadoID = empleadoID;
         this.dni = dni;
-       // this.rolID = rolID;
+        this.rolID = rolID;
         this.sueldo = sueldo;
         this.vacacionesActivas = vacacionesActivas;
         this.faltas = faltas;
@@ -46,9 +47,7 @@ public class Empleado extends Persona implements Imprimible {
         return dni;
     }
 
-    /*public int getRolID() {
-        return rolID;
-    }*/
+    public Roles getRolID() { return rolID; }
 
     public double getSueldo() {
         return sueldo;
@@ -80,7 +79,7 @@ public class Empleado extends Persona implements Imprimible {
 
     public void setDni(int dni) { this.dni = dni; }
 
-    //public void setRolID(int rolID) { this.rolID = rolID; }
+    public void setRolID(Roles rolID) { this.rolID = rolID; }
 
     public void setSueldo(double sueldo) { this.sueldo = sueldo; }
 

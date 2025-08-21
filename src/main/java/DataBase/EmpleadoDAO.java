@@ -12,11 +12,12 @@ public class EmpleadoDAO {
 
     public static void cargarEmpleadosEnLista(ArrayList<Empleado> lista) {
         String sql = """
-        SELECT e.id, e.DNI, p.nombre, t.telefono, p.apellido, e.idRol, e.Sueldo,
-               e.Vacaciones, e.Faltas, e.FechaIngreso, e.FechaEgreso, e.Activo
+        SELECT e.id, e.DNI, p.nombre, p.apellido, r.descripcion, e.Sueldo,
+               e.Vacaciones, e.Faltas, t.telefono, e.FechaIngreso, e.FechaEgreso, e.Activo
         FROM Empleado e
         INNER JOIN Persona p ON e.DNI = p.DNI
         INNER JOIN Telefonos t ON t.idPersona = p.DNI
+        INNER JOIN Roles r ON r.rol = e.idrol
         """;
 
         try (Statement stmt = conn.createStatement();
