@@ -1,5 +1,6 @@
 package View;
 
+import Clases.Extras.Roles;
 import Clases.Extras.Telefono;
 import Clases.Principales.Cliente;
 import Clases.Principales.Empleado;
@@ -157,14 +158,14 @@ public class VentanaEmpleado {
 
                 //TipoRol rol = new TipoRol(rolId, "");
                 Telefono tel = new Telefono(DNI, telefono);
-
+                Roles rol = new Roles(rolId, "");
                 Empleado em = new Empleado();
                 em.setDNI(DNI);
                 em.setNombre(Nombre);
                 em.setApellido(Apellido);
-                //e.setRolID(rol);
+                em.setRolID(rol);
                 em.setSueldo(sueldo);
-                em.setVacacionesActivas(false);
+                em.setVacaciones(false);
                 em.setActivo(true);
                 em.setTelefono(tel);
 
@@ -267,6 +268,7 @@ public class VentanaEmpleado {
                 Empleado e = EmpleadoDAO.obtenerEmpleadoPorId(id);
 
                 if (e != null) {
+                    /// ACA FALTA COMPLETAR!!!! CON TODAS LAS VARIABLES DE EMPLEADO
                     campos.get("dni").setText(String.valueOf(e.getDNI()));
                     campos.get("nombre").setText(e.getNombre());
                     campos.get("apellido").setText(e.getApellido());

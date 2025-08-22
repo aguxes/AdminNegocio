@@ -311,7 +311,7 @@ public class VentanaVentas {
             });
 
             agregarDobleClickSeleccion(tabla3, empleado -> {    // ✅ Doble click para seleccionar automáticamente
-                campoDestino.setText(String.valueOf(empleado.getEmpleadoID()));
+                campoDestino.setText(String.valueOf(empleado.getId()));
                 ventana.close();
             });
 

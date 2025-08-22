@@ -8,15 +8,15 @@ public class Empleado extends Persona implements Imprimible {
     private int dni;
     private Roles rolID;
     private double sueldo;
-    private boolean vacacionesActivas;
+    private boolean vacaciones;
     private int faltas;
     private String fechaDeIngreso;
     private String fechaDeEgreso;
     private boolean activo;
     private Telefono telefono;
 
-    public Empleado( int dni, String nombre, String apellido, Telefono telefono, int empleadoID,
-                    Roles rolID, double sueldo, boolean vacacionesActivas, int faltas, String fechaDeIngreso,
+    public Empleado( int empleadoID, int dni, String nombre, String apellido, Telefono telefono,
+                    Roles rolID, double sueldo, boolean vacaciones, int faltas, String fechaDeIngreso,
                     String fechaDeEgreso, boolean activo) {
 
         super(dni, nombre, apellido, telefono);
@@ -24,7 +24,7 @@ public class Empleado extends Persona implements Imprimible {
         this.dni = dni;
         this.rolID = rolID;
         this.sueldo = sueldo;
-        this.vacacionesActivas = vacacionesActivas;
+        this.vacaciones = vacaciones;
         this.faltas = faltas;
         this.fechaDeIngreso = fechaDeIngreso;
         this.fechaDeEgreso = fechaDeEgreso;
@@ -39,22 +39,20 @@ public class Empleado extends Persona implements Imprimible {
 
     //GETTERS
 
-    public int getEmpleadoID() {
-        return empleadoID;
-    }
+    public int getId() { return empleadoID; }
 
     public int getDni() {
         return dni;
     }
 
-    public Roles getRolID() { return rolID; }
+    public Roles getRol() { return rolID; }
 
     public double getSueldo() {
         return sueldo;
     }
 
-    public boolean getVacacionesActivas() {
-        return vacacionesActivas;
+    public boolean getVacaciones() {
+        return vacaciones;
     }
 
     public int getFaltas() {
@@ -69,13 +67,13 @@ public class Empleado extends Persona implements Imprimible {
         return fechaDeEgreso;
     }
 
-    public boolean isActivo() {
+    public boolean getActivo() {
         return activo;
     }
 
     //  SETTERS
 
-    public void setEmpleadoID(int empleadoID) { this.empleadoID = empleadoID; }
+    public void setID(int empleadoID) { this.empleadoID = empleadoID; }
 
     public void setDni(int dni) { this.dni = dni; }
 
@@ -83,7 +81,7 @@ public class Empleado extends Persona implements Imprimible {
 
     public void setSueldo(double sueldo) { this.sueldo = sueldo; }
 
-    public void setVacacionesActivas(boolean vacacionesActivas) { this.vacacionesActivas = vacacionesActivas; }
+    public void setVacaciones(boolean vacaciones) { this.vacaciones = vacaciones; }
 
     public void setFaltas(int faltas) { this.faltas = faltas; }
 

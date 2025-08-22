@@ -110,14 +110,14 @@ public class Mapper {
 
     public static Empleado getEmpleado(ResultSet rs) throws SQLException {
 
-        Telefono tel = new Telefono(rs.getInt("DNI"), rs.getLong("telefono"));
+        Telefono tel = new Telefono(rs.getInt("dni"), rs.getLong("telefono"));
         Roles rol = new Roles(rs.getInt("rol"), rs.getString("descripcion"));
         return new Empleado(
+        rs.getInt("ID"),
         rs.getInt("DNI"),
-        rs.getString("nombre"),
-        rs.getString("apellido"),
+        rs.getString("Nombre"),
+        rs.getString("Apellido"),
         tel,
-        rs.getInt("EmpleadoID"),
         rol,
         rs.getDouble("Sueldo"),
         rs.getBoolean("Vacaciones"),
@@ -129,23 +129,23 @@ public class Mapper {
     }
 
     public static void setEmpleado(PreparedStatement stmt, Empleado e) throws SQLException {
-        stmt.setInt(1, e.getEmpleadoID());
+        stmt.setInt(1, e.getId());
         stmt.setInt(2, e.getDNI());
-        stmt.setInt(3, e.getRolID().getRol());
+        stmt.setInt(3, e.getRol().getRol());
         stmt.setDouble(4, e.getSueldo());
-        stmt.setBoolean(5, e.getVacacionesActivas());
+        stmt.setBoolean(5, e.getVacaciones());
         stmt.setInt(6, e.getFaltas());
         stmt.setString(7, e.getFechaDeIngreso());
         stmt.setString(8, e.getFechaDeEgreso());
-        stmt.setInt(9, e.isActivo() ? 1 : 0);
+        stmt.setInt(9, e.getActivo() ? 1 : 0);
     }
 
     public static void modEmpleado(PreparedStatement stmt, Empleado e) throws SQLException {
         stmt.setDouble(1, e.getSueldo());
-        stmt.setBoolean(2, e.getVacacionesActivas());
-        stmt.setInt(2, e.getFaltas());
-        stmt.setBoolean(2, e.isActivo());
-        stmt.setInt(3, e.getDNI());
+        stmt.setBoolean(2, e.getVacaciones());
+        stmt.setInt(3, e.getFaltas());
+        stmt.setBoolean(4, e.getActivo());
+        stmt.setInt(5, e.getDNI());
     }
 
     //PRODUCTO

@@ -12,10 +12,10 @@ public class EmpleadoDAO {
 
     public static void cargarEmpleadosEnLista(ArrayList<Empleado> lista) {
         String sql = """
-        SELECT e.id, e.DNI, p.nombre, p.apellido, r.descripcion, e.Sueldo,
-               e.Vacaciones, e.Faltas, t.telefono, e.FechaIngreso, e.FechaEgreso, e.Activo
+        SELECT e.id, e.DNI, p.nombre, p.apellido, r.rol, r.descripcion, e.sueldo,
+               e.vacaciones, e.faltas, t.telefono, e.fechaIngreso, e.fechaEgreso, e.activo
         FROM Empleado e
-        INNER JOIN Persona p ON e.DNI = p.DNI
+        INNER JOIN Persona p ON p.DNI = e.DNI
         INNER JOIN Telefonos t ON t.idPersona = p.DNI
         INNER JOIN Roles r ON r.rol = e.idrol
         """;
@@ -111,22 +111,23 @@ public class EmpleadoDAO {
             boolean esNumerico = false;
             String campoSQL = switch (campo) {
                 case "nombre", "apellido"                                   -> "p." + campo;
-                case "DNI"                                                  -> "p." + campo;
-                case "ID", "sueldo", "vacaciones", "faltas", "activo"       -> "e." + campo;
+                case "dni"                                                  -> "p." + campo;
+                case "id", "idrol", "sueldo", "vacaciones", "faltas", "activo"       -> "e." + campo;
                 case "telefono"                                             -> "t.telefono";
                 default                                                         -> null;
             };
 
             if (campoSQL == null) return listaTemp;
             esNumerico = switch (campo) {
-                case "ID", "sueldo", "vacaciones", "faltas", "activo", "telefono" -> true;
+                case "id", "dni", "idrol", "sueldo", "vacaciones", "faltas", "activo", "telefono" -> true;
                 default -> false;
             };
             String query =
-                    "SELECT e.ID, p.DNI, p.nombre, p.apellido, e.sueldo, e.vacaciones, e.faltas, e.activo, t.telefono " +
+                    "SELECT e.ID, p.DNI, p.nombre, p.apellido, r.rol, r.descripcion, e.sueldo, e.vacaciones, e.faltas, t.telefono, e.fechaingreso, e.fechaegreso, e.activo" +
                         "FROM Empleado e " +
                         "INNER JOIN Persona p ON p.DNI = e.DNI " +
                         "LEFT JOIN Telefonos t ON t.idPersona = p.DNI " +
+                        "INNER JOIN Roles r ON r.rol = e.idrol" +
                         "WHERE " + (esNumerico? campoSQL + " = ?"
                         : "unaccent(" + campoSQL + ") ILIKE unaccent(?)");
 
@@ -149,10 +150,12 @@ public class EmpleadoDAO {
         }
     public static Empleado obtenerEmpleadoPorId(int id) {
         String sql = """
-        SELECT e.ID, p.DNI, p.nombre, p.apellido, t.telefono
-        FROM Empleado c
-        JOIN Persona p ON c.DNI = p.DNI
-        LEFT JOIN Telefonos t ON p.DNI = t.idPersona
+        SELECT e.id, e.DNI, p.nombre, p.apellido, r.rol, r.descripcion, e.sueldo,
+               e.vacaciones, e.faltas, t.telefono, e.fechaIngreso, e.fechaEgreso, e.activo
+        FROM Empleado e
+        INNER JOIN Persona p ON p.DNI = e.DNI
+        INNER JOIN Telefonos t ON t.idPersona = p.DNI
+        INNER JOIN Roles r ON r.rol = e.idrol
         WHERE e.ID = ?
         """;
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
