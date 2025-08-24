@@ -18,6 +18,7 @@ public class EmpleadoDAO {
         INNER JOIN Persona p ON p.DNI = e.DNI
         INNER JOIN Telefonos t ON t.idPersona = p.DNI
         INNER JOIN Roles r ON r.rol = e.idrol
+        WHERE e.activo = true
         """;
 
         try (Statement stmt = conn.createStatement();
@@ -38,7 +39,7 @@ public class EmpleadoDAO {
         INNER JOIN Persona p ON p.DNI = e.DNI
         WHERE e.id = ?
         """;
-        String deleteSQL = "DELETE FROM Empleado WHERE id = ?";
+        String deleteSQL = "UPDATE Empleado SET activo = false, WHERE id = ?"; //Falta corregir el eliminado basandonos en como esta hecho el de producto
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, id);
@@ -70,7 +71,7 @@ public class EmpleadoDAO {
         String queryID = """
         SELECT p.nombre, p.apellido
         FROM Empleado e
-        JOIN Persona p ON c.DNI = p.DNI
+        JOIN Persona p ON p.DNI = e.DNI
         WHERE e.ID = ?
     """;
         String queryDNI = "SELECT ID FROM Empleado WHERE DNI = ?";

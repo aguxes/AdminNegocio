@@ -23,6 +23,7 @@ import javafx.stage.Stage;
 import util.Mapper;
 import util.Tablas;
 import java.sql.*;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -254,12 +255,15 @@ public class VentanaEmpleado {
                 {"Sueldo", "sueldo"},
                 {"Faltas", "faltas"},
                 {"Vacaciones", "vacaciones"},
+            //    {"FechaIngreso","fechaingreso"},
+            //    {"FechaEgreso", "fechaegreso"},
                 {"Activo", "activo"},
                 {"Teléfono", "telefonoStr"}
         };
 
         VBox formCampos = Tablas.crearform(lineas, campos);
 
+        campos.get("id").setEditable(false);
         campos.get("dni").setEditable(false);
 
         btnBuscar.setOnAction(ev -> {
@@ -268,10 +272,17 @@ public class VentanaEmpleado {
                 Empleado e = EmpleadoDAO.obtenerEmpleadoPorId(id);
 
                 if (e != null) {
-                    /// ACA FALTA COMPLETAR!!!! CON TODAS LAS VARIABLES DE EMPLEADO
+                    campos.get("id").setText(String.valueOf(e.getId()));
                     campos.get("dni").setText(String.valueOf(e.getDNI()));
                     campos.get("nombre").setText(e.getNombre());
                     campos.get("apellido").setText(e.getApellido());
+                    campos.get("rol").setText(String.valueOf(e.getRol().getDescripcion()));
+                    campos.get("sueldo").setText(String.valueOf(e.getSueldo()));
+                    campos.get("vacaciones").setText(String.valueOf(e.getVacaciones()));
+                    campos.get("faltas").setText(String.valueOf(e.getFaltas()));
+                    //campos.get("FechaIngreso").setText(String.valueOf(e.getFechaDeIngreso()));
+                   // campos.get("FechaEgreso").setText(String.valueOf(e.getFechaDeEgreso()));
+                    campos.get("activo").setText(String.valueOf(e.getActivo()));
                     campos.get("telefono").setText(String.valueOf(e.getTelefono().getTelefono()));
                 } else {
                     mostrarAlerta("❌ No se encontró el Empleado con ID: " + id);
@@ -288,6 +299,13 @@ public class VentanaEmpleado {
                 int DNI = Integer.parseInt(campos.get("dni").getText().trim());
                 String Nombre = campos.get("nombre").getText().trim();
                 String Apellido = campos.get("apellido").getText().trim();
+                int rol = Integer.parseInt(campos.get("rol").getText().trim());
+                double sueldo = Double.parseDouble(campos.get("sueldo").getText().trim());
+                boolean vacaciones = Boolean.parseBoolean(campos.get("vacaciones").getText().trim());
+                int faltas = Integer.parseInt(campos.get("faltas").getText().trim());
+              //  String fechaIngreso = campos.get("fechaIngreso").getText().trim();
+              // String fechaEgreso = campos.get("fechaEgreso").getText().trim();
+                boolean activo = Boolean.parseBoolean(campos.get("activo").getText().trim());
                 String telefonoStr = campos.get("telefono").getText().trim();
                 if (!telefonoStr.matches("\\d{8,15}")) { // Validación
                     mostrarAlerta("Ingresa un número de teléfono válido (solo números, 8 a 15 dígitos).");
@@ -296,15 +314,24 @@ public class VentanaEmpleado {
                 Long telefono = Long.parseLong(telefonoStr);
 
                 Telefono tel = new Telefono(DNI, telefono);
+                Roles roli = new Roles (rol, "");
+
 
                 Empleado em = new Empleado();
                 em.setDNI(DNI);
                 em.setNombre(Nombre);
                 em.setApellido(Apellido);
+                em.setRolID(roli);
+                em.setSueldo(sueldo);
+                em.setVacaciones(vacaciones);
+                em.setFaltas(faltas);
+            //    em.setFechaDeIngreso(fechaIngreso);
+            //    em.setFechaDeEgreso(fechaEgreso);
+                em.setActivo(activo);
                 em.setTelefono(tel);
 
                 String queryP = "UPDATE Persona SET nombre = ?, apellido = ? WHERE DNI = ?;";
-                String queryE = "UPDATE Empleado SET idrol = ?, sueldo = ?, vacaciones = ?, faltas = ?, activo = ?, WHERE DNI = ?";
+                String queryE = "UPDATE Empleado SET idrol = ?, sueldo = ?, vacaciones = ?, faltas = ?, fechaIngreso = ?, fechaEgreso = ?, activo = ?, WHERE DNI = ?";
                 String queryT = "UPDATE Telefonos SET telefono = ? WHERE idPersona = ?";
 
                 PreparedStatement stmtP = conn.prepareStatement(queryP);
