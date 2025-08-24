@@ -2,6 +2,7 @@ package DataBase;
 
 import Clases.Principales.Cliente;
 import Clases.Principales.Empleado;
+import javafx.stage.Stage;
 import util.Mapper;
 
 import java.sql.*;
@@ -12,8 +13,7 @@ public class EmpleadoDAO {
 
     public static void cargarEmpleadosEnLista(ArrayList<Empleado> lista) {
         String sql = """
-        SELECT e.id, e.DNI, p.nombre, p.apellido, r.rol, r.descripcion, e.sueldo,
-               e.vacaciones, e.faltas, t.telefono, e.fechaIngreso, e.fechaEgreso, e.activo
+        SELECT *
         FROM Empleado e
         INNER JOIN Persona p ON p.DNI = e.DNI
         INNER JOIN Telefonos t ON t.idPersona = p.DNI
@@ -35,11 +35,11 @@ public class EmpleadoDAO {
         StringBuilder result = new StringBuilder();
         String query =
                 """
-        SELECT p.nombre FROM Empleado e
-        INNER JOIN Persona p ON p.DNI = e.DNI
-        WHERE e.id = ?
+        SELECT nombre FROM persona
+        WHERE DNI IN (SELECT DNI FROM Empleado WHERE id = ? AND Activo = true) /*SELECT p.nombre FROM Empleado e INNER JOIN Persona p ON p.DNI = e.DNI WHERE e.id = ?*/
         """;
-        String deleteSQL = "UPDATE Empleado SET activo = false, WHERE id = ?"; //Falta corregir el eliminado basandonos en como esta hecho el de producto
+        String deleteSQL = "UPDATE Empleado SET activo = false, WHERE id = ? AND Activo = true";
+
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, id);
@@ -54,12 +54,16 @@ public class EmpleadoDAO {
                     deleteStmt.executeUpdate();
                     conn.commit();
                     result.append("✅ Empleado eliminado: ").append(nombre);
-                }
+                } catch (SQLException e) {
+                    conn.rollback();
+                    result.append("❌ Error eliminando empleado: ").append(e.getMessage());
+                } finally { conn.setAutoCommit(true); }
             } else {
                 result.append("⚠️ No se encontró ningún empleado con ese ID.");
             }
 
         } catch (SQLException e) {
+            try { conn.rollback(); } catch (SQLException ignore) {}
             result.append("❌ Error en la base de datos: ").append(e.getMessage());
         }
 
@@ -105,7 +109,7 @@ public class EmpleadoDAO {
             return "Error";
         }
 
-        return "No encontrado";
+        return "No encontrado o no esta activo";
     }
         public static ArrayList <Empleado> BuscarEmpleadoPorDato(String campo, String valor) {
             ArrayList<Empleado> listaTemp = new ArrayList<>();
