@@ -37,32 +37,6 @@ public class VentaDAO {
         return lista;
     }
 
-    public static String obtenerVentas(ArrayList<Venta> lista) {
-        if (lista == null || lista.isEmpty()) return "Lista de ventas vacía.";
-
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(String.format("%-5s %-20s %-25s %-20s %-15s %-10s %-20s\n",
-                "ID", "Cliente", "Empleado", "Fecha", "MedioPago", "Total", "Producto"));
-        sb.append("--------------------------------------------------------------------------------------------------------------\n");
-
-        for (Venta v : lista) {
-            String fechaFormateada = v.getFecha().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-
-
-            sb.append(String.format("%-5d %-20s %-25s %-20s %-15s %-10.2f %-20s\n",
-                    v.getIdVenta(),
-                    v.getNombreCliente(),
-                    v.getNombreEmpleado(),
-                    fechaFormateada,
-                    capitalize(v.getMedioPago()),
-                    v.getImporteTotal(),
-                    v.getNotas())); // reutilizado como nombre del producto
-        }
-
-        return sb.toString();
-    }
-
     // Capitaliza solo la primera letra
     private static String capitalize(String input) {
         if (input == null || input.isEmpty()) return "";
