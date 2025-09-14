@@ -217,16 +217,7 @@ public class VentanaVentas {
                 venta.setImporteTotal(total);
                 venta.setFecha(((DatePicker) campos.get("fechaVenta")).getValue().atStartOfDay());
 
-                String sql = "INSERT INTO Venta (idProd, idC, idE, formaDePago, cantidad, fecha, subtotal, total) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    Mapper.setVenta(stmt, venta);
-                    stmt.executeUpdate();
-                }
-                mostrarAlerta("✅ Venta registrada correctamente.");
-                boolean exito = VentaDAO.actualizarStockProducto(productoId, cantidad);
-                if (!exito) {
-                    mostrarAlerta("⚠ No se pudo actualizar el stock.");
-                }
+                VentaDAO.realizarVenta(venta);
 
                 verVentas();
 

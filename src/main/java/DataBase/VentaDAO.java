@@ -1,10 +1,13 @@
 package DataBase;
 
+import Clases.Principales.Producto;
 import Clases.Principales.Venta;
 import util.Mapper;
 import java.sql.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+
+import static View.AppController.mostrarAlerta;
 
 public class VentaDAO {
     private static final Connection conn = DataBaseConnection.getConnection();
@@ -94,4 +97,29 @@ public class VentaDAO {
         return false;
     }
 
+//    public static boolean modificarProducto(Producto producto) {
+//
+//    }
+
+    public static boolean realizarVenta(Venta venta) {
+
+        int productoId = venta.getIdProducto();
+        int cantidad = venta.getCantidad();
+        String sql = "INSERT INTO Venta (idProd, idC, idE, formaDePago, cantidad, fecha, subtotal, total) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        if (!VentaDAO.actualizarStockProducto(productoId, cantidad)) {
+            mostrarAlerta("⚠ No hay stock del producto.");
+            return false;
+        }
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            Mapper.setVenta(stmt, venta);
+            stmt.executeUpdate();
+            mostrarAlerta("✅ Venta registrada correctamente.");
+            return true;
+        } catch (Exception ex) {
+            mostrarAlerta("❌ Error: " + ex.getMessage());
+            return false;
+        }
+
+    }
 }
