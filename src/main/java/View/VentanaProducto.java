@@ -108,18 +108,25 @@ public class VentanaProducto {
         Label titulo = new Label("📦 Lista de Productos");
         titulo.getStyleClass().add("titulo-seccion");
 
-        // Barra de búsqueda
-        HBox barraBusqueda = new HBox(10);
-        barraBusqueda.setAlignment(Pos.CENTER_LEFT);
+/*        TextField campoBusqueda = new TextField();
 
-        TextField campoBusqueda = new TextField();
-        campoBusqueda.setPromptText("Buscar por ID o Nombre");
         campoBusqueda.setPrefWidth(200);
+*/
+        Label lblCampo = new Label("Buscar por:");
+        lblCampo.getStyleClass().add("label-form");
+
+        ChoiceBox<String> cC = new ChoiceBox<>();
+        cC.getItems().addAll("nombre", "ID", "Categoria", "Medida");
+        cC.setValue("Categoria");
+        cC.getStyleClass().add("input-form");
+
+        TextField txtValor = new TextField();
+        txtValor.setPromptText("Ej: Electronica");
+        txtValor.getStyleClass().add("input-form");
+        txtValor.setMaxWidth(220);
 
         Button btnBuscar = new Button("Buscar");
         btnBuscar.getStyleClass().add("btn-verde");
-
-        barraBusqueda.getChildren().addAll(new Label("🔍 Buscar:"), campoBusqueda, btnBuscar);
 
         String[][] columnas = {
                 {"ID", "productoID"},
@@ -135,6 +142,10 @@ public class VentanaProducto {
 
         TableView<Producto> tabla = Tablas.crearTabla(Producto.class, columnas);
 
+        HBox barraBusqueda = new HBox(10); // espacio entre elementos STYLE
+        barraBusqueda.setAlignment(Pos.CENTER_LEFT);
+        barraBusqueda.getChildren().addAll(lblCampo, cC, txtValor, btnBuscar);
+
         Label lblCantidad = new Label();
         lblCantidad.getStyleClass().add("label-cantidad");
 
@@ -143,24 +154,28 @@ public class VentanaProducto {
         lblCantidad.setText("Total de productos: " + listaOriginal.size());
 
         btnBuscar.setOnAction(e -> {
-            String texto = campoBusqueda.getText().trim().toLowerCase();
-            if (texto.isEmpty()) {
-                tabla.setItems(FXCollections.observableArrayList(listaOriginal));
-                lblCantidad.setText("Total de productos: " + listaOriginal.size());
+            String campo = cC.getValue();
+            String valor = txtValor.getText();
+            ArrayList<Producto> resultado = ProductoDAO.buscarProductoPorDato(campo, valor);
+
+            if (resultado.isEmpty()) {
+
+                tabla.getItems().clear();
+                mostrarAlerta("❌ No se encontró ningún producto con ese dato.");
             } else {
-                ArrayList<Producto> filtrados = new ArrayList<>();
-                for (Producto p : listaOriginal) {
-                    if (String.valueOf(p.getProductoID()).equals(texto) ||
-                            p.getNombreProducto().toLowerCase().contains(texto)) {
-                        filtrados.add(p);
-                    }
-                }
-                tabla.setItems(FXCollections.observableArrayList(filtrados));
-                lblCantidad.setText("Coincidencias: " + filtrados.size());
+                tabla.getItems().setAll(resultado);
             }
         });
-        campoBusqueda.setOnAction(e -> btnBuscar.fire());
+        txtValor.setOnAction(e -> btnBuscar.fire());
         //Armado final
+
+        btnBuscar.setPrefWidth(240); // mismo ancho que txtValor
+        btnBuscar.setAlignment(Pos.CENTER);
+
+        tarjeta.setMaxWidth(Double.MAX_VALUE); // Ocupa todo el ancho disponible
+        VBox.setVgrow(tarjeta, Priority.ALWAYS); // Opcional para que crezca si hay espacio
+
+
         tarjeta.getChildren().addAll(titulo, barraBusqueda, tabla, lblCantidad);
         contenedor.getChildren().setAll(tarjeta);
     }

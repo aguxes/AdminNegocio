@@ -1,5 +1,6 @@
 package DataBase;
 
+import Clases.Principales.Cliente;
 import Clases.Principales.Producto;
 import util.*;
 import java.sql.*;
@@ -30,6 +31,51 @@ public class ProductoDAO {
             System.out.println("❌ Error al cargar productos: " + e.getMessage());
         }
         return lista;
+    }
+
+    public static ArrayList<Producto> buscarProductoPorDato(String campo, String valor) {
+        ArrayList<Producto> listaTemp = new ArrayList<>();
+        boolean esNumerico = false;
+        String campoSQL = switch (campo) {
+            case "nombre"        -> "p." + campo;
+            case "ID"         -> "p." + campo;
+            case "categoria"                      -> "c.descripcion";
+            case "medida"                      -> "m.descripcion";
+            default                          -> null;
+        };
+
+        if (campoSQL == null) return listaTemp;
+
+        esNumerico = switch (campo) {
+            case "ID" -> true;
+            default -> false;
+        };
+        String query =
+
+        "SELECT p.idProducto, p.nombre, p.precio, p.costo, p.stock," +
+        "p.fechAlta, p.fechaBaja, c.descripcion AS categoriaNombre, m.descripcion AS medidaNombre" +
+        "FROM Producto p " +
+        "INNER JOIN CategoriasProd c ON c.Categoria = p.idCategoria " +
+        "INNER JOIN MedidasProd m ON m.unidadMedida = p.idMedida " +
+            "WHERE " + (esNumerico? campoSQL + " = ?"
+            : "unaccent(" + campoSQL + ") ILIKE unaccent(?)");
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            if (esNumerico) {
+                stmt.setInt(1, Integer.parseInt(valor));
+            } else {
+                stmt.setString(1, "%" + valor + "%");
+            }
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Producto p = Mapper.getProducto(rs);
+                listaTemp.add(p);
+            }
+        } catch (SQLException e) {
+            System.out.println("❌ Error al buscar producto: " + e.getMessage());
+        }
+        return listaTemp;
     }
 
     public static Producto obtenerProductoPorID(int id) {
