@@ -6,13 +6,6 @@ import com.google.gson.Gson;
 import DataBase.ClienteDAO;
 import DataBase.DataBaseConnection; // Importar conexión
 import Clases.Principales.Cliente;
-import Clases.Extras.TiposClientes;
-import Clases.Extras.Telefono;
-
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 
 public class ServidorWeb {
     public static void iniciar() {

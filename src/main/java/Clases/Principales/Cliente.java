@@ -7,18 +7,17 @@ public class Cliente extends Persona implements Imprimible {
     private int id;
     private TiposClientes tipo;
     private int cantCompras;
-    private Telefono telefono;
-
+    // private Telefono telefono; // Removed shadowed field
 
     public Cliente(int dni, String nombre, String apellido, Telefono telefono, int id, TiposClientes tipo, int cantCompras) {
         super(dni, nombre, apellido, telefono);
         this.id = id;
         this.tipo = tipo;
         this.cantCompras = cantCompras;
-        this.telefono = telefono;
+        // this.telefono = telefono; // Removed assignment
     }
 
-    public Cliente() { super(0, "", "", new Telefono (0,0)); }// Constructor vacío
+    public Cliente() { super(0, "", "", new Telefono (0,0)); }// Constructor vacÃ­o
 
     public int getId() { return id; }
     public void setid(int id) { this.id = id; }
@@ -41,7 +40,7 @@ public class Cliente extends Persona implements Imprimible {
     @Override
     public void imprimir() {
         System.out.printf("%-5s %-10s %-15s %-15s %-15s %-12s %-15s\n",
-                "ID", "DNI", "Nombre", "Apellido", "Tipo", "Compras", "Teléfono");
+                "ID", "DNI", "Nombre", "Apellido", "Tipo", "Compras", "TelÃ©fono");
         System.out.println("-------------------------------------------------------------------------------");
 
         System.out.printf("%-5d %-10d %-15s %-15s %-15s %-12d %-15s\n",
@@ -51,7 +50,7 @@ public class Cliente extends Persona implements Imprimible {
                 getApellido(),
                 tipo != null ? tipo.getDescripcion() : "N/A",
                 cantCompras,
-                telefono != null ? String.valueOf(telefono.getTelefono()) : "N/A"
+                getTelefono() != null ? String.valueOf(getTelefono().getTelefono()) : "N/A"
         );
     }
 

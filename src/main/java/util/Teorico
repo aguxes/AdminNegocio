@@ -2,7 +2,7 @@ Ejecucion correcta del servidor web por powershel:
 cd "C:\Users\agusp\Downloads\Git\AdminNegocio"  (cd PATH del royecto)
 $env:JAVA_HOME = "C:\Program Files\Java\jdk-21" (Crear variable de entorno del jdk-21)
 .\mvnw.cmd clean compile exec:java "-Dexec.mainClass=WebServer.ServidorWeb" Compilar y ejecutar
-
+http://localhost:4567	 URL de ejecucion:
 
 
 Ordena los controles =                              --Ordenar
