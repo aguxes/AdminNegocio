@@ -36,3 +36,9 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+*.xml
+
+#xml
+*.xml
+.idea/*.xml

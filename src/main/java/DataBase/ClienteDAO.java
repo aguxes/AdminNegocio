@@ -14,7 +14,6 @@ public class ClienteDAO {
 
     public static void cargarClientesEnLista(ArrayList<Cliente> lista) {
         String sql = """
-        
                 SELECT c.ID, p.DNI, p.nombre, p.apellido, tc.tipo, tc.descripcion, c.cantcompras, t.telefono
         FROM Cliente c
          INNER JOIN Persona p ON c.DNI = p.DNI
@@ -98,7 +97,7 @@ public class ClienteDAO {
                             retryStmt.setInt(1, nuevoId);
                             ResultSet retryRs = retryStmt.executeQuery();
                             if (retryRs.next()) {
-                                return retryRs.getString("nombre") + " " + retryRs.getString("apellido");
+                                return retryRs.getString("nombre") + " " + retryRs.getString("apellido"); 
                             }
                         }
                     }
@@ -176,12 +175,78 @@ public class ClienteDAO {
         }
         return null;
     }
-    //para la web, toy probando
+
     public static List<Cliente> obtenerTodos() {
         ArrayList<Cliente> lista = new ArrayList<>();
         cargarClientesEnLista(lista);
         return lista;
     }
 
-}
+    public static boolean insertarCliente(Cliente c) {
+        String queryP = "INSERT INTO Persona (dni, nombre, apellido ) VALUES (?, ?, ?) ";
+        String queryC = "INSERT INTO Cliente (dni, idTipo, cantCompras ) VALUES (?, ?, ?)";
+        String queryT = "INSERT INTO Telefonos (idpersona, telefono) VALUES (?, ?)";
 
+        try {
+            conn.setAutoCommit(false);
+            try (PreparedStatement stmtP = conn.prepareStatement(queryP);
+                 PreparedStatement stmtC = conn.prepareStatement(queryC);
+                 PreparedStatement stmtT = conn.prepareStatement(queryT)) {
+
+                Mapper.setPersona(stmtP, c);
+                Mapper.setCliente(stmtC, c);
+                Mapper.setTelefono(stmtT, c);
+
+                stmtP.executeUpdate();
+                stmtC.executeUpdate();
+                stmtT.executeUpdate();
+
+                conn.commit();
+                return true;
+            } catch (SQLException e) {
+                conn.rollback();
+                System.out.println("❌ Error al insertar cliente: " + e.getMessage());
+                return false;
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean actualizarCliente(Cliente c) {
+        String queryP = "UPDATE Persona SET nombre = ?, apellido = ? WHERE DNI = ?;";
+        String queryC = "UPDATE Cliente SET idTipo = ?, cantCompras = ? WHERE DNI = ?";
+        String queryT = "UPDATE Telefonos SET telefono = ? WHERE idPersona = ?";
+
+        try {
+            conn.setAutoCommit(false);
+            try (PreparedStatement stmtP = conn.prepareStatement(queryP);
+                 PreparedStatement stmtC = conn.prepareStatement(queryC);
+                 PreparedStatement stmtT = conn.prepareStatement(queryT)) {
+
+                Mapper.modPersona(stmtP, c);
+                Mapper.modCliente(stmtC, c);
+                Mapper.modTelefono(stmtT, c);
+
+                stmtP.executeUpdate();
+                stmtC.executeUpdate();
+                stmtT.executeUpdate();
+
+                conn.commit();
+                return true;
+            } catch (SQLException e) {
+                conn.rollback();
+                System.out.println("❌ Error al actualizar cliente: " + e.getMessage());
+                return false;
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+}
