@@ -21,6 +21,7 @@ import util.prueba.Tablass;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static View.AppController.mostrarAlerta;
@@ -132,7 +133,7 @@ public class VentanaProducto {
         Button btnBuscar = new Button("Buscar");
         btnBuscar.getStyleClass().add("btn-verde");
 
-        var random = new HashMap<String, String>();
+        var random = new LinkedHashMap<String, String>();
         random.put("ID", "productoID");
         random.put("Nombre", "nombreProducto");
         random.put("Precio", "precioUnitario");

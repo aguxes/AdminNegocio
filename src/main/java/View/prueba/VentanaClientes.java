@@ -23,6 +23,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static View.AppController.mostrarAlerta;
@@ -60,7 +61,7 @@ public class VentanaClientes {
         Button btnBuscar = new Button("Buscar");
         btnBuscar.getStyleClass().add("btn-verde");
 
-        var random = new HashMap<String, String>();
+        var random = new LinkedHashMap<String, String>();
        random.put("ID", "id");
        random.put("DNI", "dni");
        random.put("Nombre", "nombre");

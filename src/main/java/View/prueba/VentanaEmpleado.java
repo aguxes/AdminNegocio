@@ -23,6 +23,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static View.AppController.mostrarAlerta;
@@ -256,7 +257,7 @@ public class VentanaEmpleado {
 
         Map<String, TextField> campos = new HashMap<>();
 
-        var lineas = new HashMap<String, String>();
+        var lineas = new LinkedHashMap<String, String>();
         lineas.put("ID", "id");
         lineas.put("DNI", "dni");
         lineas.put("Nombre", "nombre");

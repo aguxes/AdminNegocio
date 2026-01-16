@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static View.AppController.agregarDobleClickSeleccion;
@@ -74,7 +75,7 @@ public class VentanaVentas {
 
         barraSuperior.getChildren().addAll(lblBuscar, campoCliente, btnAbrirLista, btnFiltrar);
 
-        var random = new HashMap<String, String>();
+        var random = new LinkedHashMap<String, String>();
         random.put("Factura", "idVenta");
         random.put("Cliente", "nombreCliente");
         random.put("Empleado", "nombreEmpleado");
@@ -249,7 +250,7 @@ public class VentanaVentas {
         ventana.setTitle("Seleccionar Cliente");
         ventana.initModality(Modality.APPLICATION_MODAL);
 
-        var random = new HashMap<String, String>();
+        var random = new LinkedHashMap<String, String>();
         random.put("ID", "id");
         random.put("DNI", "DNI");
         random.put("Nombre", "nombre");
@@ -295,7 +296,7 @@ public class VentanaVentas {
         ventana.setTitle("Seleccionar Empleado");
         ventana.initModality(Modality.APPLICATION_MODAL);
 
-        var random = new HashMap<String, String>();
+        var random = new LinkedHashMap<String, String>();
         random.put("ID", "empleadoID");
         random.put("DNI", "dni");
         random.put("Nombre", "nombre");
