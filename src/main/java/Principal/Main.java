@@ -8,11 +8,12 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
 
+        /*
         ArrayList<Imprimible> listaClientes = new ArrayList<>();
         ArrayList<Imprimible> listaVentas = new ArrayList<>();
         ArrayList<Imprimible> listaProdutos = new ArrayList<>();
         ArrayList<Imprimible> listaReportes = new ArrayList<>();
-
+        */
         ClienteDAO daoCliente = new ClienteDAO();
         VentaDAO daoVenta = new VentaDAO();
         ProductoDAO daoProducto = new ProductoDAO();

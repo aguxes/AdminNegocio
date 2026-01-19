@@ -2,7 +2,7 @@ package Clases.Principales;
 
 import Clases.Extras.Telefono;
 
-public class Persona {
+public abstract class Persona {
     protected int DNI;
     protected String nombre;
     protected String apellido;

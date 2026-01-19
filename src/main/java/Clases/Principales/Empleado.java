@@ -3,7 +3,7 @@ package Clases.Principales;
 import Clases.Extras.Telefono;
 import Clases.Extras.Roles;
 
-public class Empleado extends Persona implements Imprimible {
+public class Empleado extends Persona {
     private int empleadoID;
     // private int dni; // Removed shadowed field
     private Roles rolID;
@@ -32,10 +32,7 @@ public class Empleado extends Persona implements Imprimible {
         // this.telefono = telefono; // Removed assignment
     }
 
-    public Empleado() { super(0, "Sin nombre","Sin apellido", new Telefono(0,0)); } // Constructor vacÃ­o 
-
-    @Override
-    public void imprimir() { }
+    public Empleado() { super(0, "Sin nombre","Sin apellido", new Telefono(0,0)); } // Constructor vacÃ­o
 
     //GETTERS
 

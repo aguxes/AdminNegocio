@@ -3,7 +3,7 @@ package Clases.Principales;
 import Clases.Extras.Telefono;
 import Clases.Extras.TiposClientes;
 
-public class Cliente extends Persona implements Imprimible {
+public class Cliente extends Persona {
     private int id;
     private TiposClientes tipo;
     private int cantCompras;
@@ -35,24 +35,4 @@ public class Cliente extends Persona implements Imprimible {
     public String getTipCliente() {
         return tipo != null ? tipo.getDescripcion() : "";
     } // Caso de uso de esta cosa??
-
-
-    @Override
-    public void imprimir() {
-        System.out.printf("%-5s %-10s %-15s %-15s %-15s %-12s %-15s\n",
-                "ID", "DNI", "Nombre", "Apellido", "Tipo", "Compras", "TelÃ©fono");
-        System.out.println("-------------------------------------------------------------------------------");
-
-        System.out.printf("%-5d %-10d %-15s %-15s %-15s %-12d %-15s\n",
-                id,
-                getDNI(),
-                getNombre(),
-                getApellido(),
-                tipo != null ? tipo.getDescripcion() : "N/A",
-                cantCompras,
-                getTelefono() != null ? String.valueOf(getTelefono().getTelefono()) : "N/A"
-        );
     }
-
-
-}

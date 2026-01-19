@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class Venta implements Imprimible {
+public class Venta {
 
     private int idVenta;
     private int idProducto;
@@ -87,11 +87,5 @@ public class Venta implements Imprimible {
     public void setSubtotal(BigDecimal subtotal) { this.subtotal = subtotal; }
     public void setImporteTotal(BigDecimal importeTotal) { this.importeTotal = importeTotal; }
     public void setNotas(String notas) { this.notas = notas; }
-
-    @Override
-    public void imprimir() {
-        System.out.printf("%-5d %-10s %-10s %-15s %-15s %-10s %-15s %-15s\n",
-                idVenta, idCliente, idEmpleado, fecha, medioPago, cantidad, importeTotal, notas);
-    }
 }
 

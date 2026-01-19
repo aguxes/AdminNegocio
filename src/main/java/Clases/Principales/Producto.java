@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class Producto implements Imprimible {
+public class Producto {
     private int productoID;
     private String nombreProducto;
     private BigDecimal precioUnitario;
@@ -73,14 +73,5 @@ public class Producto implements Imprimible {
     public void setActivo(boolean activo) { this.activo = activo; }
 
     // Métodos para impresión
-    public void imprimirEncabezado() {
-        System.out.printf("%-5s %-20s %-10s %-10s %-10s\n",
-                "ID", "Nombre", "Precio", "Costo", "Stock");
-        System.out.println("---------------------------------------------------");
-    }
-    public void imprimir() {
-        System.out.printf("%-5d %-20s %-10.2f %-10.2f %-10d\n",
-                productoID, nombreProducto, precioUnitario, costo, stock);
-    }
 }
 

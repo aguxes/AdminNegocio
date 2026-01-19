@@ -17,6 +17,7 @@ public class Mapper {
 
     // Mapeo de Persona
     // ========================================
+    /*
     public static Persona getPersona(ResultSet rs) throws SQLException {
         Telefono tel = new Telefono(rs.getInt("DNI"), rs.getLong("telefono"));
 
@@ -27,7 +28,7 @@ public class Mapper {
                 tel
         );
         return p;
-    }
+    } */ //¿Existe situacion donde necesitemos de esto?
 
     public static void setPersona(PreparedStatement stmt, Persona p) throws SQLException {
         stmt.setInt(1, p.getDNI());
